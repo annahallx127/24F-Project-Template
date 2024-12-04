@@ -268,8 +268,14 @@ VALUES
 (1, 2, 1, '2024-12-01 10:00:00', 60, 'Career Advice'),
 (2, 1, 2, '2024-12-02 14:00:00', 45, 'Engineering Insights');
 
+INSERT INTO `Applicant` (ApplicantID, FirstName, LastName, Resume, WCFI)
+VALUES
+(1, 'John', 'Doe', 'Resume text for John Doe', 'W123'),
+(2, 'Jane', 'Smith', 'Resume text for Jane Smith', 'W456');
+
+
 -- Insert into Rank table
-INSERT INTO Rank (ApplicantID, RankNum)
+INSERT INTO `Rank` (ApplicantID, RankNum)
 VALUES
 (1, 2),
 (2, 1);
