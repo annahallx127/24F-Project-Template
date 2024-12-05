@@ -19,7 +19,7 @@ student_id_detail = st.text_input("Enter Student ID to Fetch Details", key="stud
 if st.button("Fetch Student Details"):
     if student_id_detail:
         # Call the Flask API to get student details
-        url = f"http://localhost:8501/students/new_student/{student_id_detail}"
+        url = f"http://web-api:4000/students/new_student/{student_id_detail}"
         
         try:
             response = requests.get(url)

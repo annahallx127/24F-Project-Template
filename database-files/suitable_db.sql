@@ -210,10 +210,10 @@ CREATE TABLE IF NOT EXISTS `JobListingManagement` (
 );
 
 -- Insert into Student table
-INSERT INTO Student (FirstName, LastName, Major, isMentor, WCFI)
+INSERT INTO Student (StudentID, FirstName, LastName, Major, isMentor, WCFI)
 VALUES
-('Alice', 'Johnson', 'Computer Science', TRUE, '1234'),
-('Bob', 'Smith', 'Mechanical Engineering', FALSE, '5678');
+(1, 'Alice', 'Johnson', 'Computer Science', TRUE, '1234'),
+(2, 'Bob', 'Smith', 'Mechanical Engineering', FALSE, '5678');
 
 -- Insert into Resume table
 INSERT INTO Resume (StudentID, ResumeName, WorkExperience, TechnicalSkills, SoftSkills)
