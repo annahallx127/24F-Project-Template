@@ -32,3 +32,10 @@ if st.button('Alert System',
              type='primary',
             use_container_width=True):
   st.switch_page('pages/22_AlertSystem.py')
+
+
+if st.button('Manage All Users',
+             type='primary',
+            use_container_width=True):
+  st.switch_page('pages/25_ManageUsers.py')
+
