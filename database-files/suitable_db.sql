@@ -37,6 +37,7 @@ CREATE TABLE IF NOT EXISTS `HiringManager` (
 
 CREATE TABLE IF NOT EXISTS `Company` (
   `CompanyID` integer PRIMARY KEY AUTO_INCREMENT,
+
     `EmployerID` integer NOT NULL,
   `Name` varchar(300),
   `Industry` varchar(100),
@@ -65,8 +66,6 @@ CREATE TABLE IF NOT EXISTS `Applicant` (
   `WCFI` char(4),
     FOREIGN KEY (ApplicantID) REFERENCES Application(ApplicationID) ON DELETE CASCADE
 );
-
-
 
 
 CREATE TABLE IF NOT EXISTS `CareerProjections` (
