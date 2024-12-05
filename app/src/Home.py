@@ -36,7 +36,7 @@ SideBarLinks(show_home=True)
 logger.info("Loading the Home page of the app")
 st.title('Welcome to Suitable!')
 st.write('\n\n')
-st.write('### Which suit do you wanna put on today?')
+st.write('### Which "suit" would you like to put on today?')
 
 # For each of the user personas for which we are implementing
 # functionality, we put a button on the screen that the user 
