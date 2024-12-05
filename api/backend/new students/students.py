@@ -32,7 +32,7 @@ def update_new_student():
     student_id = student_info['StudentID']  # Ensure StudentID is included
     if not student_id:
         return jsonify({'message': 'StudentID is required'}), 400
-
+ 
     # Extract fields to update
     first_name = student_info['FirstName']
     last_name = student_info[('LastName')]
@@ -73,7 +73,7 @@ def update_new_student():
 
     # Combine the updates into a single SQL query
     if updates:
-        query = 'UPDATE Student SET {', '.join(updates)} WHERE StudentID = %s'
+        query = f"UPDATE Student SET {', '.join(updates)} WHERE StudentID = %s"
         values.append(student_id)  # Add StudentID as the last parameter for the WHERE clause
 
         cursor.execute(query, tuple(values))
@@ -175,7 +175,7 @@ def get_job_listing_details(JobListingID):
         FROM JobListing
         WHERE JobID = %s
     '''
-    cursor.execute(query, (id,))
+    cursor.execute(query, (JobListingID,))
 
     # Fetch the result
     job_listing = cursor.fetchone()
@@ -283,7 +283,7 @@ def withdraw_application(id):
         return jsonify({'message': 'Application has already been withdrawn'}), 400
 
     # Step 3: Update the application status to 'withdrawn'
-    update_query = "UPDATE Applicatios SET Status = 'withdrawn' WHERE ApplicationID = %s"
+    update_query = "UPDATE Application SET Status = 'withdrawn' WHERE ApplicationID = %s"
     cursor.execute(update_query, (id,))
     db.get_db().commit()
 
