@@ -16,48 +16,26 @@ if st.button("Fetch Job Details"):
     else:
         st.warning("Please enter a Job Listing ID.")
 
-# Section: Create Job Listing
-st.header("Create Job Listing")
-job_title = st.text_input("Job Title", key="create_job_title")
-job_description = st.text_area("Job Description", key="create_job_description")
-company_id = st.text_input("Company ID", key="create_company_id")
-is_active = st.checkbox("Is Active", value=True, key="create_is_active")
-if st.button("Create Job Listing"):
-    if job_title and job_description and company_id:
-        payload = {
-            "job_title": job_title,
-            "job_description": job_description,
-            "company_id": company_id,
-            "is_active": is_active
-        }
-        response = requests.post("http://localhost:8501/job-listings", json=payload)
-        if response.status_code == 201:
-            st.success("Job listing created successfully!")
-        else:
-            st.error("Failed to create job listing.")
-    else:
-        st.warning("Please fill out all required fields.")
+        # Section: View and Delete Expired Job Listings
+st.header("Manage Expired Job Listings")
+if st.button("Fetch Expired Job Listings"):
+    response = requests.get("http://localhost:8501/job-listings/expired")
+    if response.status_code == 200:
+        expired_jobs = response.json()
+        if expired_jobs:
+            st.subheader("Expired Job Listings")
+            st.json(expired_jobs)
 
-# Section: Update Job Listing
-st.header("Update Job Listing")
-job_id_put = st.text_input("Enter Job Listing ID to Update", key="update_job_id")
-job_title_put = st.text_input("New Job Title", key="update_job_title")
-job_description_put = st.text_area("New Job Description", key="update_job_description")
-is_active_put = st.checkbox("Is Active", value=True, key="update_is_active")
-if st.button("Update Job Listing"):
-    if job_id_put:
-        payload = {
-            "job_title": job_title_put,
-            "job_description": job_description_put,
-            "is_active": is_active_put
-        }
-        response = requests.put(f"http://localhost:8501/job-listings/{job_id_put}", json=payload)
-        if response.status_code == 200:
-            st.success("Job listing updated successfully!")
+            if st.button("Delete All Expired Job Listings"):
+                delete_response = requests.delete("http://localhost:8501/job-listings/expired")
+                if delete_response.status_code == 200:
+                    st.success("All expired job listings deleted successfully!")
+                else:
+                    st.error("Failed to delete expired job listings.")
         else:
-            st.error("Failed to update job listing.")
+            st.info("No expired job listings found.")
     else:
-        st.warning("Please enter a Job Listing ID.")
+        st.error("Failed to fetch expired job listings.")
 
 # Section: Delete Job Listing
 st.header("Delete Job Listing")
