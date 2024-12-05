@@ -70,6 +70,29 @@ def post_availability():
 
     return the_response
 
+# update availability for coffee chat
+@returning_student.route('/availability/<int:availabilityId>', methods=['PUT'])
+def update_availability(availabilityId):
+    cursor = db.get_db().cursor()
+    req_data = request.get_json()
+
+    start_date = req_data.get('StartDate')
+    end_date = req_data.get('EndDate')
+
+    query = '''
+        UPDATE Availability
+        SET StartDate = %s, EndDate = %s
+        WHERE AvailabilityID = %s
+    '''
+    try:
+        cursor.execute(query, (start_date, end_date, availabilityId))
+        db.get_db().commit()
+        the_response = make_response(jsonify({"message": "Availability updated successfully!"}), 200)
+    except Exception as e:
+        db.get_db().rollback()
+        the_response = make_response(jsonify({"error": str(e)}), 500)
+
+    return the_response
 
 
 
