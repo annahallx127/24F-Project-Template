@@ -172,3 +172,27 @@ def delete_job_listing(id):
         return make_response(
             jsonify({"error": "Failed to delete job listing", "details": str(e)}), 500
         )
+
+#Update applicant MBTI 
+@hiring_manager.route('/applicants/<int:applicant_id>/mbti', methods=['PUT'])
+def update_applicant_mbti(applicant_id):
+    data = request.get_json()
+    mbti_type = data.get('MBTIType')
+    if not mbti_type:
+        return make_response(jsonify({"error": "Missing MBTIType field"}), 400)
+
+    query = '''
+        UPDATE Applicant 
+        SET MBTIType = %s
+        WHERE ApplicantID = %s
+    '''
+    cursor = db.get_db().cursor()
+    try:
+        cursor.execute(query, (mbti_type, applicant_id))
+        db.get_db().commit()
+        if cursor.rowcount == 0:
+            return make_response(jsonify({"error": "Applicant not found"}), 404)
+        return make_response(jsonify({"message": "MBTI updated successfully"}), 200)
+    except Exception as e:
+        db.get_db().rollback()
+        return make_response(jsonify({"error": str(e)}), 500)
