@@ -14,32 +14,26 @@ from backend.ml_models.model01 import predict
 # Create a new Blueprint object, which is a collection of 
 # routes.
 hiring_manager = Blueprint('hiring_manager', __name__)
-
-
 #------------------------------------------------------------
-# Get all hiring managers from the system --fix this get route get all hiring managers 
-@hiring_manager.route('/hiring-managers', methods=['POST'])
-def add_hiring_manager():
+# Get all hiring managers from the system
+@hiring_manager.route('/hiring-managers', methods=['GET'])
+def get_all_hiring_managers():
     cursor = db.get_db().cursor()
-    req_data = request.get_json()
-    first_name = req_data.get('FirstName')
-    last_name = req_data.get('LastName')
-    email = req_data.get('Email')
-    company_id = req_data.get('CompanyID')
-
-    if not all([first_name, last_name, email, company_id]):
-        return make_response(jsonify({"error": "Missing required fields"}), 400)
-
+    
+    # SQL query to fetch all hiring managers
     query = '''
-        INSERT INTO HiringManager (FirstName, LastName, Email, CompanyID)
-        VALUES (%s, %s, %s, %s)
+        SELECT * FROM HiringManager
     '''
     try:
-        cursor.execute(query, (first_name, last_name, email, company_id))
-        db.get_db().commit()
-        return make_response(jsonify({"message": "Hiring manager added successfully"}), 201)
+        cursor.execute(query)
+        rows = cursor.fetchall()
+        column_names = [desc[0] for desc in cursor.description]
+        
+        # Convert rows into a list of dictionaries
+        result = [dict(zip(column_names, row)) for row in rows]
+        
+        return make_response(jsonify(result), 200)
     except Exception as e:
-        db.get_db().rollback()
         return make_response(jsonify({"error": str(e)}), 500)
     
 # add a new hiring manager to the system 
@@ -67,7 +61,7 @@ def add_hiring_manager():
         db.get_db().rollback()
         return make_response(jsonify({"error": str(e)}), 500)
     
-
+#Post job listing
 @hiring_manager.route('/job-listings', methods=['POST'])
 def post_job_listing():
     cursor = db.get_db().cursor()
