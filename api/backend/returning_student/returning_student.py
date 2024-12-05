@@ -94,7 +94,40 @@ def update_availability(availabilityId):
 
     return the_response
 
+# Post a co-op review after completing co-op
+@returning_student.route('/coop/review/<int:coopId>', methods=['PUT'])
+def update_coop_review(coopId):
+    cursor = db.get_db().cursor()
+    req_data = request.get_json()
 
+    review = req_data.get('CoopReview')
+    rating = req_data.get('CoopRating')
+
+    if not review or not isinstance(review, str) or len(review.strip()) == 0:
+        return make_response(
+            jsonify({"error": "CoopReview must be a non-empty string"}), 400
+        )
+    if not rating or not isinstance(rating, int) or not (1 <= rating <= 5):
+        return make_response(
+            jsonify({"error": "CoopRating must be an integer between 1 and 5"}), 400
+        )
+
+    query = '''
+        UPDATE Coop
+        SET CoopReview = %s, CoopRating = %s
+        WHERE CoopID = %s
+    '''
+    try:
+        cursor.execute(query, (review, rating, coopId))
+        db.get_db().commit()
+        return make_response(
+            jsonify({"message": "Co-op review updated successfully!"}), 200
+        )
+    except Exception as e:
+        db.get_db().rollback()
+        return make_response(
+            jsonify({"error": "Failed to update co-op review", "details": str(e)}), 500
+        )
 
 
 
