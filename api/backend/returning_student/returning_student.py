@@ -153,6 +153,37 @@ def update_coop_review(coopId):
 
     return the_response
 
+# delete a co-op review
+@returning_student.route('/coop/review/<int:coop_id>', methods=['DELETE'])
+def delete_coop_review(coop_id):
+    # Get the database cursor
+    cursor = db.get_db().cursor()
+
+    # SQL query to delete the co-op review based on CoopID
+    query = '''DELETE FROM Coop WHERE CoopID = %s'''
+
+    # Execute the query
+    try:
+        cursor.execute(query, (coop_id,))
+        db.get_db().commit()
+
+        # Check if a row was deleted
+        if cursor.rowcount == 0:
+            the_response = make_response(
+                jsonify({"error": f" Co-op review with CoopID {coop_id} does not exist"}), 404
+            )
+        else:
+            the_response = make_response(
+                jsonify({"message": f"Co-op review with CoopID {coop_id} successfully deleted!"}), 200
+            )
+    except Exception as e:
+        db.get_db().rollback()
+        the_response = make_response(
+            jsonify({"error": str(e)}), 500
+        )
+
+    return the_response
+
 
 
 
