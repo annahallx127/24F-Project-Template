@@ -15,7 +15,7 @@ from modules.nav import SideBarLinks
 
 # streamlit supports reguarl and wide layout (how the controls
 # are organized/displayed on the screen).
-st.set_page_config(layout = 'wide' )
+st.set_page_config(layout = 'wide')
 
 # If a user is at this page, we assume they are not 
 # authenticated.  So we change the 'authenticated' value
@@ -34,9 +34,9 @@ SideBarLinks(show_home=True)
 
 # set the title of the page and provide a simple prompt. 
 logger.info("Loading the Home page of the app")
-st.title('Suitable')
+st.title('Welcome to Suitable!')
 st.write('\n\n')
-st.write('### HIIIIIIII!! Which user would you like to log in as?')
+st.write('### Which suit do you wanna put on today?')
 
 # For each of the user personas for which we are implementing
 # functionality, we put a button on the screen that the user 
@@ -56,6 +56,7 @@ if st.button("Act as Peter Parker, a second year at Spider University",
     # landing page for this particular user type
     logger.info("Logging in as New Student")
     st.switch_page('pages/00_Pol_Strat_Home.py') #CHANGE PAGE
+
 
 if st.button("Act as Mary Jane, a third year at Spider University", 
             type = 'primary', 
@@ -87,6 +88,3 @@ if st.button('Act as Gwen Stacy, Systems Administrator',
     st.session_state['role'] = 'system_administrator'
     st.session_state['first_name'] = 'Gwen'
     st.switch_page('pages/20_Admin_Home.py') #CHANGE PAGE
-
-
-

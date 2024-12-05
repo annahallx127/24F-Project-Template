@@ -2,16 +2,16 @@ import streamlit as st
 from streamlit_extras.app_logo import add_logo
 from modules.nav import SideBarLinks
 
-SideBarLinks()
+SideBarLinks(show_home=True)
 
-st.write("# About this App")
+st.write("# About Suitable")
 
 st.markdown (
     """
-    This is a demo app for CS 3200 Course Project.  
+    Welcome to Suitable! Suitable is created by Bella, Anna, Afra, and Isabel.
+    This is an improved application of NUWorks created for a CS 3200 Course Project.  
 
-    The goal of this demo is to provide information on the tech stack 
-    being used as well as demo some of the features of the various platforms. 
+   Suitable personalizes the job application process by addressing the challenges students, employers, and administrators face. For students, the platform offers tailored job recommendations, networking opportunities, and an application tracker. Employers benefit from automated resume ranking, collaborative hiring tools, and customized interview prompts. Administrators have advanced data security and user management features. Suitable transforms the job application process into a supportive, insightful, and secure experience, making career decisions more informed and accessible.
 
     Stay tuned for more information and features to come!
     """
