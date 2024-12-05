@@ -118,6 +118,44 @@ def get_student(StudentID):
     return jsonify(student_data), 200
 
 #------------------------------------------------------------
+# Get all job listings
+@new_students.route('/job-listings', methods=['GET'])
+def get_all_job_listings():
+    current_app.logger.info('GET /job-listings route')
+    
+    # Create a cursor to execute the query
+    cursor = db.get_db().cursor()
+    
+    # Query to retrieve all job listings
+    query = '''
+        SELECT *
+        FROM JobListing
+    '''
+    cursor.execute(query)
+    
+    # Fetch all job listings
+    job_listings = cursor.fetchall()
+    
+    # If no job listings are found, return an appropriate response
+    if not job_listings:
+        return jsonify({'message': 'No job listings found'}), 404
+    
+    # Format the job listings as a list of dictionaries
+    job_data = []
+    for job in job_listings:
+        job_data.append({
+            'JobListingID': job[0],
+            'CompanyID': job[1],
+            'JobDescription': job[2],
+            'JobPositionTitle': job[3],
+            'JobIsActive': job[4],
+        })
+    
+    # Return the list of job listings as a JSON response
+    return jsonify({'job_listings': job_data}), 200
+
+
+#------------------------------------------------------------
 # Get detailed information about a specific job posting by ID
 @new_students.route('/job-listings/JobListingID>', methods=['GET'])
 def get_job_listing_details(JobListingID):
