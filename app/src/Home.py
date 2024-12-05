@@ -79,7 +79,7 @@ if st.button('Act as Miles Morales, a hiring manager',
     st.session_state['authenticated'] = True
     st.session_state['role'] = 'hiring_manager'
     st.session_state['first_name'] = 'Miles'
-    st.switch_page('pages/10_USAID_Worker_Home.py') #CHANGE PAGE
+    st.switch_page('pages/31_ManagerDashboard')
 
 if st.button('Act as Gwen Stacy, Systems Administrator', 
             type = 'primary', 
