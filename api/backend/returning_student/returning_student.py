@@ -185,5 +185,33 @@ def delete_coop_review(coop_id):
     return the_response
 
 
+# get all career projections
+@returning_student.route('/students/<int:studentId>/career-projections', methods=['GET'])
+def get_career_projections(studentId):
+    cursor = db.get_db().cursor()
 
+    # Query to fetch career projections for the student
+    query = '''
+        SELECT TimelineID, EducationTimeline, CoopTimeline, FullTimeTimeline
+        FROM CareerProjections
+        WHERE StudentID = %s
+    '''
+
+    try:
+        # Execute the query
+        cursor.execute(query, (studentId,))
+        theData = cursor.fetchone()
+
+        # If no career projections are found, return a 404
+        if not theData:
+            the_response = make_response(
+                jsonify({"error": f"No career projections found for StudentID {studentId}"}), 404
+            )
+        else:
+            the_response = make_response(jsonify(theData), 200)
+
+    except Exception as e:
+        the_response = make_response(jsonify({"error": str(e)}), 500)
+
+    return the_response
 
