@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import plotly.express as px
 from modules.nav import SideBarLinks
+import requests
 
 
 st.title("Student Information Management")
@@ -14,21 +15,21 @@ st.title("Student Information Management")
 # Section: Get Student Details
 st.header("View Student Details")
 student_id_detail = st.text_input("Enter Student ID to Fetch Details", key="student_id_detail")
+
 if st.button("Fetch Student Details"):
     if student_id_detail:
-        student = get_student(student_id_detail)
-        if student:
-            student_data = {
-                "StudentID": student[0],
-                "FirstName": student[1],
-                "LastName": student[2],
-                "Major": student[3],
-                "Is Mentor": student[4],
-                "WCFI": student[5],
-            }
-            st.dataframe(student_data)
-        else:
-            st.error("No student found with this ID.")
+        # Call the Flask API to get student details
+        url = f"http://localhost:8501/students/new_student/{student_id_detail}"
+        
+        try:
+            response = requests.get(url)
+            if response.status_code == 200:
+                student_data = response.json()
+                st.json(student_data)  # Display the student data in JSON format
+            else:
+                st.error("No student found with this ID.")
+        except requests.exceptions.RequestException as e:
+            st.error(f"Error fetching student details: {e}")
     else:
         st.warning("Please enter a Student ID.")
 

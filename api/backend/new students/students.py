@@ -90,19 +90,24 @@ def update_new_student():
 #   Notice the manner of constructing the query. 
 @new_students.route('/students/new_student/<StudentID>', methods=['GET'])
 def get_student(StudentID):
-    current_app.logger.info('GET /students/new_student/<StudentID> route')
+    current_app.logger.info(f"GET /students/new_student/{StudentID} route")
+
+    # Get the database cursor
     cursor = db.get_db().cursor()
+    
+    # Execute the query to fetch student details
     cursor.execute('''
         SELECT StudentID, FirstName, LastName, Major, isMentor, WCFI
         FROM Student
         WHERE StudentID = %s
-    ''')
-
-    student = cursor.fetchone()
+    ''', (StudentID,))
     
+    # Fetch the student data
+    student = cursor.fetchone()
     
     # If the student does not exist, return an error message
     if not student:
+        current_app.logger.error(f"Student with ID {StudentID} not found.")
         return jsonify({'message': 'Student not found'}), 404
 
     # Format the data as a dictionary to send as JSON
@@ -115,6 +120,7 @@ def get_student(StudentID):
         'WCFI': student[5]
     }
 
+    # Return the student data as a JSON response
     return jsonify(student_data), 200
 
 #------------------------------------------------------------
