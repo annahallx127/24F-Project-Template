@@ -71,7 +71,7 @@ if st.button("Act as Mary Jane, a third year at Spider University",
     # finally, we ask streamlit to switch to another page, in this case, the 
     # landing page for this particular user type
     logger.info("Logging in as Returning Student")
-    st.switch_page('pages/00_Pol_Strat_Home.py') #CHANGE PAGE
+    st.switch_page('pages/26_ReturningStudentDashboard') 
 
 if st.button('Act as Miles Morales, a hiring manager', 
             type = 'primary', 
