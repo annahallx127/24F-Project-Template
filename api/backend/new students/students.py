@@ -15,22 +15,6 @@ from backend.ml_models.model01 import predict
 new_students = Blueprint('new students', __name__)
 
 
-#------------------------------------------------------------
-# Get all new students from the system
-@new_students.route('/students/new_student', methods=['GET'])
-def get_new_student():
-
-    cursor = db.get_db().cursor()
-    cursor.execute('''SELECT StudentID, FirstName, LastName, Major, WCFI
-                   FROM Student
-                   WHERE isMentor = False
-    ''')
-    
-    theData = cursor.fetchall()
-    
-    the_response = make_response(jsonify(theData))
-    the_response.status_code = 200
-    return the_response
 
 #------------------------------------------------------------
 # Update student info for student with particular StudentID
@@ -174,6 +158,74 @@ def get_job_listing_details(JobListingID):
     return jsonify(job_data), 200
 
 #------------------------------------------------------------
+# Apply for a job
+@new_students.route('/applications', methods=['POST'])
+def apply_for_job():
+    current_app.logger.info('POST /applications route')
+    
+    # Get the request data
+    application_data = request.json
+    student_id = application_data.get('StudentID')
+    job_id = application_data.get('JobID')
+    status = application_data.get('Status')
+
+    # Validate the incoming data
+    if not student_id or not job_id or not status:
+        return jsonify({'message': 'Missing required fields'}), 400
+
+    # Get the current date for the AppliedDate
+    applied_date = datetime.utcnow()
+
+    # Insert the application into the database
+    cursor = db.get_db().cursor()
+    cursor.execute("""
+        INSERT INTO Application (StudentID, AppliedDate, Status, JobID)
+        VALUES (%s, %s, %s, %s)
+    """, (student_id, applied_date, status, job_id))
+    
+    db.get_db().commit()
+
+    return jsonify({'message': 'Application submitted successfully'}), 201
+
+
+#------------------------------------------------------------
+# Get all the jobs a student has applied for
+@students.route('/applications/<int:student_id>', methods=['GET'])
+def get_student_applications(student_id):
+    current_app.logger.info(f'GET /applications/{student_id} route')
+    
+    # Query to get all job details for a student
+    cursor = db.get_db().cursor()
+    cursor.execute("""
+        SELECT j.JobListingID, j.JobPositionTitle, j.JobDescription, a.Status, a.AppliedDate
+        FROM Application a
+        JOIN JobListings j ON a.JobID = j.JobListingID
+        WHERE a.StudentID = %s
+    """, (student_id,))
+    
+    # Fetch all results
+    applications = cursor.fetchall()
+
+    # If no applications found for the student
+    if not applications:
+        return jsonify({'message': 'No applications found for this student'}), 404
+    
+    # Format the result
+    job_list = []
+    for application in applications:
+        job_list.append({
+            'JobListingID': application[0],
+            'JobPositionTitle': application[1],
+            'JobDescription': application[2],
+            'Status': application[3],
+            'AppliedDate': application[4].strftime('%Y-%m-%d %H:%M:%S')
+        })
+    
+    # Return the list of jobs
+    return jsonify({'applications': job_list}), 200
+
+
+#------------------------------------------------------------
 # Withdraw a job application for a specific student
 @new_students.route('/applications/{id}/withdraw', methods=['DELETE'])
 def withdraw_application(id):
@@ -299,3 +351,78 @@ def update_application(application_id):
         return jsonify({'message': 'Application updated successfully'}), 200
     else:
         return jsonify({'message': 'No fields to update provided'}), 400
+
+# Define the upload folder for resume storage (change this path as necessary)
+UPLOAD_FOLDER = '/path/to/your/uploads'
+ALLOWED_EXTENSIONS = {'pdf', 'docx', 'txt', 'rtf'}
+
+# Helper function to check the file extension
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+#------------------------------------------------------------
+# Submit a resume for a student
+@new_students.route('/resume/<int:student_id>', methods=['POST'])
+def submit_resume(student_id):
+    current_app.logger.info(f'POST /resume/{student_id} route')
+    
+    # Ensure a file is part of the request
+    if 'resume' not in request.files:
+        return jsonify({'message': 'No file part'}), 400
+    
+    file = request.files['resume']
+    
+    # Check if a file is selected and has a valid extension
+    if file.filename == '':
+        return jsonify({'message': 'No selected file'}), 400
+    
+    if file and allowed_file(file.filename):
+        # Save the resume file
+        filename = f"{student_id}_resume.{file.filename.rsplit('.', 1)[1].lower()}"
+        file_path = os.path.join(UPLOAD_FOLDER, filename)
+        file.save(file_path)
+
+        # Insert resume details into the database
+        resume_info = request.json
+        work_experience = resume_info.get('WorkExperience')
+        technical_skills = resume_info.get('TechnicalSkills')
+        soft_skills = resume_info.get('SoftSkills')
+        resume_name = resume_info.get('ResumeName', filename)
+
+        cursor = db.get_db().cursor()
+        cursor.execute("""
+            INSERT INTO Resume (StudentID, WorkExperience, ResumeName, TechnicalSkills, SoftSkills)
+            VALUES (%s, %s, %s, %s, %s)
+        """, (student_id, work_experience, resume_name, technical_skills, soft_skills))
+        
+        db.get_db().commit()
+
+        return jsonify({'message': 'Resume submitted successfully'}), 200
+    else:
+        return jsonify({'message': 'Invalid file format'}), 400
+    
+    #------------------------------------------------------------
+# Delete a student's resume
+@new_students.route('/resume/<int:student_id>', methods=['DELETE'])
+def delete_resume(student_id):
+    current_app.logger.info(f'DELETE /resume/{student_id} route')
+    
+    # Retrieve the resume record from the database
+    cursor = db.get_db().cursor()
+    cursor.execute("SELECT ResumeID, ResumeName FROM Resume WHERE StudentID = %s", (student_id,))
+    resume = cursor.fetchone()
+
+    # If no resume found for the student
+    if not resume:
+        return jsonify({'message': 'No resume found for this student'}), 404
+
+    # Delete the resume file from the server
+    file_path = os.path.join(UPLOAD_FOLDER, resume[1])
+    if os.path.exists(file_path):
+        os.remove(file_path)
+
+    # Delete the resume record from the database
+    cursor.execute("DELETE FROM Resume WHERE StudentID = %s", (student_id,))
+    db.get_db().commit()
+
+    return jsonify({'message': 'Resume deleted successfully'}), 200

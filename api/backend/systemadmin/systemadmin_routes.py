@@ -200,7 +200,7 @@ def get_expired_job_listings():
     # Query to fetch job listings where the expiration date (isActive) is less than the current time
     cursor = db.get_db().cursor()
     cursor.execute("""
-        SELECT JobListingID, JobPositionTitle, JobDescription, isActive
+        SELECT *
         FROM JobListings
         WHERE isActive = False
     """)
