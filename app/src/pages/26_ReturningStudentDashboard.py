@@ -9,6 +9,7 @@ import requests
 st.set_page_config(layout="wide")
 
 SideBarLinks()
+BASE_API_URL = "http://web-api:4000"
 
 st.title("Mary Jane's Dashboard")
 

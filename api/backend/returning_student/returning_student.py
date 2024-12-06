@@ -14,23 +14,39 @@ returning_student = Blueprint('returning_student', __name__)
 
 
 #------------------------------------------------------------
-# Get all returning students from the system
-@returning_student.route('/students/returning', methods=['GET'])
-def get_returning_students():
+
+# Get all posted availabilities
+@returning_student.route('/availabilities', methods=['GET'])
+def get_all_availabilities():
     cursor = db.get_db().cursor()
 
-    # Modify the query to always filter for isMentor = true
-    query = '''SELECT StudentID, FirstName, LastName, Major, isMentor 
-               FROM Student
-               WHERE isMentor = TRUE'''
-    
-    cursor.execute(query)
-    
-    theData = cursor.fetchall()
-    
-    the_response = make_response(jsonify(theData))
-    the_response.status_code = 200
-    return the_response
+    # SQL query to fetch all availabilities
+    query = '''
+        SELECT AvailabilityID, StudentID, StartDate, EndDate
+        FROM Availability
+    '''
+
+    try:
+        # Execute the query
+        cursor.execute(query)
+        availabilities = cursor.fetchall()
+
+        # If no availabilities are found, return a message
+        if not availabilities:
+            return make_response(
+                jsonify({"message": "No availabilities found"}), 404
+            )
+
+        # Return the fetched availabilities
+        return make_response(jsonify(availabilities), 200)
+
+    except Exception as e:
+        # Handle errors and roll back the transaction if necessary
+        db.get_db().rollback()
+        return make_response(
+            jsonify({"error": "Failed to fetch availabilities", "details": str(e)}), 500
+        )
+
 
 # Post availability so other students can schedule coffee chat
 @returning_student.route('/availability', methods=['POST'])

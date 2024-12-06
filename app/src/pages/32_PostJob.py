@@ -12,6 +12,7 @@ st.set_page_config(layout="wide")
 
 # Add sidebar navigation
 SideBarLinks()
+BASE_API_URL = "http://web-api:4000"
 
 # Title for the page
 st.title("Job Listing Management")

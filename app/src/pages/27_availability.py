@@ -4,6 +4,16 @@ import requests
 # Set up the page layout
 st.set_page_config(layout="wide")
 
+logger = logging.getLogger(__name__)
+
+# Configure the page layout
+st.set_page_config(layout="wide")
+
+# Add sidebar navigation
+SideBarLinks()
+BASE_API_URL = "http://web-api:4000"
+
+
 st.title("Manage Availability")
 
 # Section: View Availability
