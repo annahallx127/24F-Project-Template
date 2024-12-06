@@ -60,88 +60,66 @@ def add_hiring_manager():
     except Exception as e:
         db.get_db().rollback()
         return make_response(jsonify({"error": str(e)}), 500)
-    
-#Post job listing
-@hiring_manager.route('/job-listings', methods=['POST'])
+
+#Post job listing    
+@hiring_manager.route('/hiring-manager/job-listings', methods=['POST'])
 def post_job_listing():
+    current_app.logger.info('POST /hiring-manager/job-listings route')
+
+    job_data = request.json
+    required_fields = ['HiringManagerID', 'JobPositionTitle', 'JobDescription', 'JobIsActive']
+
+    # Validate input fields
+    if not all(field in job_data for field in required_fields):
+        return jsonify({'message': 'Missing required fields'}), 400
+
+    # Ensure JobIsActive is a valid boolean
+    job_is_active = job_data['JobIsActive']
+    if not isinstance(job_is_active, (bool, int)) or job_is_active not in [True, False, 1, 0]:
+        return jsonify({'message': 'JobIsActive must be a boolean'}), 400
+
     cursor = db.get_db().cursor()
-
-    # Extract request data
-    req_data = request.get_json()
-
-    company_id = req_data.get('CompanyID')
-    job_description = req_data.get('JobDescription')
-    job_position_title = req_data.get('JobPositionTitle')
-
-    # Validate required fields
-    if not all([company_id, job_description, job_position_title]):
-        return make_response(
-            jsonify({"error": "Missing required fields: CompanyID, JobDescription, JobPositionTitle"}), 400
-        )
-
-    # SQL query to insert the job listing
-    query = '''
-        INSERT INTO JobListing (CompanyID, JobDescription, JobPositionTitle, JobIsActive)
+    cursor.execute("""
+        INSERT INTO JobListing (HiringManagerID, JobPositionTitle, JobDescription, JobIsActive)
         VALUES (%s, %s, %s, %s)
-    '''
+    """, (job_data['HiringManagerID'], job_data['JobPositionTitle'], job_data['JobDescription'], bool(job_is_active)))
+    db.get_db().commit()
 
-    try:
-        # Execute the query, setting JobIsActive to True by default
-        cursor.execute(query, (company_id, job_description, job_position_title, True))
-        db.get_db().commit()
-        return make_response(
-            jsonify({"message": "Job listing successfully created and set as active!"}), 201
-        )
-    except Exception as e:
-        db.get_db().rollback()
-        return make_response(
-            jsonify({"error": "Failed to create job listing", "details": str(e)}), 500
-        )
+    return jsonify({'message': 'Job listing created successfully'}), 201
 
 # Update a job listing based on JobListingID 
-@hiring_manager.route('/job-listings/<int:id>', methods=['PUT'])
-def update_job_listing(id):
-    data = request.json
-    job_title = data.get('job_title')
-    job_description = data.get('job_description')
-    is_active = data.get('is_active')
+@hiring_manager.route('/hiring-manager/job-listings/<int:job_id>', methods=['PUT'])
+def update_job_listing(job_id):
+    current_app.logger.info(f'PUT /hiring-manager/job-listings/{job_id} route')
 
-    # Input validation
-    if not all([job_title, job_description, is_active is not None]):
-        return make_response(
-            jsonify({"error": "Missing required fields: job_title, job_description, is_active"}), 400
-        )
-    
-    if not isinstance(is_active, bool):
-        return make_response(
-            jsonify({"error": "is_active must be a boolean value (true/false)"}), 400
-        )
+    job_data = request.json
+    updates = []
+    values = []
 
-    query = '''
-        UPDATE JobListing 
-        SET JobPositionTitle = %s, JobDescription = %s, JobIsActive = %s
-        WHERE JobListingID = %s
-    '''
+    if 'JobPositionTitle' in job_data:
+        updates.append("JobPositionTitle = %s")
+        values.append(job_data['JobPositionTitle'])
+    if 'JobDescription' in job_data:
+        updates.append("JobDescription = %s")
+        values.append(job_data['JobDescription'])
+    if 'JobIsActive' in job_data:
+        # Ensure JobIsActive is a valid boolean
+        job_is_active = job_data['JobIsActive']
+        if not isinstance(job_is_active, (bool, int)) or job_is_active not in [True, False, 1, 0]:
+            return jsonify({'message': 'JobIsActive must be a boolean'}), 400
+        updates.append("JobIsActive = %s")
+        values.append(bool(job_is_active))
 
-    cursor = db.get_db().cursor()
-    try:
-        cursor.execute(query, (job_title, job_description, is_active, id))
+    if updates:
+        query = f"UPDATE JobListing SET {', '.join(updates)} WHERE JobListingID = %s"
+        values.append(job_id)
+        cursor = db.get_db().cursor()
+        cursor.execute(query, tuple(values))
         db.get_db().commit()
+        return jsonify({'message': 'Job listing updated successfully'}), 200
+    else:
+        return jsonify({'message': 'No fields to update provided'}), 400
 
-        # Check if any rows were updated
-        if cursor.rowcount == 0:
-            return make_response(
-                jsonify({"error": f"No job listing found with JobListingID {id}"}), 404
-            )
-
-        return make_response(
-            jsonify({"message": "Job listing updated successfully"}), 200
-        )
-    except Exception as e:
-        db.get_db().rollback()
-        return make_response(
-            jsonify({"error": "Failed to update job listing", "details": str(e)}), 500
-        )
 
 # Delete a job listing based on JobListingID
 @hiring_manager.route('/job-listings/<int:id>', methods=['DELETE'])
