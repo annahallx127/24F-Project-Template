@@ -20,7 +20,7 @@ st.write('### What would you like to do today?')
 
 # Button to view and manage availability
 if st.button("Manage JobListings", type="primary", use_container_width=True):
-    st.switch_page("pages/31_availability.py")  # Link to the availability management page
+    st.switch_page("pages/32_PostJob.py")  
 
 # Button to view and update co-op reviews
 if st.button("Manage Co-op Reviews", type="primary", use_container_width=True):
