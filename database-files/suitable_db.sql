@@ -222,6 +222,85 @@ VALUES
 (1, 'Alice Resume', 'Software Developer Intern at TechCorp', 'Java, SQL', 'Communication, Leadership'),
 (2, 'Bob Resume', 'Junior Engineer at BuildCo', 'CAD Design, Prototyping', 'Problem-solving, Teamwork');
 
+--HIRING MANAGER NEW INSERT STATEMENTS ---------------------------------------
+-- Insert into HiringManager table (One hiring manager for simplicity)
+INSERT INTO HiringManager (ApplicantID, FirstName, LastName, Position)
+VALUES
+(1, 'Alex', 'Smith', 'Hiring Manager'); -- Alex is the hiring manager responsible for job postings and applicant tracking
+
+-- Insert into Company table (A company associated with the hiring manager)
+INSERT INTO Company (EmployerID, Name, Industry)
+VALUES
+(1, 'InnovativeTech', 'Technology');  -- InnovativeTech is the company where the hiring manager works
+
+-- Insert into JobListings table (Hiring manager posting job openings)
+INSERT INTO JobListings (JobDescription, JobPositionTitle, JobIsActive, CompanyID)
+VALUES
+('Looking for a skilled software engineer to join our team and work on innovative projects.', 'Software Engineer', TRUE, 1), -- Software Engineer position
+('Seeking a data analyst to help with data-driven decision making and business intelligence projects.', 'Data Analyst', TRUE, 1); -- Data Analyst position
+
+-- Insert into Application table (Applicants applying for job listings)
+-- Assuming students have IDs 1 and 2 from previous data
+INSERT INTO Application (StudentID, JobID, AppliedDate, Status)
+VALUES
+(1, 1, '2024-12-01', 'Pending'),  -- Applicant 1 for Software Engineer
+(2, 2, '2024-12-02', 'Interview Scheduled'); -- Applicant 2 for Data Analyst
+
+-- Insert into Rank table (Automated ranking based on applicant match with job descriptions)
+-- Rank is calculated based on applicant match with job description (e.g., keyword matching, skills match)
+INSERT INTO Rank (ApplicantID, RankNum)
+VALUES
+(1, 1),  -- Applicant 1 (Software Engineer) ranked 1 (high match)
+(2, 2);   -- Applicant 2 (Data Analyst) ranked 2 (moderate match)
+
+-- Insert into Resume table (Applicants' resumes)
+INSERT INTO Resume (StudentID, ResumeName, WorkExperience, TechnicalSkills, SoftSkills)
+VALUES
+(1, 'John Doe Resume', 'Software Developer Intern at TechCorp', 'Java, C++, SQL, Python', 'Problem-solving, Communication, Teamwork'),
+(2, 'Jane Smith Resume', 'Data Analyst Intern at DataCorp', 'Excel, PowerBI, SQL', 'Critical Thinking, Communication, Attention to Detail');
+
+-- Insert into CareerProjections table (Career projections for each applicant based on their future plans)
+INSERT INTO CareerProjections (StudentID, EducationTimeline, CoopTimeline, FullTimeTimeline)
+VALUES
+(1, '2024-2026: B.S. in Computer Science', 'Summer 2025: TechCorp Intern', '2026: Full-time at InnovativeTech'),
+(2, '2024-2026: B.S. in Data Science', 'Summer 2025: DataCorp Coop', '2026: Full-time at InnovativeTech');
+
+-- Insert into Coop table (Co-op experiences that help the hiring manager assess applicants)
+INSERT INTO Coop (StudentID, StartDate, EndDate, JobTitle, CompanyName, CoopReview, CoopRating)
+VALUES
+(1, '2025-06-01', '2025-08-31', 'Software Intern', 'TechCorp', 'Great technical learning experience', 5),
+(2, '2025-06-01', '2025-08-31', 'Data Analyst Intern', 'DataCorp', 'Strong data analysis skills', 4);
+
+-- Insert into MBTI_Assessments table (Work-based MBTI assessments incorporated into each applicant's profile)
+-- Assuming MBTI assessment values are stored in a new table for this purpose
+CREATE TABLE IF NOT EXISTS MBTI_Assessments (
+  `AssessmentID` integer PRIMARY KEY AUTO_INCREMENT,
+  `StudentID` integer NOT NULL,
+  `MBTI_Type` varchar(4),
+  `AssessmentDate` date,
+  FOREIGN KEY (StudentID) REFERENCES Student(StudentID) ON DELETE CASCADE
+);
+
+-- Insert mock MBTI assessment data for applicants
+INSERT INTO MBTI_Assessments (StudentID, MBTI_Type, AssessmentDate)
+VALUES
+(1, 'INTJ', '2024-11-30'), -- Applicant 1: INTJ personality (Strategic and analytical)
+(2, 'ENTP', '2024-12-01'); -- Applicant 2: ENTP personality (Innovative and communicative)
+
+-- Insert into JobListingManagement table (Job status updates - Expired or Filled job listings)
+-- Here we mark the Software Engineer job as filled and the Data Analyst job as expired
+INSERT INTO JobListingManagement (AdminInCharge, JobID, UpdateID)
+VALUES
+(1, 1, 1), -- Job listing for Software Engineer filled by hiring manager Alex Smith
+(1, 2, 2); -- Job listing for Data Analyst expired (no longer accepting applications)
+
+-- Insert into SystemUpdate table (System updates related to job listings)
+INSERT INTO SystemUpdate (UpdateType, AdminID, UpdateDate, Description)
+VALUES
+('Job Listing Filled', 1, '2024-12-05', 'Software Engineer position filled by a candidate'),
+('Job Listing Expired', 1, '2024-12-05', 'Data Analyst position expired, no more applicants');
+
+---NEW HIRING MANAGER INSERTS END----------------------------------------------------------------------------------------------------------------------
 -- Insert into HiringManager table
 INSERT INTO HiringManager (ApplicantID,FirstName, LastName, Position)
 VALUES

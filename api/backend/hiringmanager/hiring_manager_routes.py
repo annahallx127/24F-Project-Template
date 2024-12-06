@@ -15,17 +15,46 @@ from backend.ml_models.model01 import predict
 # routes.
 hiring_manager = Blueprint('hiring_manager', __name__)
 #------------------------------------------------------------
-# Get all hiring managers from the system
-@hiring_manager.route('/hiring-managers', methods=['GET'])
-def get_all_hiring_managers():
+# Get all candidates who applied for a specific job
+@hiring_manager.route('/job-listings/<int:job_id>/candidates', methods=['GET'])
+def get_candidates_by_job(job_id):
     cursor = db.get_db().cursor()
     
-    # SQL query to fetch all hiring managers
+    # SQL query to fetch candidates for the job listing
     query = '''
-        SELECT * FROM HiringManager
+        SELECT c.CandidateID, c.FirstName, c.LastName, c.Email, c.ApplicationStage
+        FROM Candidate c
+        WHERE c.AppliedJobID = %s
     '''
     try:
-        cursor.execute(query)
+        cursor.execute(query, (job_id,))
+        rows = cursor.fetchall()
+        column_names = [desc[0] for desc in cursor.description]
+        
+        # Convert rows into a list of dictionaries
+        result = [dict(zip(column_names, row)) for row in rows]
+        
+        if result:
+            return make_response(jsonify(result), 200)
+        else:
+            return make_response(jsonify({"message": f"No candidates found for job ID {job_id}"}), 404)
+    except Exception as e:
+        return make_response(jsonify({"error": str(e)}), 500)
+
+# Get MBTI distribution for all candidates of a specific job
+@hiring_manager.route('/job-listings/<int:job_id>/mbti-distribution', methods=['GET'])
+def get_mbti_distribution(job_id):
+    cursor = db.get_db().cursor()
+    
+    # SQL query to fetch MBTI results for candidates of a specific job
+    query = '''
+        SELECT MBTIResult, COUNT(*) as Count
+        FROM Candidate
+        WHERE AppliedJobID = %s
+        GROUP BY MBTIResult
+    '''
+    try:
+        cursor.execute(query, (job_id,))
         rows = cursor.fetchall()
         column_names = [desc[0] for desc in cursor.description]
         
@@ -36,31 +65,6 @@ def get_all_hiring_managers():
     except Exception as e:
         return make_response(jsonify({"error": str(e)}), 500)
     
-# add a new hiring manager to the system 
-@hiring_manager.route('/hiring-managers', methods=['POST'])
-def add_hiring_manager():
-    cursor = db.get_db().cursor()
-    req_data = request.get_json()
-    first_name = req_data.get('FirstName')
-    last_name = req_data.get('LastName')
-    email = req_data.get('Email')
-    company_id = req_data.get('CompanyID')
-
-    if not all([first_name, last_name, email, company_id]):
-        return make_response(jsonify({"error": "Missing required fields"}), 400)
-
-    query = '''
-        INSERT INTO HiringManager (FirstName, LastName, Email, CompanyID)
-        VALUES (%s, %s, %s, %s)
-    '''
-    try:
-        cursor.execute(query, (first_name, last_name, email, company_id))
-        db.get_db().commit()
-        return make_response(jsonify({"message": "Hiring manager added successfully"}), 201)
-    except Exception as e:
-        db.get_db().rollback()
-        return make_response(jsonify({"error": str(e)}), 500)
-
 #Post job listing    
 @hiring_manager.route('/hiring-manager/job-listings', methods=['POST'])
 def post_job_listing():
@@ -151,26 +155,58 @@ def delete_job_listing(id):
             jsonify({"error": "Failed to delete job listing", "details": str(e)}), 500
         )
 
-#Update applicant MBTI 
-@hiring_manager.route('/applicants/<int:applicant_id>/mbti', methods=['PUT'])
-def update_applicant_mbti(applicant_id):
-    data = request.get_json()
-    mbti_type = data.get('MBTIType')
-    if not mbti_type:
-        return make_response(jsonify({"error": "Missing MBTIType field"}), 400)
-
-    query = '''
-        UPDATE Applicant 
-        SET MBTIType = %s
-        WHERE ApplicantID = %s
-    '''
+# Get the ranking of candidates for a specific job listing
+@hiring_manager.route('/job-listings/<int:job_id>/candidates-ranking', methods=['GET'])
+def get_candidates_ranking_for_job(job_id):
     cursor = db.get_db().cursor()
+
+    # SQL query to get candidate ranking for a specific job listing
+    query = '''
+        SELECT s.StudentID, s.FirstName, s.LastName, r.RankNum, j.JobPositionTitle
+        FROM Rank r
+        JOIN Student s ON r.ApplicantID = s.StudentID
+        JOIN Application a ON a.StudentID = s.StudentID
+        JOIN JobListings j ON a.JobID = j.JobListingID
+        WHERE j.JobListingID = %s
+        ORDER BY r.RankNum ASC
+    '''
     try:
-        cursor.execute(query, (mbti_type, applicant_id))
-        db.get_db().commit()
-        if cursor.rowcount == 0:
-            return make_response(jsonify({"error": "Applicant not found"}), 404)
-        return make_response(jsonify({"message": "MBTI updated successfully"}), 200)
+        cursor.execute(query, (job_id,))
+        rows = cursor.fetchall()
+        column_names = [desc[0] for desc in cursor.description]
+
+        # Convert rows into a list of dictionaries
+        result = [dict(zip(column_names, row)) for row in rows]
+
+        if result:
+            return make_response(jsonify(result), 200)
+        else:
+            return make_response(jsonify({"message": f"No rankings found for job ID {job_id}"}), 404)
     except Exception as e:
-        db.get_db().rollback()
+        return make_response(jsonify({"error": str(e)}), 500)
+# Get the list of all candidates with their rankings
+@hiring_manager.route('/candidates-ranking', methods=['GET'])
+def get_all_candidates_ranking():
+    cursor = db.get_db().cursor()
+
+    # SQL query to get all candidate rankings
+    query = '''
+        SELECT s.StudentID, s.FirstName, s.LastName, r.RankNum
+        FROM Rank r
+        JOIN Student s ON r.ApplicantID = s.StudentID
+        ORDER BY r.RankNum ASC
+    '''
+    try:
+        cursor.execute(query)
+        rows = cursor.fetchall()
+        column_names = [desc[0] for desc in cursor.description]
+
+        # Convert rows into a list of dictionaries
+        result = [dict(zip(column_names, row)) for row in rows]
+
+        if result:
+            return make_response(jsonify(result), 200)
+        else:
+            return make_response(jsonify({"message": "No candidates found"}), 404)
+    except Exception as e:
         return make_response(jsonify({"error": str(e)}), 500)

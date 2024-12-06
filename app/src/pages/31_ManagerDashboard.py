@@ -23,10 +23,10 @@ if st.button("Manage JobListings", type="primary", use_container_width=True):
     st.switch_page("pages/32_PostJob.py")  
 
 # Button to view and update co-op reviews
-if st.button("Manage Co-op Reviews", type="primary", use_container_width=True):
-    st.switch_page("pages/28_coop_reviews.py")  # Link to the co-op reviews management page
+if st.button("Manage Candidate", type="primary", use_container_width=True):
+    st.switch_page("pages/33_ViewCandidates.py")  # Link to the co-op reviews management page
 
 # Button to view career projections
-if st.button("View Career Projections", type="primary", use_container_width=True):
-    st.switch_page("pages/29_career_projections.py")  # Link to the career projections page
+if st.button("Candidate Ranks ", type="primary", use_container_width=True):
+    st.switch_page("pages/34_Rank.py")  # Link to the career projections page
 
