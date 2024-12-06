@@ -43,19 +43,26 @@ update_last_name = st.text_input("Last Name", key="update_last_name")
 update_major = st.text_input("Major", key="update_major")
 update_is_mentor = st.checkbox("Is Mentor", value=False, key="update_is_mentor")
 update_wcfi = st.text_input("WCFI", key="update_wcfi")
+
 if st.button("Update Student Information"):
     if update_student_id:
-        success = update_new_student(
-            update_student_id,
-            update_first_name,
-            update_last_name,
-            update_major,
-            update_is_mentor,
-            update_wcfi
-        )
-        if success:
-            st.success("Student information updated successfully!")
-        else:
-            st.error("Failed to update student information or Student ID not found.")
+        student_info = {
+            "FirstName": update_first_name,
+            "LastName": update_last_name,
+            "Major": update_major,
+            "isMentor": update_is_mentor,
+            "WCFI": update_wcfi
+        }
+
+        # Send the PUT request to the Flask API
+        url = f"http://web-api:4000/students/new_student/{update_student_id}"
+        try:
+            response = requests.put(url, json=student_info)  # Using PUT request
+            if response.status_code == 200:
+                st.success("Student information updated successfully!")
+            else:
+                st.error(f"Failed to update student information: {response.json()['message']}")
+        except requests.exceptions.RequestException as e:
+            st.error(f"Error updating student information: {e}")
     else:
         st.warning("Please provide a valid Student ID.")

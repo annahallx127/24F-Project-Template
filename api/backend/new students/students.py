@@ -12,37 +12,21 @@ from backend.ml_models.model01 import predict
 #------------------------------------------------------------
 # Create a new Blueprint object, which is a collection of 
 # routes.
-new_students = Blueprint('new students', __name__)
+new_students = Blueprint('new_students', __name__)
 
 
-
-#------------------------------------------------------------
-# Update student info for student with particular StudentID
-#   Notice the manner of constructing the query.
-#------------------------------------------------------------
-# Update student info for student using StudentID from request body
+# #------------------------------------------------------------
+# Update student detail for student with particular StudentID
 @new_students.route('/students/new_student/<StudentID>', methods=['PUT'])
-def update_new_student():
+def update_new_student(StudentID):
     current_app.logger.info('PUT /students/new_student route')
     
     # Parse the request body
     student_info = request.json
     
-    # Extract fields from the request body
-    student_id = student_info.get('StudentID')  # Use .get to avoid KeyErrors
-    if not student_id:
-        return jsonify({'message': 'StudentID is required'}), 400
- 
-    # Extract fields to update
-    first_name = student_info.get('FirstName')
-    last_name = student_info.get('LastName')
-    major = student_info.get('Major')
-    is_mentor = student_info.get('isMentor')
-    wcfi = student_info.get('WCFI')
-
-    # Step 1: Check if the student exists and is a "new student" (isMentor = false)
+    # Check if the student exists and if they are not a mentor
     cursor = db.get_db().cursor()
-    cursor.execute("SELECT isMentor FROM Student WHERE StudentID = %s", (student_id,))
+    cursor.execute("SELECT isMentor FROM Student WHERE StudentID = %s", (StudentID,))
     result = cursor.fetchone()
 
     if not result:
@@ -51,39 +35,35 @@ def update_new_student():
     if result[0]:  # `isMentor` is true
         return jsonify({'message': 'Cannot update this student as they are not a new student'}), 403
 
-    # Step 2: Prepare the update query dynamically
+    # Prepare the update query
     updates = []
     values = []
 
-    if first_name:
+    if 'FirstName' in student_info:
         updates.append("FirstName = %s")
-        values.append(first_name)
-    if last_name:
+        values.append(student_info['FirstName'])
+    if 'LastName' in student_info:
         updates.append("LastName = %s")
-        values.append(last_name)
-    if major:
+        values.append(student_info['LastName'])
+    if 'Major' in student_info:
         updates.append("Major = %s")
-        values.append(major)
-    if is_mentor is not None:  # Allow updates to isMentor if explicitly set
+        values.append(student_info['Major'])
+    if 'isMentor' in student_info:
         updates.append("isMentor = %s")
-        values.append(is_mentor)
-    if wcfi:
+        values.append(student_info['isMentor'])
+    if 'WCFI' in student_info:
         updates.append("WCFI = %s")
-        values.append(wcfi)
+        values.append(student_info['WCFI'])
 
-    # Combine the updates into a single SQL query
     if updates:
         query = f"UPDATE Student SET {', '.join(updates)} WHERE StudentID = %s"
-        values.append(student_id)  # Add StudentID as the last parameter for the WHERE clause
-
+        values.append(StudentID)
         cursor.execute(query, tuple(values))
         db.get_db().commit()
 
         return jsonify({'message': 'Student updated successfully'}), 200
     else:
         return jsonify({'message': 'No fields to update provided'}), 400
-
-
 
 
 # #------------------------------------------------------------

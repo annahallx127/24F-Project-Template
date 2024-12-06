@@ -1,6 +1,7 @@
 DROP DATABASE IF EXISTS suitable;
 
 CREATE DATABASE  IF NOT EXISTS suitable;
+
 USE suitable;
 
 CREATE TABLE IF NOT EXISTS `Student` (
