@@ -26,7 +26,7 @@ if st.button("Assign Permissions"):
             "description": description,
             "user_type": user_type
         }
-        response = requests.post("http://localhost:8501/permissions", json=payload)
+        response = requests.post("http://web-api:4000/permissions", json=payload)
         if response.status_code == 200:
             st.success("Permissions assigned successfully!")
         else:
@@ -48,7 +48,7 @@ if st.button("Update Permissions"):
             "description": update_description,
             "user_type": update_user_type
         }
-        response = requests.put("http://localhost:8501/permissions", json=payload)
+        response = requests.put("http://web-api:4000/permissions", json=payload)
         if response.status_code == 200:
             st.success("Permissions updated successfully!")
         else:
@@ -66,7 +66,7 @@ if st.button("Revoke Permissions"):
             "user_id": revoke_user_id,
             "user_type": revoke_user_type
         }
-        response = requests.delete("http://localhost:8501/permissions", params=params)
+        response = requests.delete("http://web-api:4000/permissions", params=params)
         if response.status_code == 200:
             st.success("Permissions revoked successfully!")
         else:

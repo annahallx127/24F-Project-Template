@@ -35,7 +35,7 @@ st.header("Delete Job Listing")
 job_id_delete = st.text_input("Enter Job Listing ID to Delete", key="delete_job_id")
 if st.button("Delete Job Listing"):
     if job_id_delete:
-        response = requests.delete(f"http://api:4000/job-listings/{job_id_delete}")
+        response = requests.delete(f"http://web-api:4000/job-listings/{job_id_delete}")
         if response.status_code == 200:
             st.success("Job listing deleted successfully!")
         else:

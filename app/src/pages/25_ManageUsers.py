@@ -8,7 +8,7 @@ st.header("Retrieve Users")
 user_type_filter = st.selectbox("Filter by User Type", ["All", "Student", "Employer", "Admin"], key="user_type_filter")
 if st.button("Fetch Users"):
     params = {"type": None if user_type_filter == "All" else user_type_filter}
-    response = requests.get("http://localhost:8501/users", params=params)
+    response = requests.get("http://web-api:4000/users", params=params)
     if response.status_code == 200:
         st.json(response.json())
     else:
@@ -40,7 +40,7 @@ if st.button("Register User"):
             payload.update({"major": new_major, "is_mentor": new_is_mentor, "wcfi": new_wcfi})
         elif new_user_type == "Employer":
             payload.update({"position": new_position})
-        response = requests.post("http://localhost:8501/users", json=payload)
+        response = requests.post("web-api:4000/users", json=payload)
         if response.status_code == 201:
             st.success("User registered successfully!")
         else:
@@ -74,7 +74,7 @@ if st.button("Update User"):
             payload.update({"major": update_major, "is_mentor": update_is_mentor, "wcfi": update_wcfi})
         elif update_user_type == "Employer":
             payload.update({"position": update_position})
-        response = requests.put("http://localhost:8501/users", json=payload)
+        response = requests.put("http://web-api:4000/users", json=payload)
         if response.status_code == 200:
             st.success("User updated successfully!")
         else:
@@ -89,7 +89,7 @@ delete_user_type = st.selectbox("User Type", ["Student", "Employer", "Admin"], k
 if st.button("Delete User"):
     if delete_user_id:
         params = {"id": delete_user_id, "user_type": delete_user_type}
-        response = requests.delete("http://localhost:8501/users", params=params)
+        response = requests.delete("http://web-api:4000/users", params=params)
         if response.status_code == 200:
             st.success("User deleted successfully!")
         else:

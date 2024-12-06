@@ -6,7 +6,7 @@ st.title("System Update Management")
 # Section: Retrieve Current System Status
 st.header("Retrieve Current System Status")
 if st.button("Fetch System Status"):
-    response = requests.get("http://localhost:8501/system-update")
+    response = requests.get("http://web-api:4000/system-update")
     if response.status_code == 200:
         st.json(response.json())
     else:
@@ -24,7 +24,7 @@ if st.button("Submit Report"):
             "description": description,
             "admin_id": admin_id
         }
-        response = requests.post("http://localhost:8501/system-update", json=payload)
+        response = requests.post("http://web-api:4000/system-update", json=payload)
         if response.status_code == 200:
             st.success("System report submitted successfully!")
         else:
@@ -42,7 +42,7 @@ if st.button("Update Configuration"):
             "update_id": update_id,
             "description": new_description
         }
-        response = requests.put("http://localhost:8501/system-update", json=payload)
+        response = requests.put("http://web-api:4000/system-update", json=payload)
         if response.status_code == 200:
             st.success("Configuration updated successfully!")
         else:
@@ -53,7 +53,7 @@ if st.button("Update Configuration"):
 # Section: Clear Outdated Logs
 st.header("Clear Outdated Logs")
 if st.button("Clear Logs Older Than Retention Policy"):
-    response = requests.delete("http://localhost:8501/system-update/logs")
+    response = requests.delete("http://web-api:4000/system-update/logs")
     if response.status_code == 200:
         st.success("Outdated logs cleared successfully!")
     else:
