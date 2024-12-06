@@ -196,9 +196,9 @@ def apply_for_job():
 
 #------------------------------------------------------------
 # Get all the jobs a student has applied for
-@new_students.route('/applications/<int:student_id>', methods=['GET'])
-def get_student_applications(student_id):
-    current_app.logger.info(f'GET /applications/{student_id} route')
+@new_students.route('/applications/', methods=['GET'])
+def get_student_applications():
+    current_app.logger.info(f'GET /applications/ route')
     
     # Query to get all job details for a student
     cursor = db.get_db().cursor()
@@ -206,8 +206,8 @@ def get_student_applications(student_id):
         SELECT j.JobListingID, j.JobPositionTitle, j.JobDescription, a.Status, a.AppliedDate
         FROM Application a
         JOIN JobListings j ON a.JobID = j.JobListingID
-        WHERE a.StudentID = %s
-    """, (student_id,))
+        WHERE a.FirstName = %s
+    """, ('Peter',))
     
     # Fetch all results
     applications = cursor.fetchall()
@@ -216,19 +216,11 @@ def get_student_applications(student_id):
     if not applications:
         return jsonify({'message': 'No applications found for this student'}), 404
     
-    # Format the result
-    job_list = []
-    for application in applications:
-        job_list.append({
-            'JobListingID': application[0],
-            'JobPositionTitle': application[1],
-            'JobDescription': application[2],
-            'Status': application[3],
-            'AppliedDate': application[4].strftime('%Y-%m-%d %H:%M:%S')
-        })
-    
-    # Return the list of jobs
-    return jsonify({'applications': job_list}), 200
+
+    # Return the lisst of jobs as a JSON response
+    the_response = make_response(jsonify(applications))
+    the_response.status_code = 200
+    return the_response
 
 
 #------------------------------------------------------------

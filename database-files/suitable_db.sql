@@ -246,10 +246,10 @@ VALUES
 
 -- Insert into Application table (Applicants applying for job listings)
 -- Assuming students have IDs 1 and 2 from previous data
-INSERT INTO Application (StudentID, JobID, AppliedDate, Status)
+INSERT INTO Application (ApplicationID,StudentID, AppliedDate, Status, JobID)
 VALUES
-(1, 1, '2024-12-01', 'Pending'),  -- Applicant 1 for Software Engineer
-(2, 2, '2024-12-02', 'Interview Scheduled'); -- Applicant 2 for Data Analyst
+(1, 1, '2024-12-01', 'Pending', 1),  -- Applicant 1 for Software Engineer
+(2, 2, '2024-12-02', 'Interview Scheduled', 2); -- Applicant 2 for Data Analyst
 
 -- Insert into Rank table (Automated ranking based on applicant match with job descriptions)
 -- Rank is calculated based on applicant match with job description (e.g., keyword matching, skills match)

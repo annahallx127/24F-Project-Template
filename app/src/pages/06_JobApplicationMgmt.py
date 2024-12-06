@@ -5,10 +5,9 @@ st.title("Application Management")
 
 # Section: View Applications
 st.header("View Applications")
-student_id_view = st.text_input("Enter Student ID to Fetch Applications", key="student_id_view")
 if st.button("Fetch Applications"):
-    if student_id_view:
-        response = requests.get(f"http://web-api:4000/applications/{student_id_view}")
+    if st.session_state.get('authenticated') and st.session_state.get('first_name') == 'Peter':
+        response = requests.get(f"http://web-api:4000/ns/applications")
         if response.status_code == 200:
             try:
                 data = response.json()
