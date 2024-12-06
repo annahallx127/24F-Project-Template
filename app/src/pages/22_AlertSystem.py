@@ -6,7 +6,7 @@ st.title("Alert System Management")
 # Section: Retrieve Audit Logs
 st.header("Retrieve Audit Logs")
 if st.button("Fetch Audit Logs"):
-    response = requests.get("http://localhost:8501/alert-system/audit-logs")
+    response = requests.get("http://web-api:4000/alert-system/audit-logs")
     if response.status_code == 200:
         try:
             data = response.json()

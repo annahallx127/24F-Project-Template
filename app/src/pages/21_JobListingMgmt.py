@@ -8,7 +8,7 @@ st.header("Retrieve Job Listing Details")
 job_id_get = st.text_input("Enter Job Listing ID", key="get_job_id")
 if st.button("Fetch Job Details"):
     if job_id_get:
-        response = requests.get(f"http://localhost:8501/job-listings/{job_id_get}")
+        response = requests.get(f"http://web-api:4000/job-listings/{job_id_get}")
         if response.status_code == 200:
             st.json(response.json())
         else:
@@ -19,7 +19,7 @@ if st.button("Fetch Job Details"):
         # Section: View and Delete Expired Job Listings
 st.header("Manage Expired Job Listings")
 if st.button("Fetch Expired Job Listings"):
-    response = requests.get("http://localhost:8501/job-listings/expired")
+    response = requests.get("http://web-api:4000/job-listings/expired")
     if response.status_code == 200:
         expired_jobs = response.json()
         if expired_jobs:
@@ -35,7 +35,7 @@ st.header("Delete Job Listing")
 job_id_delete = st.text_input("Enter Job Listing ID to Delete", key="delete_job_id")
 if st.button("Delete Job Listing"):
     if job_id_delete:
-        response = requests.delete(f"http://localhost:8501/job-listings/{job_id_delete}")
+        response = requests.delete(f"http://api:4000/job-listings/{job_id_delete}")
         if response.status_code == 200:
             st.success("Job listing deleted successfully!")
         else:

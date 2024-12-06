@@ -6,7 +6,7 @@ st.title("Permissions Management")
 # Section: Retrieve Current Permissions
 st.header("Retrieve Current User Permissions and Roles")
 if st.button("Fetch Permissions"):
-    response = requests.get("http://localhost:8501/permissions")
+    response = requests.get("http://web-api:4000/permissions")
     if response.status_code == 200:
         st.json(response.json())
     else:
