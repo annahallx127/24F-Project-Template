@@ -21,7 +21,7 @@ new_students = Blueprint('new students', __name__)
 #   Notice the manner of constructing the query.
 #------------------------------------------------------------
 # Update student info for student using StudentID from request body
-@new_students.route('/students/new_student', methods=['PUT'])
+@new_students.route('/students/new_student/<StudentID>', methods=['PUT'])
 def update_new_student():
     current_app.logger.info('PUT /students/new_student route')
     
@@ -29,18 +29,18 @@ def update_new_student():
     student_info = request.json
     
     # Extract fields from the request body
-    student_id = student_info['StudentID']  # Ensure StudentID is included
+    student_id = student_info.get('StudentID')  # Use .get to avoid KeyErrors
     if not student_id:
         return jsonify({'message': 'StudentID is required'}), 400
  
     # Extract fields to update
-    first_name = student_info['FirstName']
-    last_name = student_info[('LastName')]
-    major = student_info[('Major')]
-    is_mentor = student_info[('isMentor')]
-    wcfi = student_info[('WCFI')]
+    first_name = student_info.get('FirstName')
+    last_name = student_info.get('LastName')
+    major = student_info.get('Major')
+    is_mentor = student_info.get('isMentor')
+    wcfi = student_info.get('WCFI')
 
-    # Step 1: Check if the student is a "new student" (isMentor = false)
+    # Step 1: Check if the student exists and is a "new student" (isMentor = false)
     cursor = db.get_db().cursor()
     cursor.execute("SELECT isMentor FROM Student WHERE StudentID = %s", (student_id,))
     result = cursor.fetchone()
@@ -85,6 +85,7 @@ def update_new_student():
 
 
 
+
 # #------------------------------------------------------------
 # Get student detail for student with particular StudentID
 #   Notice the manner of constructing the query. 
@@ -97,9 +98,9 @@ def get_student(StudentID):
     
     # Execute the query to fetch student details
     cursor.execute('''
-        SELECT StudentID, FirstName, LastName, Major, isMentor, WCFI
-        FROM Student
-        WHERE StudentID = %s
+    SELECT StudentID, FirstName, LastName, Major, isMentor, WCFI
+    FROM Student
+    WHERE StudentID = %s
     ''', (StudentID,))
     
     # Fetch the student data
@@ -119,7 +120,7 @@ def get_student(StudentID):
         'isMentor': student[4],
         'WCFI': student[5]
     }
-
+    print(student_data)
     # Return the student data as a JSON response
     return jsonify(student_data), 200
 

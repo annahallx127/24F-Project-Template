@@ -20,11 +20,13 @@ if st.button("Fetch Student Details"):
     if student_id_detail:
         # Call the Flask API to get student details
         url = f"http://web-api:4000/students/new_student/{student_id_detail}"
-        
+
         try:
             response = requests.get(url)
+            st.write(response)
             if response.status_code == 200:
                 student_data = response.json()
+                st.write(student_data)
                 st.json(student_data)  # Display the student data in JSON format
             else:
                 st.error("No student found with this ID.")
@@ -43,7 +45,7 @@ update_is_mentor = st.checkbox("Is Mentor", value=False, key="update_is_mentor")
 update_wcfi = st.text_input("WCFI", key="update_wcfi")
 if st.button("Update Student Information"):
     if update_student_id:
-        success = update_student_details(
+        success = update_new_student(
             update_student_id,
             update_first_name,
             update_last_name,
