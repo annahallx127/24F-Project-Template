@@ -1,6 +1,8 @@
 import streamlit as st
 import requests
 
+SideBarLinks()
+
 st.title("Permissions Management")
 
 # Section: Retrieve Current Permissions

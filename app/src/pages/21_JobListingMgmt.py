@@ -1,6 +1,9 @@
 import streamlit as st
 import requests
 
+SideBarLinks()
+
+
 st.title("Job Listings Management")
 
 # Section: Retrieve Job Listing Details

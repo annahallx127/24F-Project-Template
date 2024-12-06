@@ -2,6 +2,7 @@ import streamlit as st
 import requests
 
 st.title("Alert System Management")
+SideBarLinks()
 
 # Section: Retrieve Audit Logs
 st.header("Retrieve Audit Logs")

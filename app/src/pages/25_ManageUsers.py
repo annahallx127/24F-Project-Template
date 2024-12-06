@@ -3,6 +3,8 @@ import requests
 
 st.title("Users Management")
 
+SideBarLinks()
+
 # Section: Retrieve Users
 st.header("Retrieve Users")
 user_type_filter = st.selectbox("Filter by User Type", ["All", "Student", "Employer", "Admin"], key="user_type_filter")

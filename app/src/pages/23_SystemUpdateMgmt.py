@@ -1,6 +1,8 @@
 import streamlit as st
 import requests
 
+SideBarLinks()
+
 st.title("System Update Management")
 
 # Section: Retrieve Current System Status
