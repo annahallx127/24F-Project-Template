@@ -246,7 +246,7 @@ VALUES
 
 -- Insert into Application table (Applicants applying for job listings)
 -- Assuming students have IDs 1 and 2 from previous data
-INSERT INTO Application (ApplicationID,StudentID, AppliedDate, Status, JobID)
+INSERT INTO Application (ApplicationID, StudentID, AppliedDate, Status, JobID)
 VALUES
 (1, 1, '2024-12-01', 'Pending', 1),  -- Applicant 1 for Software Engineer
 (2, 2, '2024-12-02', 'Interview Scheduled', 2); -- Applicant 2 for Data Analyst
@@ -322,12 +322,6 @@ INSERT INTO JobListings (JobListingID, JobDescription, JobPositionTitle, JobIsAc
 VALUES
 (3, 'Software Engineer Intern', 'Software Intern', TRUE, 1),
 (4, 'Mechanical Engineer Intern', 'Mechanical Intern', TRUE, 2);
-
--- Insert into Application table
-INSERT INTO Application (StudentID, JobID, AppliedDate, Status)
-VALUES
-(1, 1,  '2024-11-01', 'Pending'),
-(2, 2, '2024-11-02', 'Interview Scheduled');
 
 -- Insert into CareerProjections table
 INSERT INTO CareerProjections (StudentID, EducationTimeline, CoopTimeline, FullTimeTimeline)
@@ -408,14 +402,11 @@ VALUES
 (1, 1, 1, 'Super Admin Permissions'),
 (2, 2, 2, 'Data Manager Permissions');
 
-<<<<<<< HEAD
 SELECT * FROM Availabilities WHERE StudentID = 2;
-=======
 -- Insert expired job listings into the JobListings table
 INSERT INTO JobListings (JobListingID, JobDescription, JobPositionTitle, JobIsActive, CompanyID)
 VALUES
 (5, 'Expired Job 1 Description', 'Expired Position 1', FALSE, 1),
 (6, 'Expired Job 2 Description', 'Expired Position 2', FALSE, 2),
 (7, 'Expired Job 3 Description', 'Expired Position 3', FALSE, 1);
->>>>>>> 4eb21c3e639ff4f00f9f075d9e6158a2f39d53c1
 
