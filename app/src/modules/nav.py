@@ -14,21 +14,28 @@ def AboutPageNav():
     st.sidebar.page_link("pages/30_About.py", label="About", icon="🧠")
 
 
-#### ------------------------ Examples for Role of pol_strat_advisor ------------------------
-def PolStratAdvHomeNav():
+#### ------------------------ Examples for Role of new student------------------------
+def NewStudentHomeNav():
     st.sidebar.page_link(
-        "pages/00_Pol_Strat_Home.py", label="Political Strategist Home", icon="👤"
+        "'pages/04_New_Student.py", label="New Student Home", icon="👤"
     )
 
 
-def WorldBankVizNav():
+def ManageStudentInfoNav():
     st.sidebar.page_link(
-        "pages/01_World_Bank_Viz.py", label="World Bank Visualization", icon="🏦"
+        "pages/05_NewStudentInfo.py", label="Manage New Student Info", icon="🏦"
     )
 
 
-def MapDemoNav():
-    st.sidebar.page_link("pages/02_Map_Demo.py", label="Map Demonstration", icon="🗺️")
+def ManageJobApplicationsNav():
+    st.sidebar.page_link("pages/06_JobApplicationMgmt.py", label="Manage Job Applications", icon="🗺️")
+
+
+def ViewJobsNav():
+    st.sidebar.page_link("pages/08_ViewAllJobs.py", label="View All Jobs", icon="🗺️")
+
+def ApplyForJobsNav():
+    st.sidebar.page_link("pages/09_ApplyForJob.py", label="Apply For Jobs", icon="🗺️")
 
 
 ## ------------------------ Examples for Role of usaid_worker ------------------------
@@ -79,9 +86,11 @@ def SideBarLinks(show_home=False):
 
         # Show World Bank Link and Map Demo Link if the user is a political strategy advisor role.
         if st.session_state["role"] == "pol_strat_advisor":
-            PolStratAdvHomeNav()
-            WorldBankVizNav()
-            MapDemoNav()
+            NewStudentHomeNav()
+            ManageStudentInfoNav()
+            ManageJobApplicationsNav()
+            ViewJobsNav()
+            ApplyForJobsNav()
 
         # If the user role is usaid worker, show the Api Testing page
         if st.session_state["role"] == "usaid_worker":
