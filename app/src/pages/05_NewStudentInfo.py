@@ -9,6 +9,7 @@ import plotly.express as px
 from modules.nav import SideBarLinks
 import requests
 
+SideBarLinks(show_home=True)
 # Initialize session state variables
 if 'authenticated' not in st.session_state:
     st.session_state['authenticated'] = False
@@ -30,6 +31,7 @@ if st.button("Fetch Student Details", type='primary', use_container_width=True):
         
         try:
             response = requests.get(url).json()
+            st.session_state['student_id'] = response.get("StudentID")  # Store the StudentID
             st.write(response)
         except Exception as e:
             st.error("Failed to fetch student details.")
@@ -38,25 +40,23 @@ if st.button("Fetch Student Details", type='primary', use_container_width=True):
 
 # Section: Update Student Information
 st.header("Update Student Information")
-update_student_id = st.text_input("Student ID", key="update_student_id")
 update_first_name = st.text_input("First Name", key="update_first_name")
 update_last_name = st.text_input("Last Name", key="update_last_name")
 update_major = st.text_input("Major", key="update_major")
-update_is_mentor = st.checkbox("Is Mentor", value=False, key="update_is_mentor")
 update_wcfi = st.text_input("WCFI", key="update_wcfi")
 
 if st.button("Update Student Information"):
-    if update_student_id:
+    student_id = st.session_state.get("student_id")
+    if student_id:
         student_info = {
             "FirstName": update_first_name,
             "LastName": update_last_name,
             "Major": update_major,
-            "isMentor": update_is_mentor,
             "WCFI": update_wcfi
         }
 
         # Send the PUT request to the Flask API
-        url = f"http://web-api:4000/ns/students/new_student/{update_student_id}"
+        url = f"http://web-api:4000/ns/students/new_student/{student_id}"
         try:
             response = requests.put(url, json=student_info)  # Using PUT request
             if response.status_code == 200:

@@ -16,57 +16,6 @@ new_students = Blueprint('new_students', __name__)
 
 
 # #------------------------------------------------------------
-# Update student detail for student with particular StudentID
-@new_students.route('/students/new_student/<StudentID>', methods=['PUT'])
-def update_new_student(StudentID):
-    current_app.logger.info('PUT /students/new_student route')
-    
-    # Parse the request body
-    student_info = request.json
-    
-    # Check if the student exists and if they are not a mentor
-    cursor = db.get_db().cursor()
-    cursor.execute("SELECT isMentor FROM Student WHERE StudentID = %s", (StudentID,))
-    result = cursor.fetchone()
-
-    if not result:
-        return jsonify({'message': 'Student not found'}), 404
-
-    if result[0]:  # `isMentor` is true
-        return jsonify({'message': 'Cannot update this student as they are not a new student'}), 403
-
-    # Prepare the update query
-    updates = []
-    values = []
-
-    if 'FirstName' in student_info:
-        updates.append("FirstName = %s")
-        values.append(student_info['FirstName'])
-    if 'LastName' in student_info:
-        updates.append("LastName = %s")
-        values.append(student_info['LastName'])
-    if 'Major' in student_info:
-        updates.append("Major = %s")
-        values.append(student_info['Major'])
-    if 'isMentor' in student_info:
-        updates.append("isMentor = %s")
-        values.append(student_info['isMentor'])
-    if 'WCFI' in student_info:
-        updates.append("WCFI = %s")
-        values.append(student_info['WCFI'])
-
-    if updates:
-        query = f"UPDATE Student SET {', '.join(updates)} WHERE StudentID = %s"
-        values.append(StudentID)
-        cursor.execute(query, tuple(values))
-        db.get_db().commit()
-
-        return jsonify({'message': 'Student updated successfully'}), 200
-    else:
-        return jsonify({'message': 'No fields to update provided'}), 400
-
-
-# #------------------------------------------------------------
 # Get student detail for student with particular StudentID
 #   Notice the manner of constructing the query. 
 @new_students.route('/students/new_student', methods=['GET'])
@@ -88,13 +37,54 @@ def get_student():
     
     # If the student does not exist, return an error message
     if not student:
-        current_app.logger.error(f"Peter Parker Information not found.")
+        current_app.logger.error(f"Student Information not found.")
         return jsonify({'message': 'Student not found'}), 404
 
     # Return the student data as a JSON response
     the_response = make_response(jsonify(student))
     the_response.status_code = 200
     return the_response
+
+
+# #------------------------------------------------------------
+# Update student detail for student with particular StudentID
+@new_students.route('/students/new_student/<StudentID>', methods=['PUT'])
+def update_new_student(StudentID):
+    current_app.logger.info('PUT /students/new_student/<StudentID> route')
+    
+    # Parse the request body
+    student_info = request.json
+    
+    # # Check if the student exists and if they are not a mentor
+    cursor = db.get_db().cursor()
+ 
+    # Prepare the update query
+    updates = []
+    values = []
+
+    if 'FirstName' in student_info:
+        updates.append("FirstName = %s")
+        values.append(student_info['FirstName'])
+    if 'LastName' in student_info:
+        updates.append("LastName = %s")
+        values.append(student_info['LastName'])
+    if 'Major' in student_info:
+        updates.append("Major = %s")
+        values.append(student_info['Major'])
+    if 'WCFI' in student_info:
+        updates.append("WCFI = %s")
+        values.append(student_info['WCFI'])
+
+    if updates:
+        query = f"UPDATE Student SET {', '.join(updates)} WHERE StudentID = %s"
+        values.append(StudentID)
+        cursor.execute(query, tuple(values))
+        db.get_db().commit()
+
+        return jsonify({'message': 'Student updated successfully'}), 200
+    else:
+        return jsonify({'message': 'No fields to update provided'}), 400
+
 
 #------------------------------------------------------------
 # Get all job listings
