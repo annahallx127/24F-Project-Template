@@ -18,7 +18,7 @@ def create_app():
     # commands below to see how they're being used.
     load_dotenv()
 
-    # secret key that will be used for securely signing the session 
+    # secret key that widoll be used for securely signing the session 
     # cookie and can be used for any other security related needs by 
     # extensions or your application
     # app.config['SECRET_KEY'] = 'someCrazyS3cR3T!Key.!'
@@ -40,10 +40,10 @@ def create_app():
     # Register the routes from each Blueprint with the app object
     # and give a url prefix to each
     app.logger.info('current_app(): registering blueprints with Flask app object.')   
-    app.register_blueprint(new_students, url_prefix='/ns')
-    app.register_blueprint(returning_student,   url_prefix='/rs')
-    app.register_blueprint(admin,    url_prefix='/a')
-    app.register_blueprint(hiring_manager,    url_prefix='/hm')
+    app.register_blueprint(new_students)
+    app.register_blueprint(returning_student)
+    app.register_blueprint(admin)
+    app.register_blueprint(hiring_manager)
 
     # Don't forget to return the app object
     return app

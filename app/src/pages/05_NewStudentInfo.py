@@ -16,22 +16,22 @@ st.title("Student Information Management")
 st.header("View Student Details")
 student_id_detail = st.text_input("Enter Student ID to Fetch Details", key="student_id_detail")
 
-if st.button("Fetch Student Details"):
+if st.button("Fetch Student Details", type='primary', use_container_width=True):
     if student_id_detail:
         # Call the Flask API to get student details
-        url = f"http://web-api:4000/students/new_student/{student_id_detail}"
+        url = f"http://api:4000/students/new_student/{student_id_detail}"
 
-        try:
-            response = requests.get(url)
-            st.write(response)
-            if response.status_code == 200:
-                student_data = response.json()
-                st.write(student_data)
-                st.json(student_data)  # Display the student data in JSON format
-            else:
-                st.error("No student found with this ID.")
-        except requests.exceptions.RequestException as e:
-            st.error(f"Error fetching student details: {e}")
+        # try:
+        response = requests.get(url).json()
+        st.dataframe(response)
+        #     if response.status_code == 200:
+        #         student_data = response.json()
+        #         st.write(student_data)
+        #         st.json(student_data)  # Display the student data in JSON format
+        #     else:
+        #         st.error("No student found with this ID.")
+        # except requests.exceptions.RequestException as e:
+        #     st.error(f"Error fetching student details: {e}")
     else:
         st.warning("Please enter a Student ID.")
 
