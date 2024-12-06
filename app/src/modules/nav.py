@@ -91,25 +91,25 @@ def AdminHomePageNav():
 
 def UpdateJobListingsNav():
     st.sidebar.page_link(
-        "pages/21_JobListingMgmt.py", label="Admin Update Job Listing", icon="🤓"
+        "pages/21_JobListingMgmt.py", label="Admin Update Job Listing", icon="💼"
     )
 
 
 def ManageUserPermissionsNav():
     st.sidebar.page_link(
-        "pages/24_PermissionMgmt.py", label="Manage User Permissions", icon="👩‍🎓"
+        "pages/24_PermissionMgmt.py", label="Manage User Permissions", icon="🤖"
     )
 
 
 def ManageSystemUpdatesNav():
-    st.sidebar.page_link("pages/23_SystemUpdateMgmt.py", label="Manage System Updates", icon="🗂️")
+    st.sidebar.page_link("pages/23_SystemUpdateMgmt.py", label="Manage System Updates", icon="🔎")
 
 
 def AlertSystemNav():
-    st.sidebar.page_link("pages/22_AlertSystem.py", label="Alert System", icon="👩‍💻")
+    st.sidebar.page_link("pages/22_AlertSystem.py", label="Alert System", icon="📬")
 
 def ManagerUsersNav():
-    st.sidebar.page_link("pages/25_ManageUsers.py", label="Manager Users", icon="✍️")
+    st.sidebar.page_link("pages/25_ManageUsers.py", label="Manager Users", icon="🖇️")
 
 
 # --------------------------------Links Function -----------------------------------------------
