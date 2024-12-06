@@ -25,17 +25,10 @@ if st.button("Fetch Expired Job Listings"):
         if expired_jobs:
             st.subheader("Expired Job Listings")
             st.json(expired_jobs)
-
-            if st.button("Delete All Expired Job Listings"):
-                delete_response = requests.delete("http://localhost:8501/job-listings/expired")
-                if delete_response.status_code == 200:
-                    st.success("All expired job listings deleted successfully!")
-                else:
-                    st.error("Failed to delete expired job listings.")
         else:
             st.info("No expired job listings found.")
     else:
-        st.error("Failed to fetch expired job listings.")
+        st.error(f"Failed to fetch expired job listings: {response.status_code}")
 
 # Section: Delete Job Listing
 st.header("Delete Job Listing")

@@ -8,9 +8,19 @@ st.header("Retrieve Audit Logs")
 if st.button("Fetch Audit Logs"):
     response = requests.get("http://localhost:8501/alert-system/audit-logs")
     if response.status_code == 200:
-        st.json(response.json())
+        try:
+            data = response.json()
+            if data:
+                st.json(data)
+            else:
+                st.info("No audit logs found.")
+        except ValueError:
+            st.error("Invalid response format from API.")
+    elif response.status_code == 404:
+        st.warning("No audit logs found.")
     else:
-        st.error("Failed to fetch audit logs.")
+        st.error(f"Failed to fetch audit logs: {response.status_code}")
+
 
 # Section: Submit New Alert
 st.header("Submit New Alert")
