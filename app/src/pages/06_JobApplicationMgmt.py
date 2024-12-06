@@ -8,7 +8,7 @@ st.header("View Applications")
 student_id_view = st.text_input("Enter Student ID to Fetch Applications", key="student_id_view")
 if st.button("Fetch Applications"):
     if student_id_view:
-        response = requests.get(f"http://localhost:8501/applications/{student_id_view}")
+        response = requests.get(f"http://web-api:4000/applications/{student_id_view}")
         if response.status_code == 200:
             try:
                 data = response.json()
@@ -24,7 +24,7 @@ st.header("Withdraw Application")
 application_id_withdraw = st.text_input("Enter Application ID to Withdraw", key="application_id_withdraw")
 if st.button("Withdraw Application"):
     if application_id_withdraw:
-        response = requests.delete(f"http://localhost:8501/applications/{application_id_withdraw}/withdraw")
+        response = requests.delete(f"http://web-api:4000/applications/{application_id_withdraw}/withdraw")
         if response.status_code == 200:
             st.success("Application withdrawn successfully!")
         else:
@@ -43,7 +43,7 @@ if st.button("Update Application"):
             "status": status,
             "resume_id": update_resume_id
         }
-        update_response = requests.put(f"http://localhost:8501/applications/{application_id_update}", json=payload)
+        update_response = requests.put(f"http://web-api:4000/applications/{application_id_update}", json=payload)
         if update_response.status_code == 200:
             st.success("Application updated successfully!")
         else:

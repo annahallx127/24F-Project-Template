@@ -17,7 +17,7 @@ if response.status_code == 200:
             # Display each job as a clickable button
             if st.button(f"View Details for {job_title}", key=f"job_{job_id}"):
                 # When a job is clicked, show the details for that job
-                job_details_response = requests.get(f"http://localhost:8501/job-listings/{job_id}")
+                job_details_response = requests.get(f"http://web-api:4000/job-listings/{job_id}")
                 if job_details_response.status_code == 200:
                     job_details = job_details_response.json()
                     st.subheader(f"Job Details for {job_title}")
@@ -43,7 +43,7 @@ if response.status_code == 200:
                                     "Duration": duration,
                                     "MeetingSubject": meeting_subject,
                                 }
-                                chat_response = requests.post("http://localhost:8501/coffee-chat", json=payload)
+                                chat_response = requests.post("http://web-api:4000/coffee-chat", json=payload)
                                 if chat_response.status_code == 201:
                                     st.success("Coffee chat scheduled successfully!")
                                 else:
