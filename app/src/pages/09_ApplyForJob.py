@@ -9,11 +9,11 @@ st.title("Manage Applications")
 st.header("Apply for a Job")
 apply_student_id = st.text_input("Student ID", key="apply_student_id")
 job_id = st.text_input("Job ID", key="apply_job_id")
-status = st.selectbox("Status", ["Applied", "Interested"], key="apply_status")
+status = st.selectbox("Status", ["Applied", "Interested", "Rejected"], key="apply_status")
 if st.button("Submit Application"):
     if apply_student_id and job_id and status:
         payload = {"StudentID": apply_student_id, "JobID": job_id, "Status": status}
-        response = requests.post("http://localhost:8501/applications", json=payload)
+        response = requests.post("http://web-api:4000/applications", json=payload)
         if response.status_code == 201:
             st.success("Application submitted successfully!")
         else:
@@ -38,7 +38,7 @@ if st.button("Submit Resume"):
             "TechnicalSkills": technical_skills,
             "SoftSkills": soft_skills,
         }
-        response = requests.post(f"http://localhost:8501/resume/{resume_student_id}", files=files, data=payload)
+        response = requests.post(f"http://web-api:4000/resume/{resume_student_id}", files=files, data=payload)
         if response.status_code == 200:
             st.success("Resume submitted successfully!")
         else:
@@ -51,7 +51,7 @@ st.header("Delete Resume")
 delete_resume_student_id = st.text_input("Student ID for Resume Deletion", key="delete_resume_student_id")
 if st.button("Delete Resume"):
     if delete_resume_student_id:
-        response = requests.delete(f"http://localhost:8501/resume/{delete_resume_student_id}")
+        response = requests.delete(f"http://web-api:4000/resume/{delete_resume_student_id}")
         if response.status_code == 200:
             st.success("Resume deleted successfully!")
         else:

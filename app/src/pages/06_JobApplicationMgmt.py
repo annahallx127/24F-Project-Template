@@ -35,12 +35,12 @@ if st.button("Withdraw Application"):
 # Section: Update Application
 st.header("Update Application")
 application_id_update = st.text_input("Enter Application ID to Update", key="application_id_update")
-update_status = st.text_input("Status", key="update_status")
+status = st.selectbox("Status", ["Applied", "Interested", "Rejected"], key="apply_status")
 update_resume_id = st.text_input("Resume ID (Optional)", key="update_resume_id")
 if st.button("Update Application"):
     if application_id_update:
         payload = {
-            "status": update_status,
+            "status": status,
             "resume_id": update_resume_id
         }
         update_response = requests.put(f"http://localhost:8501/applications/{application_id_update}", json=payload)
