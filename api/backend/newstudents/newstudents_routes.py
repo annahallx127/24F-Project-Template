@@ -16,25 +16,47 @@ new_students = Blueprint('new_students', __name__)
 
 
 # #------------------------------------------------------------
+# Get student detail for student with particular StudentID
+#   Notice the manner of constructing the query. 
+@new_students.route('/students/new_student', methods=['GET'])
+def get_student():
+    current_app.logger.info(f"GET /students/new_student route")
+
+    # Get the database cursor
+    cursor = db.get_db().cursor()
+    
+    # Execute the query to fetch student details
+    cursor.execute('''
+    SELECT *
+    FROM Student
+    WHERE FirstName = %s
+    ''', ('Peter',))
+    
+    # Fetch the student data
+    student = cursor.fetchone()
+    
+    # If the student does not exist, return an error message
+    if not student:
+        current_app.logger.error(f"Student Information not found.")
+        return jsonify({'message': 'Student not found'}), 404
+
+    # Return the student data as a JSON response
+    the_response = make_response(jsonify(student))
+    the_response.status_code = 200
+    return the_response
+
+# #------------------------------------------------------------
 # Update student detail for student with particular StudentID
 @new_students.route('/students/new_student/<StudentID>', methods=['PUT'])
 def update_new_student(StudentID):
-    current_app.logger.info('PUT /students/new_student route')
+    current_app.logger.info('PUT /students/new_student/<StudentID> route')
     
     # Parse the request body
     student_info = request.json
     
-    # Check if the student exists and if they are not a mentor
+    # # Check if the student exists and if they are not a mentor
     cursor = db.get_db().cursor()
-    cursor.execute("SELECT isMentor FROM Student WHERE StudentID = %s", (StudentID,))
-    result = cursor.fetchone()
-
-    if not result:
-        return jsonify({'message': 'Student not found'}), 404
-
-    if result[0]:  # `isMentor` is true
-        return jsonify({'message': 'Cannot update this student as they are not a new student'}), 403
-
+ 
     # Prepare the update query
     updates = []
     values = []
@@ -48,9 +70,6 @@ def update_new_student(StudentID):
     if 'Major' in student_info:
         updates.append("Major = %s")
         values.append(student_info['Major'])
-    if 'isMentor' in student_info:
-        updates.append("isMentor = %s")
-        values.append(student_info['isMentor'])
     if 'WCFI' in student_info:
         updates.append("WCFI = %s")
         values.append(student_info['WCFI'])
@@ -65,36 +84,6 @@ def update_new_student(StudentID):
     else:
         return jsonify({'message': 'No fields to update provided'}), 400
 
-
-# #------------------------------------------------------------
-# Get student detail for student with particular StudentID
-#   Notice the manner of constructing the query. 
-@new_students.route('/students/new_student/<StudentID>', methods=['GET'])
-def get_student(StudentID):
-    current_app.logger.info(f"GET /students/new_student/{StudentID} route")
-
-    # Get the database cursor
-    cursor = db.get_db().cursor()
-    
-    # Execute the query to fetch student details
-    cursor.execute('''
-    SELECT *
-    FROM Student
-    WHERE isMentor = False
-    ''', (StudentID,))
-    
-    # Fetch the student data
-    student = cursor.fetchone()
-    
-    # If the student does not exist, return an error message
-    if not student:
-        current_app.logger.error(f"Student with ID {StudentID} not found.")
-        return jsonify({'message': 'Student not found'}), 404
-
-    # Return the student data as a JSON response
-    the_response = make_response(jsonify(student))
-    the_response.status_code = 200
-    return the_response
 
 #------------------------------------------------------------
 # Get all job listings

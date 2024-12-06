@@ -21,6 +21,8 @@ st.set_page_config(layout = 'wide')
 # authenticated.  So we change the 'authenticated' value
 # in the streamlit session_state to false. 
 st.session_state['authenticated'] = False
+st.session_state['role'] = None
+st.session_state['first_name'] = None
 
 # Use the SideBarLinks function from src/modules/nav.py to control
 # the links displayed on the left-side panel. 
@@ -54,8 +56,9 @@ if st.button("Act as Peter Parker, a second year at Spider University",
     st.session_state['first_name'] = 'Peter'
     # finally, we ask streamlit to switch to another page, in this case, the 
     # landing page for this particular user type
-    logger.info("Logging in as New Student")
+    logger.info("Logging in as Peter")
     st.switch_page('pages/04_New_Student.py') 
+
 
 
 if st.button("Act as Mary Jane, a third year at Spider University", 
