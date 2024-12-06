@@ -1,7 +1,9 @@
 import streamlit as st
 import requests
+from modules.nav import SideBarLinks
 
 st.title("Alert System Management")
+SideBarLinks(show_home=True)
 
 # Section: Retrieve Audit Logs
 st.header("Retrieve Audit Logs")

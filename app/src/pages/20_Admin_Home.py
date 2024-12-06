@@ -7,7 +7,7 @@ import requests
 
 st.set_page_config(layout = 'wide')
 
-SideBarLinks()
+SideBarLinks(show_home=True)
 
 st.title('System Administrator Home Page')
 

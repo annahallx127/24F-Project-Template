@@ -7,53 +7,109 @@ import streamlit as st
 
 #### ------------------------ General ------------------------
 def HomeNav():
-    st.sidebar.page_link("Home.py", label="Home", icon="🏠")
-
+    st.sidebar.page_link("Home.py", label="Home", icon="🏡")
 
 def AboutPageNav():
-    st.sidebar.page_link("pages/30_About.py", label="About", icon="🧠")
+    st.sidebar.page_link("pages/30_About.py", label="About", icon="🕴")
 
 
-#### ------------------------ Examples for Role of pol_strat_advisor ------------------------
-def PolStratAdvHomeNav():
+
+#### ------------------------ Examples for Role of new student------------------------
+def NewStudentHomeNav():
     st.sidebar.page_link(
-        "pages/00_Pol_Strat_Home.py", label="Political Strategist Home", icon="👤"
+        "pages/04_New_Student.py", label="New Student Home", icon="🤓"
     )
 
 
-def WorldBankVizNav():
+def ManageStudentInfoNav():
     st.sidebar.page_link(
-        "pages/01_World_Bank_Viz.py", label="World Bank Visualization", icon="🏦"
+        "pages/05_NewStudentInfo.py", label="Manage New Student Info", icon="👩‍🎓"
     )
 
 
-def MapDemoNav():
-    st.sidebar.page_link("pages/02_Map_Demo.py", label="Map Demonstration", icon="🗺️")
+def ManageJobApplicationsNav():
+    st.sidebar.page_link("pages/06_JobApplicationMgmt.py", label="Manage Job Applications", icon="🗂️")
 
 
-## ------------------------ Examples for Role of usaid_worker ------------------------
-def ApiTestNav():
-    st.sidebar.page_link("pages/12_API_Test.py", label="Test the API", icon="🛜")
+def ViewJobsNav():
+    st.sidebar.page_link("pages/08_ViewAllJobs.py", label="View All Jobs", icon="👩‍💻")
+
+def ApplyForJobsNav():
+    st.sidebar.page_link("pages/09_ApplyForJob.py", label="Apply For Jobs", icon="✍️")
 
 
-def PredictionNav():
+## ------------------------ Examples for Role of returning student ------------------------
+def ReturningStudentHomeNav():
+    st.sidebar.page_link("pages/26_ReturningStudentDashboard.py", label="Returning Student Dashboard", icon="🛜")
+
+
+
+def ManageAvailabilityNav():
     st.sidebar.page_link(
-        "pages/11_Prediction.py", label="Regression Prediction", icon="📈"
+        "pages/27_availability.py", label="Manage Availability", icon="📈"
     )
 
 
-def ClassificationNav():
+def ManageCoopNav():
     st.sidebar.page_link(
-        "pages/13_Classification.py", label="Classification Demo", icon="🌺"
+        "pages/28_coop_reviews.py", label="Manage Co-ops", icon="🌺"
     )
+
+def ViewCareerProjNav():
+    st.sidebar.page_link(
+        "pages/29_career_projections.py", label="View Career Projections", icon="🌺"
+    )
+
+
+## ------------------------ Examples for Role of hiring manager ------------------------
+def HiringManagerHomeNav():
+    st.sidebar.page_link("pages/31_ManagerDashboard.py", label="Hiring Manager Dashboard", icon="🛜")
+
+
+
+def ManageJobListingsNav():
+    st.sidebar.page_link(
+        "pages/32_PostJob.py", label="Manage Job Listings", icon="📈"
+    )
+
+
+def ManageCandidatesNav():
+    st.sidebar.page_link(
+        "pages/33_ViewCandidates.py", label="Manage Candidates", icon="🌺"
+    )
+
+def CandidateRankingNav():
+    st.sidebar.page_link(
+        "pages/34_Rank.py", label="Candidate Ranks", icon="🌺"
+    )
+
 
 
 #### ------------------------ System Admin Role ------------------------
-def AdminPageNav():
+def AdminHomePageNav():
     st.sidebar.page_link("pages/20_Admin_Home.py", label="System Admin", icon="🖥️")
+
+def UpdateJobListingsNav():
     st.sidebar.page_link(
-        "pages/21_ML_Model_Mgmt.py", label="ML Model Management", icon="🏢"
+        "pages/21_JobListingMgmt.py", label="Admin Update Job Listing", icon="💼"
     )
+
+
+def ManageUserPermissionsNav():
+    st.sidebar.page_link(
+        "pages/24_PermissionMgmt.py", label="Manage User Permissions", icon="🤖"
+    )
+
+
+def ManageSystemUpdatesNav():
+    st.sidebar.page_link("pages/23_SystemUpdateMgmt.py", label="Manage System Updates", icon="🔎")
+
+
+def AlertSystemNav():
+    st.sidebar.page_link("pages/22_AlertSystem.py", label="Alert System", icon="📬")
+
+def ManagerUsersNav():
+    st.sidebar.page_link("pages/25_ManageUsers.py", label="Manager Users", icon="🖇️")
 
 
 # --------------------------------Links Function -----------------------------------------------
@@ -63,7 +119,7 @@ def SideBarLinks(show_home=False):
     """
 
     # add a logo to the sidebar always
-    st.sidebar.image("assets/logo.png", width=150)
+    st.sidebar.image("assets/logo.png", width=1000)
 
     # If there is no logged in user, redirect to the Home (Landing) page
     if "authenticated" not in st.session_state:
@@ -78,10 +134,12 @@ def SideBarLinks(show_home=False):
     if st.session_state["authenticated"]:
 
         # Show World Bank Link and Map Demo Link if the user is a political strategy advisor role.
-        if st.session_state["role"] == "pol_strat_advisor":
-            PolStratAdvHomeNav()
-            WorldBankVizNav()
-            MapDemoNav()
+        if st.session_state["role"] == "new_student":
+            NewStudentHomeNav()
+            ManageStudentInfoNav()
+            ManageJobApplicationsNav()
+            ViewJobsNav()
+            ApplyForJobsNav()
 
         # If the user role is usaid worker, show the Api Testing page
         if st.session_state["role"] == "usaid_worker":

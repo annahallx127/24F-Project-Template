@@ -7,11 +7,11 @@ import requests
 
 st.set_page_config(layout = 'wide')
 
-SideBarLinks()
+SideBarLinks(show_home=True)
 
 st.title('Welcome Peter! What would you like to do?')
 
-if st.button('Update Student Details', 
+if st.button('Manage Student Details', 
              type='primary',
              use_container_width=True):
   st.switch_page('pages/05_NewStudentInfo.py')
