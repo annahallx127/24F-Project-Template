@@ -1,7 +1,9 @@
 import streamlit as st
 import requests
+from modules.nav import SideBarLinks
 
-SideBarLinks()
+
+SideBarLinks(show_home=True)
 
 st.title("System Update Management")
 

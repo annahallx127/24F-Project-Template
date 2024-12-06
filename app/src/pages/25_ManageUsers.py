@@ -1,9 +1,11 @@
 import streamlit as st
 import requests
 
+from modules.nav import SideBarLinks
+
 st.title("Users Management")
 
-SideBarLinks()
+SideBarLinks(show_home=True)
 
 # Section: Retrieve Users
 st.header("Retrieve Users")
