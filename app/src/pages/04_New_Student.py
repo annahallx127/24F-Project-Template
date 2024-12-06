@@ -9,7 +9,7 @@ st.set_page_config(layout = 'wide')
 
 SideBarLinks()
 
-st.title('New Student Home Page')
+st.title('Welcome Peter! What would you like to do?')
 
 if st.button('Update Student Details', 
              type='primary',

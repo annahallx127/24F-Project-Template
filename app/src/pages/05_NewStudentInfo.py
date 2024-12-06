@@ -9,23 +9,32 @@ import plotly.express as px
 from modules.nav import SideBarLinks
 import requests
 
+# Initialize session state variables
+if 'authenticated' not in st.session_state:
+    st.session_state['authenticated'] = False
+if 'role' not in st.session_state:
+    st.session_state['role'] = None
+if 'first_name' not in st.session_state:
+    st.session_state['first_name'] = None
+
 
 st.title("Student Information Management")
 
 # Section: Get Student Details
 st.header("View Student Details")
-
 if st.button("Fetch Student Details", type='primary', use_container_width=True):
-    if st.session_state['first_name'] == 'Peter':
+    if st.session_state.get('authenticated') and st.session_state.get('first_name') == 'Peter':
 
         # Call the Flask API to get student details
-        url = f"http://api:4000/ns/students/new_student/peter"
+        url = f"http://api:4000/ns/students/new_student"
         
-        response = requests.get(url).json()
-        st.write(response)
-        
+        try:
+            response = requests.get(url).json()
+            st.write(response)
+        except Exception as e:
+            st.error("Failed to fetch student details.")
     else:
-        st.warning("Could not get Student Details.")
+        st.warning("You are not logged in as Peter. Please authenticate first.")
 
 # Section: Update Student Information
 st.header("Update Student Information")

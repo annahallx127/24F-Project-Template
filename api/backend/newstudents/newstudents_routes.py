@@ -69,9 +69,9 @@ def update_new_student(StudentID):
 # #------------------------------------------------------------
 # Get student detail for student with particular StudentID
 #   Notice the manner of constructing the query. 
-@new_students.route('/students/new_student/<StudentID>', methods=['GET'])
-def get_student(StudentID):
-    current_app.logger.info(f"GET /students/new_student/{StudentID} route")
+@new_students.route('/students/new_student', methods=['GET'])
+def get_student():
+    current_app.logger.info(f"GET /students/new_student route")
 
     # Get the database cursor
     cursor = db.get_db().cursor()
@@ -80,15 +80,15 @@ def get_student(StudentID):
     cursor.execute('''
     SELECT *
     FROM Student
-    WHERE isMentor = False
-    ''', (StudentID,))
+    WHERE FirstName = %s
+    ''', ('Peter',))
     
     # Fetch the student data
     student = cursor.fetchone()
     
     # If the student does not exist, return an error message
     if not student:
-        current_app.logger.error(f"Student with ID {StudentID} not found.")
+        current_app.logger.error(f"Peter Parker Information not found.")
         return jsonify({'message': 'Student not found'}), 404
 
     # Return the student data as a JSON response
