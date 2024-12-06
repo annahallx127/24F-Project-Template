@@ -216,6 +216,11 @@ VALUES
 (1, 'Peter', 'Parker', 'Arachnology', FALSE, '1234'),
 (2, 'Mary', 'Jane', 'Computer Science', TRUE, '5678');
 
+INSERT INTO Availabilities (StudentID, StartDate, EndDate)
+VALUES
+(2, '2024-12-10 10:00:00', '2024-12-10 12:00:00'),
+(2, '2024-12-15 08:00:00', '2024-12-15 12:00:00');
+
 -- Insert into Resume table
 INSERT INTO Resume (StudentID, ResumeName, WorkExperience, TechnicalSkills, SoftSkills)
 VALUES
@@ -323,4 +328,6 @@ INSERT INTO AdminPermissions (AdminInCharge, AdminID, AccessLevel, AccessDescrip
 VALUES
 (1, 1, 1, 'Super Admin Permissions'),
 (2, 2, 2, 'Data Manager Permissions');
+
+SELECT * FROM Availabilities WHERE StudentID = 2;
 
