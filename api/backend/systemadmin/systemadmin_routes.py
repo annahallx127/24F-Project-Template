@@ -197,12 +197,12 @@ def get_expired_job_listings():
     from datetime import datetime
     current_time = datetime.now()
 
-    # Query to fetch job listings where the expiration date (isActive) is less than the current time
+    # Query to fetch job listings where the expiration date (JobIsActive) is less than the current time
     cursor = db.get_db().cursor()
     cursor.execute("""
         SELECT *
         FROM JobListings
-        WHERE isActive = False
+        WHERE JobIsActive = False
     """)
 
     expired_jobs = cursor.fetchall()
