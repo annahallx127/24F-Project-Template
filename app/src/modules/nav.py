@@ -108,7 +108,7 @@ def ManageSystemUpdatesNav():
 def AlertSystemNav():
     st.sidebar.page_link("pages/22_AlertSystem.py", label="Alert System", icon="📬")
 
-def ManagerUsersNav():
+def ManageUsersNav():
     st.sidebar.page_link("pages/25_ManageUsers.py", label="Manager Users", icon="🖇️")
 
 
@@ -149,7 +149,13 @@ def SideBarLinks(show_home=False):
 
         # If the user is an administrator, give them access to the administrator pages
         if st.session_state["role"] == "administrator":
-            AdminPageNav()
+            AdminHomePageNav()
+            UpdateJobListingsNav()
+            ManageUsersNav()
+            ManageUserPermissionsNav()
+            ManageSystemUpdatesNav()
+            AlertSystemNav()
+
 
     # Always show the About page at the bottom of the list of links
     AboutPageNav()
