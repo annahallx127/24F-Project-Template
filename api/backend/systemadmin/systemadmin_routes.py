@@ -275,7 +275,7 @@ def delete_job_listing(id):
     db.get_db().commit()
     return make_response("Job listing deleted successfully", 200)
 
-@users.route('/users', methods=['GET'])
+@admin.route('/users', methods=['GET'])
 def get_users():
     user_type = request.args.get('type')  # Optional filter for user type
     if user_type == 'Student':
@@ -299,7 +299,7 @@ def get_users():
     return make_response(jsonify(data), 200)
 
 # Register a new user
-@users.route('/users', methods=['POST'])
+@admin.route('/users', methods=['POST'])
 def create_user():
     data = request.json
     user_type = data.get('user_type')
@@ -330,7 +330,7 @@ def create_user():
     return make_response("User created successfully", 201)
 
 # Update user profile details
-@users.route('/users', methods=['PUT'])
+@admin.route('/users', methods=['PUT'])
 def update_user():
     data = request.json
     user_id = data.get('id')
@@ -365,7 +365,7 @@ def update_user():
     return make_response("User updated successfully", 200)
 
 # Delete a user account
-@users.route('/users', methods=['DELETE'])
+@admin.route('/users', methods=['DELETE'])
 def delete_user():
     user_id = request.args.get('id')
     user_type = request.args.get('user_type')

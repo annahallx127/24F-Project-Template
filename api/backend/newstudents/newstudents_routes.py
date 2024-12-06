@@ -92,17 +92,19 @@ def get_student(StudentID):
         return jsonify({'message': 'Student not found'}), 404
 
     # Format the data as a dictionary to send as JSON
-    student_data = {
-        'StudentID': student[0],
-        'FirstName': student[1],
-        'LastName': student[2],
-        'Major': student[3],
-        'isMentor': student[4],
-        'WCFI': student[5]
-    }
-    print(student_data)
+    # student_data = {
+    #     'StudentID': student[0],
+    #     'FirstName': student[1],
+    #     'LastName': student[2],
+    #     'Major': student[3],
+    #     'isMentor': student[4],
+    #     'WCFI': student[5]
+    # }
+    # print(student_data)
     # Return the student data as a JSON response
-    return jsonify(student_data), 200
+    the_response = make_response(jsonify(student))
+    the_response.status_code = 200
+    return the_response
 
 #------------------------------------------------------------
 # Get all job listings

@@ -111,7 +111,7 @@ def update_availability(availabilityId):
     return the_response
 
 # Post a co-op review after completing co-op
-@returning_student.route('/coop/review/<int:coopId>', methods=['PUT'])
+@returning_student.route('/coop/review/<int:coopId>', methods=['POST'])
 def update_coop_review(coopId):
     cursor = db.get_db().cursor()
     req_data = request.get_json()
@@ -145,29 +145,29 @@ def update_coop_review(coopId):
             jsonify({"error": "Failed to update co-op review", "details": str(e)}), 500
         )
 
-# update co-op review
-@returning_student.route('/coop/review/<int:coopId>', methods=['PUT'])
-def update_coop_review(coopId):
-    cursor = db.get_db().cursor()
-    req_data = request.get_json()
+# # update co-op review
+# @returning_student.route('/coop/review/<int:coopId>', methods=['PUT'])
+# def update_coop_review(coopId):
+#     cursor = db.get_db().cursor()
+#     req_data = request.get_json()
 
-    review = req_data.get('CoopReview')
-    rating = req_data.get('CoopRating')
+#     review = req_data.get('CoopReview')
+#     rating = req_data.get('CoopRating')
 
-    query = '''
-        UPDATE Coop
-        SET CoopReview = %s, CoopRating = %s
-        WHERE CoopID = %s
-    '''
-    try:
-        cursor.execute(query, (review, rating, coopId))
-        db.get_db().commit()
-        the_response = make_response(jsonify({"message": "Co-op review updated successfully!"}), 200)
-    except Exception as e:
-        db.get_db().rollback()
-        the_response = make_response(jsonify({"error": str(e)}), 500)
+#     query = '''
+#         UPDATE Coop
+#         SET CoopReview = %s, CoopRating = %s
+#         WHERE CoopID = %s
+#     '''
+#     try:
+#         cursor.execute(query, (review, rating, coopId))
+#         db.get_db().commit()
+#         the_response = make_response(jsonify({"message": "Co-op review updated successfully!"}), 200)
+#     except Exception as e:
+#         db.get_db().rollback()
+#         the_response = make_response(jsonify({"error": str(e)}), 500)
 
-    return the_response
+#     return the_response
 
 # delete a co-op review
 @returning_student.route('/coop/review/<int:coop_id>', methods=['DELETE'])

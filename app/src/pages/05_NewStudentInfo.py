@@ -19,11 +19,11 @@ student_id_detail = st.text_input("Enter Student ID to Fetch Details", key="stud
 if st.button("Fetch Student Details", type='primary', use_container_width=True):
     if student_id_detail:
         # Call the Flask API to get student details
-        url = f"http://api:4000/students/new_student/{student_id_detail}"
-
+        url = f"http://api:4000/ns/students/new_student/{student_id_detail}"
+        # url = f"http://api:4000/ns/students/new_student/1"
         # try:
         response = requests.get(url).json()
-        st.dataframe(response)
+        st.write(response)
         #     if response.status_code == 200:
         #         student_data = response.json()
         #         st.write(student_data)
@@ -55,7 +55,7 @@ if st.button("Update Student Information"):
         }
 
         # Send the PUT request to the Flask API
-        url = f"http://web-api:4000/students/new_student/{update_student_id}"
+        url = f"http://web-api:4000/ns/students/new_student/{update_student_id}"
         try:
             response = requests.put(url, json=student_info)  # Using PUT request
             if response.status_code == 200:
