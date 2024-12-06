@@ -219,7 +219,7 @@ VALUES
 INSERT INTO Availabilities (StudentID, StartDate, EndDate)
 VALUES
 (2, '2024-12-10 10:00:00', '2024-12-10 12:00:00'),
-(2, '2024-12-15 08:00:00', '2024-12-15 12:00:00');
+(2, '2024-12-15 08:00:00', '2024-12-15 10:00:00');
 
 -- Insert into Resume table
 INSERT INTO Resume (StudentID, ResumeName, WorkExperience, TechnicalSkills, SoftSkills)
