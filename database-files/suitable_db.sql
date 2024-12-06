@@ -403,3 +403,10 @@ VALUES
 (1, 1, 1, 'Super Admin Permissions'),
 (2, 2, 2, 'Data Manager Permissions');
 
+-- Insert expired job listings into the JobListings table
+INSERT INTO JobListings (JobDescription, JobPositionTitle, JobIsActive, CompanyID)
+VALUES
+('Expired Job 1 Description', 'Expired Position 1', FALSE, 1),
+('Expired Job 2 Description', 'Expired Position 2', FALSE, 2),
+('Expired Job 3 Description', 'Expired Position 3', FALSE, 1);
+
