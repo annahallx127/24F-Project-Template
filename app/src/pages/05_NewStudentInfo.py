@@ -37,11 +37,9 @@ if st.button("Fetch Student Details", type='primary', use_container_width=True):
             st.error("Failed to fetch student details.")
     else:
         st.warning("You are not logged in as Peter. Please authenticate first.")
-        
+
 # Section: Update Student Information
 st.header("Update Student Information")
-update_first_name = st.text_input("First Name", key="update_first_name")
-update_last_name = st.text_input("Last Name", key="update_last_name")
 update_major = st.text_input("Major", key="update_major")
 update_wcfi = st.text_input("WCFI", key="update_wcfi")
 
@@ -49,8 +47,6 @@ if st.button("Update Student Information"):
     student_id = st.session_state.get("student_id")
     if student_id:
         student_info = {
-            "FirstName": update_first_name,
-            "LastName": update_last_name,
             "Major": update_major,
             "WCFI": update_wcfi
         }
