@@ -234,10 +234,10 @@ VALUES
 (1, 'InnovativeTech', 'Technology');  -- InnovativeTech is the company where the hiring manager works
 
 -- Insert into JobListings table (Hiring manager posting job openings)
-INSERT INTO JobListings (JobDescription, JobPositionTitle, JobIsActive, CompanyID)
+INSERT INTO JobListings (JobListingID, JobDescription, JobPositionTitle, JobIsActive, CompanyID)
 VALUES
-('Looking for a skilled software engineer to join our team and work on innovative projects.', 'Software Engineer', TRUE, 1), -- Software Engineer position
-('Seeking a data analyst to help with data-driven decision making and business intelligence projects.', 'Data Analyst', TRUE, 1); -- Data Analyst position
+(1, 'Looking for a skilled software engineer to join our team and work on innovative projects.', 'Software Engineer', TRUE, 1), -- Software Engineer position
+(2, 'Seeking a data analyst to help with data-driven decision making and business intelligence projects.', 'Data Analyst', TRUE, 1); -- Data Analyst position
 
 -- Insert into Application table (Applicants applying for job listings)
 -- Assuming students have IDs 1 and 2 from previous data
@@ -313,10 +313,10 @@ VALUES
 (1, 'TechCorp', 'Technology'),
 (2, 'BuildCo', 'Engineering');
 
-INSERT INTO JobListings (JobDescription, JobPositionTitle, JobIsActive, CompanyID)
+INSERT INTO JobListings (JobListingID, JobDescription, JobPositionTitle, JobIsActive, CompanyID)
 VALUES
-('Software Engineer Intern', 'Software Intern', TRUE, 1),
-('Mechanical Engineer Intern', 'Mechanical Intern', TRUE, 2);
+(3, 'Software Engineer Intern', 'Software Intern', TRUE, 1),
+(4, 'Mechanical Engineer Intern', 'Mechanical Intern', TRUE, 2);
 
 -- Insert into Application table
 INSERT INTO Application (StudentID, JobID, AppliedDate, Status)
@@ -406,7 +406,7 @@ VALUES
 -- Insert expired job listings into the JobListings table
 INSERT INTO JobListings (JobListingID, JobDescription, JobPositionTitle, JobIsActive, CompanyID)
 VALUES
-(444, 'Expired Job 1 Description', 'Expired Position 1', FALSE, 1),
-(333, 'Expired Job 2 Description', 'Expired Position 2', FALSE, 2),
-(222, 'Expired Job 3 Description', 'Expired Position 3', FALSE, 1);
+(5, 'Expired Job 1 Description', 'Expired Position 1', FALSE, 1),
+(6, 'Expired Job 2 Description', 'Expired Position 2', FALSE, 2),
+(7, 'Expired Job 3 Description', 'Expired Position 3', FALSE, 1);
 
