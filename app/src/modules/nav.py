@@ -141,12 +141,6 @@ def SideBarLinks(show_home=False):
             ViewJobsNav()
             ApplyForJobsNav()
 
-        # If the user role is usaid worker, show the Api Testing page
-        if st.session_state["role"] == "usaid_worker":
-            PredictionNav()
-            ApiTestNav()
-            ClassificationNav()
-
         # If the user is an administrator, give them access to the administrator pages
         if st.session_state["role"] == "administrator":
             AdminHomePageNav()
