@@ -37,7 +37,7 @@ if st.button("Fetch Student Details", type='primary', use_container_width=True):
             st.error("Failed to fetch student details.")
     else:
         st.warning("You are not logged in as Peter. Please authenticate first.")
-
+        
 # Section: Update Student Information
 st.header("Update Student Information")
 update_first_name = st.text_input("First Name", key="update_first_name")
@@ -60,7 +60,7 @@ if st.button("Update Student Information"):
         try:
             response = requests.put(url, json=student_info)  # Using PUT request
             if response.status_code == 200:
-                st.success("Student information updated successfully!")
+                st.success("Student information updated successfully!")        
             else:
                 st.error(f"Failed to update student information: {response.json()['message']}")
         except requests.exceptions.RequestException as e:
