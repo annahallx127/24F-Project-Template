@@ -78,9 +78,9 @@ def get_student(StudentID):
     
     # Execute the query to fetch student details
     cursor.execute('''
-    SELECT StudentID, FirstName, LastName, Major, isMentor, WCFI
+    SELECT *
     FROM Student
-    WHERE StudentID = %s
+    WHERE isMentor = False
     ''', (StudentID,))
     
     # Fetch the student data
@@ -91,16 +91,6 @@ def get_student(StudentID):
         current_app.logger.error(f"Student with ID {StudentID} not found.")
         return jsonify({'message': 'Student not found'}), 404
 
-    # Format the data as a dictionary to send as JSON
-    # student_data = {
-    #     'StudentID': student[0],
-    #     'FirstName': student[1],
-    #     'LastName': student[2],
-    #     'Major': student[3],
-    #     'isMentor': student[4],
-    #     'WCFI': student[5]
-    # }
-    # print(student_data)
     # Return the student data as a JSON response
     the_response = make_response(jsonify(student))
     the_response.status_code = 200
