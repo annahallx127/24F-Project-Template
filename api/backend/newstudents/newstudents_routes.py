@@ -45,7 +45,6 @@ def get_student():
     the_response.status_code = 200
     return the_response
 
-
 # #------------------------------------------------------------
 # Update student detail for student with particular StudentID
 @new_students.route('/students/new_student/<StudentID>', methods=['PUT'])
