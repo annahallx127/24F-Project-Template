@@ -1,34 +1,40 @@
 import streamlit as st
+import pandas as pd
 import requests
 
 # Set up the Streamlit page configuration
-st.set_page_config(page_title="Candidate WCFI Overview", layout="wide")
+st.set_page_config(page_title="Candidates Overview - SpiderVerse", layout="wide")
 
 # Title of the page
-st.title("Candidate WCFI Overview for Job Listing")
+st.title("Candidates Overview - SpiderVerse")
 
-# Input for Job ID
-job_id = st.text_input("Enter Job ID")
+# Section: All Candidates' WCFI
+st.header("Candidates, WCFI, and Status")
 
-# ------------------------------------------------------------
+st.write("View all applicants across all job listings from SpiderVerse.")
 
-# Button for fetching WCFI
-if st.button("Fetch Candidates' WCFI", key="fetch_wcfi"):
-    if job_id.strip():  # Ensure Job ID is provided
-        with st.spinner("Fetching candidates' WCFI and Status..."):
-            url = f"http://web-api:4000/hm/job-listings/{job_id}/candidates-wcfi"
-            try:
-                response = requests.get(url)
-                if response.status_code == 200:
-                    wcfi_data = response.json()
-                    if wcfi_data:
-                        st.subheader("Candidates, WCFI, and Status")
-                        st.dataframe(wcfi_data)  # Display the fetched data in a table
-                    else:
-                        st.warning(f"No candidates found for Job ID {job_id}.")
+# Button for fetching all candidates
+if st.button("Fetch All Candidates", type='primary', use_container_width=True):
+    with st.spinner("Fetching all candidates' WCFI and Status..."):
+        # API URL for fetching all candidates
+        url = f"http://web-api:4000/hm/job-listings/candidates-wcfi"  # Updated API endpoint to fetch all candidates
+
+        try:
+            # Make a GET request to the API
+            response = requests.get(url)
+
+            # Check for a successful response
+            if response.status_code == 200:
+                candidates = response.json()
+
+                if candidates:
+                    st.write("List of All Candidates:")
+                    # Convert the JSON response to a DataFrame
+                    df = pd.DataFrame(candidates, columns=["FirstName", "LastName", "Status", "WCFI"])
+                    st.table(df)
                 else:
-                    st.error(f"Failed to fetch WCFI and Status. Server responded with status code {response.status_code}.")
-            except Exception as e:
-                st.error(f"Error occurred while fetching WCFI and Status: {str(e)}")
-    else:
-        st.warning("Please enter a valid Job ID.")
+                    st.info("No candidates found.")
+            else:
+                st.error(f"Failed to fetch candidates. Server responded with status code {response.status_code}.")
+        except Exception as e:
+            st.error(f"Error occurred while fetching candidates: {str(e)}")

@@ -119,3 +119,15 @@ if st.button("Submit Resume", key="submit_resume"):
     else:
         st.warning("Please fill out all required fields to submit your resume.")
         
+ # Section: Delete Resume
+st.header("Delete Resume")
+delete_resume_name = st.text_input("Enter Resume Name", key="delete_resume_student_id")
+if st.button("Delete Resume"):
+    if delete_resume_name:
+        response = requests.delete(f"http://web-api:4000/ns/resume/{delete_resume_name}")
+        if response.status_code == 200:
+            st.success("Resume deleted successfully!")
+        else:
+            st.error("Failed to delete resume.")
+    else:
+        st.warning("Please enter a Resume Name.")

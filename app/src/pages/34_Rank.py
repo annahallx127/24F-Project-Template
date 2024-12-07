@@ -1,41 +1,37 @@
 import streamlit as st
-import requests
 import pandas as pd
+import requests
 
-# Set up the Streamlit page configuration
-st.set_page_config(page_title="Candidate Ranking", layout="wide")
+st.set_page_config(page_title="Candidate WCFI Overview", layout="wide")
+st.title("Candidate WCFI Overview for Job Listing")
+st.header("Candidates, WCFI, and Status")
 
-# Title of the page
-st.title("Candidate Rank Leaderboard")
+job_id = st.text_input("Enter Job ID", help="Enter the Job Listing ID to view candidate details.")
 
-# Input for Job ID
-job_id = st.text_input("Enter JobListingID", key="job_id_input")
+if job_id.strip():
+    with st.spinner("Fetching candidates' WCFI and Status..."):
+        url = f"http://web-api:4000/hm/job-listings/{job_id}/candidates-wcfi"
+        try:
+            response = requests.get(url)
+            st.write("Raw API Response:", response.text)  # Debugging
 
-# Button for fetching ranked candidates
-if st.button("Fetch Candidates", key="fetch_candidates"):
-    if job_id.strip():  # Ensure Job ID is provided
-        with st.spinner("Fetching ranked candidates..."):
-            # API URL for fetching ranked candidates
-            url = f"http://web-api:4000/hm/job-listings/{job_id}/rank-candidates"
-            try:
-                response = requests.get(url)
-                if response.status_code == 200:
-                    candidates_data = response.json()
+            if response.status_code == 200:
+                suitable = response.json()
 
-                    # Display the candidates in a table format
-                    if candidates_data:
-                        st.subheader(f"Ranked Candidates for JobListingID = {job_id}")
+                if suitable:
+                    df_candidates = pd.DataFrame(suitable)
+                    st.write("DataFrame Contents:", df_candidates)  # Debugging
 
-                        # Convert the data to a pandas DataFrame for display
-                        df = pd.DataFrame(candidates_data)
-
-                        # Display the data with specific columns in the desired order
-                        st.dataframe(df[['FirstName', 'LastName', 'WCFI', 'Status', 'RankNum']], use_container_width=True)
+                    required_columns = {"FirstName", "LastName", "Status", "WCFI"}
+                    if required_columns.issubset(df_candidates.columns):
+                        st.table(df_candidates[["FirstName", "LastName", "Status", "WCFI"]])
                     else:
-                        st.warning(f"No candidates found for JobListingID {job_id}.")
+                        st.error(f"Response is missing required columns: {required_columns}")
                 else:
-                    st.error(f"Failed to fetch ranked candidates. Server responded with status code {response.status_code}.")
-            except Exception as e:
-                st.error(f"Error occurred while fetching ranked candidates: {str(e)}")
-    else:
-        st.warning("Please enter a valid JobListingID.")
+                    st.info(f"No candidates found for Job ID {job_id}.")
+            else:
+                st.error(f"Failed to fetch data. Server responded with status code {response.status_code}.")
+        except Exception as e:
+            st.error(f"Error occurred while fetching data: {str(e)}")
+else:
+    st.info("Please enter a Job ID to view candidates.")

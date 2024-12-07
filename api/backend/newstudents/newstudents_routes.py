@@ -342,15 +342,18 @@ def submit_resume():
     #------------------------------------------------------------
 # Delete a student's resume
 @new_students.route('/resume/<resume_name>', methods=['DELETE'])
-def delete_resume(ResumeName):
-    current_app.logger.info(f'DELETE /resume/{ResumeName} route')
-    
+def delete_resume(resume_name):  # Change ResumeName to resume_name
+    current_app.logger.info(f'DELETE /resume/{resume_name} route')
+    if not resume_name:
+        return jsonify({'message': 'Invalid resume name.'}), 400
+    cursor = db.get_db().cursor()
 
     # Delete the resume record from the database
-    cursor.execute("DELETE FROM Resume WHERE ResumeName = %s", (ResumeName,))
+    cursor.execute("DELETE FROM Resume WHERE ResumeName = %s", (resume_name,))
     db.get_db().commit()
 
     return jsonify({'message': 'Resume deleted successfully'}), 200
+
 
 @new_students.route('/availabilities', methods=['GET'])
 def get_availabilities():

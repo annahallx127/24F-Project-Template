@@ -41,7 +41,6 @@ def get_candidates_by_job(job_id):
     except Exception as e:
         return make_response(jsonify({"error": str(e)}), 500)
     
-
 @hiring_manager.route('/hiring-manager/job-listings', methods=['POST'])
 def add_job_listing():
     """
@@ -183,8 +182,6 @@ def delete_job_listing(job_id):
         db.get_db().rollback()
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
-
-# Get the ranking of candidates for a specific job listing
 @hiring_manager.route('/job-listings/<int:job_id>/candidates-wcfi', methods=['GET'])
 def get_candidates_wcfi(job_id):
     """
@@ -208,8 +205,8 @@ def get_candidates_wcfi(job_id):
         cursor.execute(query, (job_id,))
         rows = cursor.fetchall()
 
-        # Log the query results for debugging
-        current_app.logger.info(f"Fetched rows for Job ID {job_id}: {rows}")
+        # Debug logging for rows
+        current_app.logger.debug(f"Fetched rows for Job ID {job_id}: {rows}")
 
         if rows:
             column_names = [desc[0] for desc in cursor.description]

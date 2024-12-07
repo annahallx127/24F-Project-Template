@@ -30,8 +30,6 @@ if st.button("Fetch Job Listings", key="fetch_job_listings"):
                 st.error("No applications found for this student.")
         else:
             st.warning(f"Failed to fetch applications.")
-           
-          
     
 # ------------------------------------------------------------
 st.title("Add a New Job Listing")
