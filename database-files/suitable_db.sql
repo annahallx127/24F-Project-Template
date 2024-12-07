@@ -314,7 +314,7 @@ VALUES
 
 INSERT INTO AlertSystem (AlertID, AdminInCharge, ActivityType, GeneratedBy, Description, Severity, TimeStamp, Status)
 VALUES
-(1, 2, 'Glitch', 4, 'User has experienced a glitch when logging into their account', 2, '2024-12-10 10:00:00', 'Resolved');
+(1, 2, 'Glitch', 4, 'User has experienced a glitch when logging into their account', 2, '2024-12-10 10:00:00', 'Resolved'),
 (2, 1, 'Lag', 4, 'User experienced a lag when changing pages', 1, '2024-10-12 12:22:22', 'Resolved');
 
 INSERT INTO JobListingManagement (AdminInCharge, JobID, UpdateID)
