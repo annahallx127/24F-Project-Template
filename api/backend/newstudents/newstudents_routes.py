@@ -261,35 +261,60 @@ def withdraw_application(id):
 
 #------------------------------------------------------------
 # Schedule a coffee chat by creating an appointment between a mentor and mentee
+# Schedule a coffee chat by creating an appointment between a mentor and mentee
 @new_students.route('/coffee-chat', methods=['POST'])
 def schedule_coffee_chat():
-    current_app.logger.info(f"POST /coffee-chat route")
-    
-    # Step 1: Get data from the incoming request
-    data = request.get_json()
+    current_app.logger.info("POST /coffee-chat route")
 
-    # Get fields from the request
-    mentee_id = data.get('MenteeID')  # This is the student who is booking the appointment
-    availability_id = data.get('AvailabilityID')
-    meeting_subject = data.get('MeetingSubject')
-    duration = data.get('Duration')
+    try:
+        # Step 1: Parse the incoming request
+        data = request.get_json()
+        current_app.logger.info(f"Received payload: {data}")
 
-    # Step 2: Validate input data
-    if not mentee_id or not availability_id or not meeting_subject or not duration:
-        return jsonify({"message": "Missing required fields"}), 400
+        # Get fields from the request
+        mentee_id = data.get('MenteeID')
+        availability_id = data.get('AvailabilityID')
+        meeting_subject = data.get('MeetingSubject')
+        duration = data.get('Duration')
 
-    # Step 3: Fetch availability info from the database using availability_id
-    cursor = db.get_db().cursor()
-    cursor.execute("""
-        SELECT StudentID, StartDate FROM Availabilities WHERE AvailabilityID = %s
-    """, (availability_id,))
-    availability_info = cursor.fetchone()
+        # Step 2: Validate input data
+        if not all([mentee_id, availability_id, meeting_subject, duration]):
+            return jsonify({"message": "Missing required fields"}), 400
 
-    # Return the student data as a JSON response
-    the_response = make_response(jsonify(availability_info))
-    the_response.status_code = 200
-    return the_response
-  
+        # Validate that duration is a positive integer
+        try:
+            duration = int(duration)
+            if duration <= 0:
+                raise ValueError
+        except ValueError:
+            return jsonify({"message": "Duration must be a positive integer"}), 400
+
+        # Step 3: Fetch availability info from the database using availability_id
+        cursor = db.get_db().cursor()
+        cursor.execute("""
+            SELECT StudentID, StartDate FROM Availabilities WHERE AvailabilityID = %s
+        """, (availability_id,))
+        availability_info = cursor.fetchone()
+
+        if not availability_info:
+            return jsonify({"message": "Availability not found"}), 404
+
+        mentor_id = availability_info['StudentID']
+        start_date = availability_info['StartDate']
+
+        # Step 4: Schedule the coffee chat (insert into appointments table)
+        cursor.execute("""
+            INSERT INTO CoffeeChats (MenteeID, MentorID, AvailabilityID, MeetingSubject, Duration)
+            VALUES (%s, %s, %s, %s, %s)
+        """, (mentee_id, mentor_id, availability_id, meeting_subject, duration))
+        db.get_db().commit()
+
+        current_app.logger.info("Coffee chat scheduled successfully")
+        return jsonify({"message": "Coffee chat scheduled successfully"}), 201
+
+    except Exception as e:
+        current_app.logger.error(f"Error scheduling coffee chat: {str(e)}")
+        return jsonify({"message": "Failed to schedule coffee chat", "details": str(e)}), 500
 
 #------------------------------------------------------------
 # Get all resumes
