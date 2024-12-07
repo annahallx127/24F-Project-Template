@@ -62,6 +62,30 @@ if st.button("Update Student Information"):
     else:
         st.warning("Please provide a valid Student ID.")
 
+# Section: Get Student Details
+st.header("Get All Resumes")
+if st.button("Get Resumes", type='primary', use_container_width=True):
+    if st.session_state.get('authenticated') and st.session_state.get('first_name') == 'Peter':
+
+        # Call the Flask API to get student details
+        url = f"http://web-api:4000/ns/resumes"
+        try:
+            response = requests.get(url)
+            if response.status_code == 200:
+                data = response.json()  # This will be a list of resumes
+                if data:
+            # If the response contains data, for example, the first resume
+                    student_id = data[0].get("StudentID")  # Assuming you're interested in the first resume
+                    st.session_state['student_id'] = student_id
+                    st.dataframe(data)  # Display the full list of resumes
+                else:
+                    st.warning("No resumes found.")
+            else:
+                st.error(f"Error: {response.status_code} - {response.text}")
+        except Exception as e:
+            st.error(f"Failed to fetch student resumes: {str(e)}")
+
+
 # Section: Submit Resume
 st.header("Submit Resume")
 resume_name = st.text_input("Resume Name", key="resume_name")
@@ -94,3 +118,4 @@ if st.button("Submit Resume", key="submit_resume"):
             st.error(f"Failed to submit resume. Status Code: {response_resume.status_code}")
     else:
         st.warning("Please fill out all required fields to submit your resume.")
+        
