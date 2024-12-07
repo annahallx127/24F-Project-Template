@@ -222,7 +222,7 @@ VALUES
 (1, 'Peter', 'Parker', 'Arachnology', FALSE, 'CENI'),
 (2, 'Mary', 'Jane', 'Computer Science', TRUE, 'DPSI'),
 (3, 'Aunt', 'May', 'Computer Science & Biology', TRUE, 'DPEI'),
-(4, 'Gwen', 'Stacy', 'Physics', FALSE, 'APSI'),
+(4, 'Ned', 'Leeds', 'Physics', FALSE, 'APSI'),
 (5, 'Harry', 'Osborn', 'Business', TRUE, 'MCSI'),
 (6, 'Norman', 'Osborn', 'Chemistry', FALSE, 'IPCI'),
 (7, 'Flash', 'Thompson', 'Sports Science', TRUE, 'DPSI');
@@ -234,7 +234,7 @@ VALUES
 (1, 1), -- Peter Parker
 (3, 2), -- Aunt May
 (2, 3), -- Mary Jane
-(4, 4), -- Gwen Stacy
+(4, 4), -- Ned Leeds
 (5, 5), -- Harry Osborn
 (6, 6), -- Norman Osborn
 (7, 7); -- Flash Thompson
@@ -362,7 +362,7 @@ VALUES (1, 1, 'Glitch', 1, 'User has experienced a glitch when logging into thei
 
 
 INSERT INTO AlertSystem(AlertID, AdminInCharge, ActivityType, GeneratedByEmployer, Description, Severity, Timestamp,status)
-VALUES (2, 1, 'Lag', 1, 'User experienced lag when switching pages', 'Low', '2024-10-13', 'Pending');
+VALUES (2, 1, 'Lag', 1, 'User experienced lag when switching pages', 'Low', '2024-10-13 12:00:13', 'Pending');
 
 
 INSERT INTO JobListingManagement (AdminInCharge, JobID, UpdateID)
