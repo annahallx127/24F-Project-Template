@@ -33,27 +33,6 @@ def get_permissions():
 # Assign permissions to a new user type
 @admin.route('/permissions', methods=['POST'])
 def assign_permissions():
-<<<<<<< Updated upstream
-    try:
-        data = request.json
-        access_level = data['access_level']
-        description = data['description']
-        user_type = data['user_type']
-        if user_type == 'Student':
-            query = 'INSERT INTO StudentPermissions (StudentID, AccessLevel, AccessDescription) VALUES (%s, %s, %s)'
-        elif user_type == 'Employer':
-            query = 'INSERT INTO EmployerPermissions (EmployerID, AccessLevel, AccessDescription) VALUES (%s, %s, %s)'
-        elif user_type == 'Admin':
-            query = 'INSERT INTO AdminPermissions (AdminID, AccessLevel, AccessDescription) VALUES (%s, %s, %s)'
-        else:
-            return make_response({"error": "Invalid user_type"}, 400)
-        cursor = db.get_db().cursor()
-        cursor.execute(query, (data['user_id'], access_level, description))
-        db.get_db().commit()
-        return make_response({"message": "Permissions assigned successfully"}, 200)
-    except Exception as e:
-        return make_response({"error": str(e)}, 500)
-=======
     data = request.json
     access_level = data['access_level']
     description = data['description']
@@ -80,7 +59,6 @@ def assign_permissions():
     cursor.execute(query, (data['user_id'], access_level, description, admin_id))
     db.get_db().commit()
     return make_response("Permissions assigned successfully", 200)
->>>>>>> Stashed changes
 
 
 # Update permissions for existing users or roles
@@ -129,8 +107,6 @@ def revoke_permissions():
         return make_response({"error": str(e)}, 500)
 
 
-<<<<<<< Updated upstream
-=======
 # Retrieve current system status
 @admin.route('/system-update', methods=['GET'])
 def get_system_status():
@@ -332,4 +308,3 @@ def delete_user():
     cursor.execute(query, (user_id,))
     db.get_db().commit()
     return make_response("User deleted successfully", 200)
->>>>>>> Stashed changes
