@@ -233,16 +233,18 @@ VALUES
 INSERT INTO HiringManager (EmployerId,ApplicantID, FirstName, LastName, Position)
 VALUES
 (1, 2, 'Miles', 'Moralas','Hiring Manager'),
-(2, 1, 'Miles', 'Moralas','Hiring Manager');
+(2, 1, 'Ned', 'Leeds','Hiring Manager');
 
 
 INSERT INTO Company (CompanyID, EmployerID, Name, Industry)
 VALUES
-(21, 1, 'Milies Moralas','Software');
+(1, 1, 'Miles Moralas','Software'),
+(2, 2, 'Ned Leeds', 'Business')
 
 INSERT INTO JobListings (JobListingID,CompanyID,JobDescription, JobPositionTitle, JobIsActive)
 VALUES
-(1,21,'Looking for a software engineer with REQUIRED experience in kotlin,java,sql,html,C++,C,Racket,Assembly,javascript, R, ruby, rust, perl, babbage. Must know all languages fluently to apply. $15 an hour ', 'SWE Role (HIGH PAYING)', true);
+(1, 1,'Looking for a software engineer with REQUIRED experience in kotlin,java,sql,html,C++,C,Racket,Assembly,javascript, R, ruby, rust, perl, babbage. Must know all languages fluently to apply. $15 an hour ', 'SWE Role (HIGH PAYING)', TRUE);
+(2, 2, 'Looking for a talented business minded individual with experience in creating automated workflows using business acumen', 'Business Automation Analyst', FALSE)
 
 -- Insert into Application table
 INSERT INTO Application (ApplicationID, StudentID, AppliedDate, Status, JobID)
