@@ -186,6 +186,30 @@ def delete_old_logs():
 # /job-listings routes
 
 #------------------------------------------------------------
+
+#Get All Active Jobs
+@admin.route('/job-listings/active', methods=['GET'])
+def get_active_job_listings():
+    current_app.logger.info('GET /job-listings/active route')
+
+    cursor = db.get_db().cursor()
+    cursor.execute("""
+        SELECT JobListingID
+        FROM JobListings
+        WHERE JobIsActive = True
+    """)
+
+    active_jobs = cursor.fetchall()
+
+    # Check if there are any expired job listings
+    if active_jobs:
+        the_response = make_response(jsonify(active_jobs))
+        the_response.status_code = 200
+        return the_response
+    else:
+        return jsonify({'message': 'No active job listings found'}), 404
+
+
 # Get all expired job listings
 @admin.route('/job-listings/expired', methods=['GET'])
 def get_expired_job_listings():

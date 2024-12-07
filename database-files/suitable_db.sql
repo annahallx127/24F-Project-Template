@@ -362,7 +362,7 @@ VALUES (1, 1, 'Glitch', 1, 'User has experienced a glitch when logging into thei
 
 
 INSERT INTO AlertSystem(AlertID, AdminInCharge, ActivityType, GeneratedByEmployer, Description, Severity, Timestamp,status)
-VALUES (2, 1, 'Lag', 1, 'User experienced lag when switching pages', 'Low', '2024-10-13', 'Pending');
+VALUES (2, 1, 'Lag', 1, 'User experienced lag when switching pages', 'Low', '2024-10-13 12:00:13', 'Pending');
 
 
 INSERT INTO JobListingManagement (AdminInCharge, JobID, UpdateID)

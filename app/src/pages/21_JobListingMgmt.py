@@ -8,22 +8,25 @@ SideBarLinks(show_home=True)
 
 st.title("Job Listings Management")
 
-st.header("All Job Listings")
-if st.button("Fetch Job Listings", key="fetch_job_listings"):
-    with st.spinner("Fetching job listings..."):
-        if st.session_state.get('authenticated') and st.session_state.get('first_name') == 'Peter':
+st.header("All Active Jobs")
+if st.button("Fetch Active Job Listings"):
+    response = requests.get("http://web-api:4000/a/job-listings/active")
+    if response.status_code == 200:
+        expired_jobs = response.json()
+        if expired_jobs:
+            st.subheader("Active Job Listings")
             
-            url = f"http://web-api:4000/a/job-listings"
-
-            try:
-                response = requests.get(url).json()
-                st.dataframe(response)
-            except Exception as e:
-                st.error("No applications found for this student.")
+            # Convert the fetched data into a pandas DataFrame
+            df = pd.DataFrame(expired_jobs)
+            
+            # Display the data as an interactive table
+            st.dataframe(df)
         else:
-            st.warning(f"Failed to fetch applications.")
-            
+            st.info("No active job listings found.")
+    else:
+        st.error(f"Failed to fetch expired job listings: {response.status_code}")
 
+            
 # Section: Retrieve Job Listing Details
 st.header("Find Job Listing Details")
 job_id_get = st.text_input("Enter Job Listing ID", key="get_job_id")
