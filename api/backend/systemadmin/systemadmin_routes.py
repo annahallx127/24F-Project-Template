@@ -232,40 +232,6 @@ def get_job_details(id):
     data = cursor.fetchall()
     return make_response(jsonify(data), 200)
 
-# Create a new job listing
-@admin.route('/job-listings', methods=['POST'])
-def create_job_listing():
-    data = request.json
-    job_title = data['job_title']
-    job_description = data['job_description']
-    company_id = data['company_id']
-    is_active = data['is_active']
-    query = '''
-        INSERT INTO JobListing (JobPositionTitle, JobDescription, CompanyID, JobIsActive)
-        VALUES (%s, %s, %s, %s)
-    '''
-    cursor = db.get_db().cursor()
-    cursor.execute(query, (job_title, job_description, company_id, is_active))
-    db.get_db().commit()
-    return make_response("Job listing created successfully", 201)
-
-# Update a job listing
-@admin.route('/job-listings/<id>', methods=['PUT'])
-def update_job_listing(id):
-    data = request.json
-    job_title = data.get('job_title')
-    job_description = data.get('job_description')
-    is_active = data.get('is_active')
-    query = '''
-        UPDATE JobListing 
-        SET JobPositionTitle = %s, JobDescription = %s, JobIsActive = %s
-        WHERE JobListingID = %s
-    '''
-    cursor = db.get_db().cursor()
-    cursor.execute(query, (job_title, job_description, is_active, id))
-    db.get_db().commit()
-    return make_response("Job listing updated successfully", 200)
-
 # Delete a job listing
 @admin.route('/job-listings/<id>', methods=['DELETE'])
 def delete_job_listing(id):
