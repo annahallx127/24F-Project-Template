@@ -95,12 +95,6 @@ def UpdateJobListingsNav():
     )
 
 
-def ManageUserPermissionsNav():
-    st.sidebar.page_link(
-        "pages/24_PermissionMgmt.py", label="Manage User Permissions", icon="🤖"
-    )
-
-
 def ManageSystemUpdatesNav():
     st.sidebar.page_link("pages/23_SystemUpdateMgmt.py", label="Manage System Updates", icon="🔎")
 
