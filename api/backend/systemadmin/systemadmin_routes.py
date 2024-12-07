@@ -30,7 +30,6 @@ def get_permissions():
         return make_response({"error": str(e)}, 500)
 
 # Assign permissions to a new user type
-# Assign permissions to a new user type
 @admin.route('/permissions', methods=['POST'])
 def assign_permissions():
     data = request.json

@@ -8,8 +8,8 @@ SideBarLinks(show_home=True)
 st.title("System Update Management")
 
 # Section: Retrieve Current System Status
-st.header("Retrieve Current System Status")
-if st.button("Fetch System Status"):
+st.header("Retrieve Latest Update")
+if st.button("Fetch Update"):
     response = requests.get("http://web-api:4000/a/system-update")
     if response.status_code == 200:
         st.json(response.json())
@@ -37,7 +37,7 @@ if st.button("Submit Report"):
         st.warning("Please fill out all required fields.")
 
 # Section: Update Health Monitoring Configuration
-st.header("Update Health Monitoring Configuration")
+st.header("System Health Update")
 update_id = st.text_input("Update ID to Modify", key="update_update_id")
 new_description = st.text_area("New Description", key="update_new_description")
 if st.button("Update Configuration"):

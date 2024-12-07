@@ -16,7 +16,7 @@ if st.button("Fetch Permissions"):
         st.error("Failed to fetch permissions.")
 
 # Section: Assign Permissions
-st.header("Assign Permissions to a New User Type")
+st.header("Assign Permissions to a New User")
 user_id = st.text_input("User ID", key="assign_user_id")
 access_level = st.text_input("Access Level", key="assign_access_level")
 description = st.text_area("Description", key="assign_description")
