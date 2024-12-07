@@ -339,7 +339,7 @@ VALUES
 INSERT INTO StudentPermissions (StudentID, AccessLevel, AccessDescription)
 VALUES
 (1, 2, 'Can apply for Co-op'),
-(2, 4, 'Can apply for Co-op and submit Coffee Chat Availibility');
+(2, 4, 'Can apply for Co-op and submit Coffee Chat Availability');
 
 INSERT INTO EmployerPermissions (EmployerID, AccessLevel, AccessDescription)
 VALUES
@@ -348,6 +348,7 @@ VALUES
 INSERT INTO AdminPermissions (AdminID, AccessLevel, AccessDescription)
 VALUES
 (1, 5, 'High Level Access');
+
 
 
 INSERT INTO AlertSystem (AlertID, ActivityType, GeneratedByStudent AS GeneratedBy, Description, Severity, Timestamp, Status)

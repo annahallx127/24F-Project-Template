@@ -42,15 +42,6 @@ if st.button("Delete User"):
 
         st.title("Permissions Management")
 
-# Section: Retrieve Current Permissions
-st.header("Retrieve Current User Permissions and Roles")
-if st.button("Fetch Permissions"):
-    response = requests.get("http://web-api:4000/a/permissions")
-    if response.status_code == 200:
-        st.json(response.json())
-    else:
-        st.error("Failed to fetch permissions.")
-
 # Section: Update Permissions
 st.header("Update Permissions for Existing Users or Roles")
 update_user_id = st.text_input("User ID to Update", key="update_user_id")

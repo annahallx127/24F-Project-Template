@@ -9,28 +9,6 @@ admin = Blueprint('admin', __name__)
 #------------------------------------------------------------
 # /permissions routes
 
-# Retrieve current user permissions and roles
-@admin.route('/permissions', methods=['GET'])
-def get_permissions():
-    try:
-        query = '''
-            SELECT sp.StudentID AS UserID, sp.AccessLevel, sp.AccessDescription, 'Student' AS UserType
-            FROM StudentPermissions sp
-            UNION ALL
-            SELECT ep.EmployerID AS UserID, ep.AccessLevel, ep.AccessDescription, 'Employer' AS UserType
-            FROM EmployerPermissions ep
-            UNION ALL
-            SELECT ap.AdminID AS UserID, ap.AccessLevel, ap.AccessDescription, 'Admin' AS UserType
-            FROM AdminPermissions ap
-        '''
-        cursor = db.get_db().cursor()
-        cursor.execute(query)
-        data = cursor.fetchall()
-        return make_response(jsonify(data), 200)
-    except Exception as e:
-        return make_response({"error": str(e)}, 500)
-
-
 # Update permissions for existing users or roles
 @admin.route('/permissions', methods=['PUT'])
 def update_permissions():
