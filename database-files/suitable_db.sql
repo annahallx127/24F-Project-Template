@@ -189,19 +189,22 @@ CREATE TABLE IF NOT EXISTS `AdminPermissions` (
 );
 
 CREATE TABLE IF NOT EXISTS `AlertSystem` (
- `AlertID` integer PRIMARY KEY AUTO_INCREMENT,
-  `AdminInCharge` integer NOT NULL,
-  `ActivityType` varchar(100),
-  `GeneratedBy` integer NOT NULL,
-  `Description` text,
-  `Severity` varchar(100),
-  `Timestamp` datetime,
-  `Status` varchar(100),
-    FOREIGN KEY (AdminInCharge) REFERENCES SystemsAdministrator(AdminID) ON DELETE CASCADE,
-    FOREIGN KEY (GeneratedBy) REFERENCES Student(StudentID) ON DELETE CASCADE,
-    FOREIGN KEY (GeneratedBy) REFERENCES HiringManager(EmployerID) ON DELETE CASCADE,
-    FOREIGN KEY (GeneratedBy) REFERENCES SystemsAdministrator(AdminID) ON DELETE CASCADE
+    `AlertID` integer PRIMARY KEY AUTO_INCREMENT,
+    `AdminInCharge` integer NOT NULL,
+    `ActivityType` varchar(100),
+    `GeneratedByStudent` integer,
+    `GeneratedByEmployer` integer,
+    `GeneratedByAdmin` integer,
+    `Description` text,
+    `Severity` varchar(100),
+    `Timestamp` datetime,
+    `Status` varchar(100),
+    FOREIGN KEY (`AdminInCharge`) REFERENCES SystemsAdministrator(`AdminID`) ON DELETE CASCADE,
+    FOREIGN KEY (`GeneratedByStudent`) REFERENCES Student(`StudentID`) ON DELETE CASCADE,
+    FOREIGN KEY (`GeneratedByEmployer`) REFERENCES HiringManager(`EmployerID`) ON DELETE CASCADE,
+    FOREIGN KEY (`GeneratedByAdmin`) REFERENCES SystemsAdministrator(`AdminID`) ON DELETE CASCADE
 );
+
 
 CREATE TABLE IF NOT EXISTS `JobListingManagement` (
     `AdminInCharge` integer NOT NULL,
@@ -218,7 +221,7 @@ INSERT INTO Student (StudentID, FirstName, LastName, Major, isMentor, WCFI)
 VALUES
 (1, 'Peter', 'Parker', 'Arachnology', FALSE, 'CENI'),
 (2, 'Mary', 'Jane', 'Computer Science', TRUE, 'DPSI'),
-(3, 'Aunt', 'May', 'Computer Science & Biology', TRUE, 'DPEI'),;
+(3, 'Aunt', 'May', 'Computer Science & Biology', TRUE, 'DPEI'),
 (4, 'Gwen', 'Stacy', 'Physics', FALSE, 'APSI'),
 (5, 'Harry', 'Osborn', 'Business', TRUE, 'MCSI'),
 (6, 'Norman', 'Osborn', 'Chemistry', FALSE, 'IPCI'),
@@ -353,13 +356,17 @@ INSERT INTO AdminPermissions (AdminInCharge, AdminID, AccessLevel, AccessDescrip
 VALUES
 (1, 1, 5, 'High Level Access');
 
-INSERT INTO AlertSystem (AlertID, AdminInCharge, ActivityType, GeneratedBy, Description, Severity, TimeStamp, Status)
-VALUES
-(1, 1, 'Glitch', 1, 'User has experienced a glitch when logging into their account', 2, '2024-12-10 10:00:00', 'Resolved'),
-(2, 1, 'Lag', 1, 'User experienced a lag when changing pages', 1, '2024-10-12 12:22:22', 'Resolved');
+
+INSERT INTO AlertSystem (AlertID, AdminInCharge, ActivityType, GeneratedByStudent, Description, Severity, Timestamp, Status)
+VALUES (1, 1, 'Glitch', 1, 'User has experienced a glitch when logging into their account', 'High', '2024-12-10 10:00:00', 'Resolved');
+
+
+INSERT INTO AlertSystem(AlertID, AdminInCharge, ActivityType, GeneratedByEmployer, Description, Severity, Timestamp,status)
+VALUES (2, 1, 'Lag', 1, 'User experienced lag when switching pages', 'Low', '2024-10-13', 'Pending');
+
 
 INSERT INTO JobListingManagement (AdminInCharge, JobID, UpdateID)
 VALUES
 (1, 1, 1),
-(1, 1, 2);
+(1, 1, 7);
 

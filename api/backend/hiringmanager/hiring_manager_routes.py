@@ -235,24 +235,33 @@ def get_all_candidates_ranking():
     # SQL query to get all candidate rankings
     query = '''
         SELECT s.StudentID, s.FirstName, s.LastName, r.RankNum
-        FROM Rank r
+        FROM `Rank` r
         JOIN Student s ON r.ApplicantID = s.StudentID
         ORDER BY r.RankNum ASC
     '''
-    try:
-        cursor.execute(query)
-        rows = cursor.fetchall()
-        column_names = [desc[0] for desc in cursor.description]
+    # # try:
+    # cursor.execute(query)
+    # rows = cursor.fetchall()
+    # # column_names = [desc[0] for desc in cursor.description]
 
-        # Convert rows into a list of dictionaries
-        result = [dict(zip(column_names, row)) for row in rows]
+    # #     # If the student does not exist, return an error message
+    # # if not student:
+    # #     current_app.logger.error(f"Student Information not found.")
+    # #     return jsonify({'message': 'Student not found'}), 404
 
-        if result:
-            return make_response(jsonify(result), 200)
-        else:
-            return make_response(jsonify({"message": "No candidates found"}), 404)
-    except Exception as e:
-        return make_response(jsonify({"error": str(e)}), 500)
+    # # Return the student data as a JSON response
+    # the_response = make_response(jsonify(rows))
+    # the_response.status_code = 200
+    # return the_response
+    #     # Convert rows into a list of dictionaries
+    #     # result = [dict(zip(column_names, row)) for row in rows]
+
+    # #     if result:
+    # #         return make_response(jsonify(result), 200)
+    # #     else:
+    # #         return make_response(jsonify({"message": "No candidates found"}), 404)
+    # # except Exception as e:
+    # #     return make_response(jsonify({"error": str(e)}), 500)
 
 
 @hiring_manager.route('/job-listings', methods=['GET'])
