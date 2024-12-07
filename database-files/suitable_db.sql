@@ -318,3 +318,5 @@ INSERT INTO JobListingManagement (AdminInCharge, JobID, UpdateID)
 VALUES
 (1, 1, 1),
 (2, 1, 2);
+
+SELECT * FROM JobListings;
