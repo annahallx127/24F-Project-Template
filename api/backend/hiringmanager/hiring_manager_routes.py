@@ -216,61 +216,42 @@ def delete_job_listing(job_id):
 
 
 # Get the ranking of candidates for a specific job listing
-@hiring_manager.route('/job-listings/<int:job_id>/candidates-ranking', methods=['GET'])
-def get_candidates_ranking_for_job(job_id):
+@hiring_manager.route('/job-listings/<int:job_id>/candidates-wcfi', methods=['GET'])
+def get_candidates_wcfi(job_id):
+    """
+    Fetch WCFI values for students who applied for a specific job.
+    """
     cursor = db.get_db().cursor()
 
-    # SQL query to get candidate ranking for a specific job listing
     query = '''
-        SELECT s.StudentID, s.FirstName, s.LastName, r.RankNum, j.JobPositionTitle
-        FROM Rank r
-        JOIN Student s ON r.ApplicantID = s.StudentID
-        JOIN Application a ON a.StudentID = s.StudentID
+        SELECT 
+            s.FirstName, 
+            s.LastName, 
+            s.WCFI, 
+            a.Status
+        FROM Student s
+        JOIN Application a ON s.StudentID = a.StudentID
         JOIN JobListings j ON a.JobID = j.JobListingID
         WHERE j.JobListingID = %s
-        ORDER BY r.RankNum ASC
     '''
+
     try:
         cursor.execute(query, (job_id,))
         rows = cursor.fetchall()
-        column_names = [desc[0] for desc in cursor.description]
 
-        # Convert rows into a list of dictionaries
-        result = [dict(zip(column_names, row)) for row in rows]
+        # Log the query results for debugging
+        current_app.logger.info(f"Fetched rows for Job ID {job_id}: {rows}")
 
-        if result:
-            return make_response(jsonify(result), 200)
+        if rows:
+            column_names = [desc[0] for desc in cursor.description]
+            result = [dict(zip(column_names, row)) for row in rows]
+            return jsonify(result), 200
         else:
-            return make_response(jsonify({"message": f"No rankings found for job ID {job_id}"}), 404)
+            return jsonify({"message": f"No candidates found for Job ID {job_id}"}), 404
+
     except Exception as e:
-        return make_response(jsonify({"error": str(e)}), 500)
-    
-# Get the list of all candidates with their rankings
-@hiring_manager.route('/candidates-ranking', methods=['GET'])
-def get_all_candidates_ranking():
-    cursor = db.get_db().cursor()
-
-    # SQL query to get all candidate rankings
-    query = '''
-        SELECT s.StudentID, s.FirstName, s.LastName, r.RankNum
-        FROM Rank r
-        JOIN Student s ON r.ApplicantID = s.StudentID
-        ORDER BY r.RankNum ASC
-    '''
-    try:
-        cursor.execute(query)
-        rows = cursor.fetchall()
-        column_names = [desc[0] for desc in cursor.description]
-
-        # Convert rows into a list of dictionaries
-        result = [dict(zip(column_names, row)) for row in rows]
-
-        if result:
-            return make_response(jsonify(result), 200)
-        else:
-            return make_response(jsonify({"message": "No candidates found"}), 404)
-    except Exception as e:
-        return make_response(jsonify({"error": str(e)}), 500)
+        current_app.logger.error(f"Error fetching candidates for Job ID {job_id}: {e}")
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
 
 @hiring_manager.route('/job-listings', methods=['GET'])
