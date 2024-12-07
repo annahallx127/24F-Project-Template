@@ -233,24 +233,44 @@ VALUES
 INSERT INTO HiringManager (EmployerId,ApplicantID, FirstName, LastName, Position)
 VALUES
 (1, 2, 'Miles', 'Moralas','Hiring Manager'),
-(2, 1, 'Ned', 'Leeds','Hiring Manager');
+(2, 1, 'Ned', 'Leeds','Hiring Manager'),
+(3, 1, 'Tony', 'Stark', 'Senior Hiring Manager'),
+(4, 2, 'Harry', 'Osborn', 'HR Specialist'),
+(5, 2, 'Felicia', 'Hardy', 'Recruitment Lead');
 
 
 INSERT INTO Company (CompanyID, EmployerID, Name, Industry)
 VALUES
 (1, 1, 'Miles Moralas','Software'),
-(2, 2, 'Ned Leeds', 'Business')
+(2, 2, 'Ned Leeds', 'Business'),
+(3, 3, 'StacyTech', 'Technology'),
+(4, 4, 'Osborn Industries', 'Pharmaceuticals'),
+(5, 5, 'HardyCorp', 'Cybersecurity');
 
 INSERT INTO JobListings (JobListingID,CompanyID,JobDescription, JobPositionTitle, JobIsActive)
 VALUES
-(1, 1,'Looking for a software engineer with REQUIRED experience in kotlin,java,sql,html,C++,C,Racket,Assembly,javascript, R, ruby, rust, perl, babbage. Must know all languages fluently to apply. $15 an hour ', 'SWE Role (HIGH PAYING)', TRUE);
-(2, 2, 'Looking for a talented business minded individual with experience in creating automated workflows using business acumen', 'Business Automation Analyst', FALSE)
+(1, 1,'Looking for a software engineer with REQUIRED experience in kotlin,java,sql,html,C++,C,Racket,Assembly,javascript, R, ruby, rust, perl, babbage. Must know all languages fluently to apply. $15 an hour ', 'SWE Role (HIGH PAYING)', TRUE),
+(2, 2, 'Looking for a talented business minded individual with experience in creating automated workflows using business acumen', 'Business Automation Analyst', FALSE),
+(3, 3, 'Looking for a Frontend Developer proficient in React.js and TypeScript. Remote-friendly and offering competitive benefits.', 'Frontend Developer', TRUE),
+(4, 4, 'Hiring a Laboratory Technician with experience in chemical analysis and quality control. On-site only.', 'Laboratory Technician', TRUE),
+(5, 5, 'Seeking a Cybersecurity Analyst skilled in penetration testing and risk management.', 'Cybersecurity Analyst', TRUE),
+(6, 3, 'Hiring a Data Analyst proficient in Python, Excel, and data visualization tools. Entry-level position.', 'Data Analyst', TRUE),
+(7, 4, 'Looking for a Digital Marketing Manager experienced in SEO, SEM, and content strategy.', 'Digital Marketing Manager', FALSE),
+(8, 5, 'Opening for a Cloud Engineer with expertise in AWS, Docker, and Kubernetes. Must have a minimum of 3 years of experience.', 'Cloud Engineer', TRUE);
 
 -- Insert into Application table
 INSERT INTO Application (ApplicationID, StudentID, AppliedDate, Status, JobID)
 VALUES
 (1, 1, '2024-12-06', 'Pending', 1),
-(2, 2, '2024-12-02', 'Applied', 1);
+(2, 2, '2024-12-02', 'Applied', 2),
+(3, 1, '2024-11-28', 'Interview', 3),
+(4, 2, '2024-12-03', 'Pending', 4),
+(5, 1, '2024-11-30', 'Accepted', 5),
+(6, 2, '2024-12-05', 'Rejected', 6),
+(7, 1, '2024-12-01', 'Applied', 7),
+(8, 2, '2024-11-25', 'Interview', 8),
+(9, 1, '2024-12-02', 'Pending', 2),
+(10, 2, '2024-11-20', 'Rejected', 1);
 
 INSERT INTO CareerProjections (TimelineID,StudentID,EducationTimeline,CoopTimeline,FullTimeTimeline)
 VALUES
