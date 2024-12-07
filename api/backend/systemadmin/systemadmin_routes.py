@@ -222,7 +222,7 @@ def get_job_details(id):
         SELECT jl.JobListingID, jl.JobPositionTitle, jl.JobDescription, jl.JobIsActive, 
                c.Name AS CompanyName, c.Industry,
                hm.FirstName AS HiringManagerFirstName, hm.LastName AS HiringManagerLastName
-        FROM JobListing jl
+        FROM JobListings jl
         JOIN Company c ON jl.CompanyID = c.CompanyID
         JOIN HiringManager hm ON c.EmployerID = hm.EmployerID
         WHERE jl.JobListingID = %s
@@ -235,7 +235,7 @@ def get_job_details(id):
 # Delete a job listing
 @admin.route('/job-listings/<id>', methods=['DELETE'])
 def delete_job_listing(id):
-    query = 'DELETE FROM JobListing WHERE JobListingID = %s'
+    query = 'DELETE FROM JobListings WHERE JobListingID = %s'
     cursor = db.get_db().cursor()
     cursor.execute(query, (id,))
     db.get_db().commit()
