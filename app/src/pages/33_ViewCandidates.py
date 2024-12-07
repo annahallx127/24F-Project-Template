@@ -32,5 +32,3 @@ if st.button("Fetch Candidates' WCFI", key="fetch_wcfi"):
                 st.error(f"Error occurred while fetching WCFI and Status: {str(e)}")
     else:
         st.warning("Please enter a valid Job ID.")
-if wcfi_data:
-    st.write("Received data:", wcfi_data)

@@ -46,34 +46,38 @@ def get_candidates_by_job(job_id):
 @hiring_manager.route('/job-listings/<int:job_id>/candidates-wcfi', methods=['GET'])
 def get_candidates_wcfi(job_id):
     """
-    Fetch WCFI values, First Name, Last Name, and Status for students who applied for a specific job.
+    Fetch WCFI values for students who applied for a specific job, including application status.
     """
+    current_app.logger.info(f'GET /job-listings/{job_id}/candidates-wcfi route')
+
     cursor = db.get_db().cursor()
 
-    # Query to fetch FirstName, LastName, WCFI, and Status for candidates applied to the specified job ID
+    # SQL query to fetch candidate details with application status
     query = '''
         SELECT DISTINCT s.FirstName, s.LastName, s.WCFI, a.Status
         FROM Student s
         JOIN Application a ON s.StudentID = a.StudentID
-        WHERE a.JobID = %s
+        JOIN JobListings j ON a.JobID = j.JobListingID
+        WHERE j.JobListingID = %s
     '''
 
     try:
-        # Execute the query with the provided job_id
+        # Execute query
         cursor.execute(query, (job_id,))
-        rows = cursor.fetchall()
+        candidates = cursor.fetchall()
 
-        if rows:
-            # Include WCFI and Status in the response
-            column_names = [desc[0] for desc in cursor.description]
-            result = [dict(zip(column_names, row)) for row in rows]
-            return make_response(jsonify(result), 200)
-        else:
-            return make_response(jsonify({"message": f"No candidates found for Job ID {job_id}"}), 404)
+        if not candidates:
+            return jsonify({'message': f'No candidates found for Job ID {job_id}'}), 404
+
+        # Prepare response
+        column_names = [desc[0] for desc in cursor.description]
+        result = [dict(zip(column_names, row)) for row in candidates]
+
+        return jsonify(result), 200
 
     except Exception as e:
-        current_app.logger.error(f"Error fetching candidates' WCFI: {e}")
-        return make_response(jsonify({"error": f"An error occurred: {str(e)}"}), 500)
+        current_app.logger.error(f"Error fetching candidates' WCFI and Status: {e}")
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
 
 
