@@ -2,6 +2,8 @@
 
 This repo is for our team WASABI- Afra Ankita, Bella Chin, Isabel Yeow, Anna Hall we created a data drive web application Suitable. Our mission is to create a better NUWorks for students, hiring managers, and system adminstrators. 
 
+Presentation Link - https://drive.google.com/file/d/1ePj1C22bjS6yyx_hnBJqdza_bWvXdaGq/view?usp=sharing
+
 ## Prerequisites
 
 - A GitHub Account
