@@ -13,6 +13,6 @@ st.markdown (
 
    Suitable personalizes the job application process by addressing the challenges students, employers, and administrators face. For students, the platform offers tailored job recommendations, networking opportunities, and an application tracker. Employers benefit from automated resume ranking, collaborative hiring tools, and customized interview prompts. Administrators have advanced data security and user management features. Suitable transforms the job application process into a supportive, insightful, and secure experience, making career decisions more informed and accessible.
 
-    Stay tuned for more information and features to come!
+   With our application, we can gaurantee that as a job applicant, you'll be suited up in no time! So come along on the journey with us and stay tuned for more information and exciting features to come!
     """
         )
