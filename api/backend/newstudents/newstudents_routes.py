@@ -199,7 +199,7 @@ def get_student_applications():
     # Query to get all job details for a student
     cursor = db.get_db().cursor()
     cursor.execute("""
-        SELECT j.JobListingID, j.JobPositionTitle, j.JobDescription, a.Status, a.AppliedDate
+        SELECT a.ApplicationID, j.JobListingID, j.JobPositionTitle, j.JobDescription, a.Status, a.AppliedDate
         FROM Application a
         JOIN JobListings j ON a.JobID = j.JobListingID
         JOIN Student s ON a.StudentID = s.StudentID
@@ -222,30 +222,21 @@ def get_student_applications():
 
 #------------------------------------------------------------
 # Withdraw a job application for a specific student
-@new_students.route('/applications/{id}/withdraw', methods=['DELETE'])
+@new_students.route('/applications/<int:id>/withdraw', methods=['DELETE'])
 def withdraw_application(id):
-    current_app.logger.info('DELETE /applications/{id}/withdraw route')
+    current_app.logger.info(f'DELETE /applications/{id}/withdraw route')
 
-    # Step 1: Check if the application exists
+    # Step 1: Check if the application exists and delete it
     cursor = db.get_db().cursor()
-    query = "SELECT ApplicationID, StudentID, AppliedDate, Status, JobID FROM Application WHERE ApplicationID = %s"
+    query = "DELETE FROM Application WHERE ApplicationID = %s"
     cursor.execute(query, (id,))
-    application = cursor.fetchone()
 
-    if not application:
-        return jsonify({'message': 'Application not found'}), 404
-
-    # Step 2: Check if the application is already withdrawn
-    if application[1] == 'withdrawn':
-        return jsonify({'message': 'Application has already been withdrawn'}), 400
-
-    # Step 3: Update the application status to 'withdrawn'
-    update_query = "UPDATE Application SET Status = 'withdrawn' WHERE ApplicationID = %s"
-    cursor.execute(update_query, (id,))
     db.get_db().commit()
 
-    # Step 4: Return a success response
+    # Step 2: Return a success response
     return jsonify({'message': 'Application withdrawn successfully'}), 200
+
+
 
 #------------------------------------------------------------
 # Schedule a coffee chat by creating an appointment between a mentor and mentee

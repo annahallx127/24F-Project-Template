@@ -1,5 +1,16 @@
+import logging
+logger = logging.getLogger(__name__)
+import pandas as pd
 import streamlit as st
+from streamlit_extras.app_logo import add_logo
+import matplotlib.pyplot as plt
+import numpy as np
+import plotly.express as px
+from modules.nav import SideBarLinks
 import requests
+
+SideBarLinks(show_home=True)
+
 
 st.title("Application Management")
 
@@ -21,13 +32,19 @@ if st.button("Fetch Applications", type='primary', use_container_width=True):
 # Section: Withdraw Application
 st.header("Withdraw Application")
 application_id_withdraw = st.text_input("Enter Application ID to Withdraw", key="application_id_withdraw")
+
 if st.button("Withdraw Application"):
     if application_id_withdraw:
-        response = requests.delete(f"http://web-api:4000/applications/{application_id_withdraw}/withdraw")
+        url = f"http://web-api:4000/ns/applications/{application_id_withdraw}/withdraw"
+        response = requests.delete(url)  # Perform the DELETE request
+
+        # Check the response status code before calling .json()
         if response.status_code == 200:
+            response_data = response.json()  # Convert to dictionary if status is OK
             st.success("Application withdrawn successfully!")
         else:
             st.error("Failed to withdraw application.")
+            st.write(f"Error {response.status_code}: {response.text}")
     else:
         st.warning("Please enter an Application ID.")
 
@@ -42,7 +59,7 @@ if st.button("Update Application"):
             "status": status,
             "resume_id": update_resume_id
         }
-        update_response = requests.put(f"http://web-api:4000/applications/{application_id_update}", json=payload)
+        update_response = requests.put(f"http://web-api:4000/ns/applications/{application_id_update}", json=payload)
         if update_response.status_code == 200:
             st.success("Application updated successfully!")
         else:
