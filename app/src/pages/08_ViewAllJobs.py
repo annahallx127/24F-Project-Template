@@ -56,7 +56,7 @@ st.write("Pick an availability time to book an appointment with the student by i
 
  # Inputs
 availability_id = st.text_input("Availability ID", key="availability_id")
-
+duration = st.text_input("Duration", key="duration")
 # Button to book an appointment
 if st.button("Book an Appointment", key="book_appointment"):
     if availability_id:
@@ -67,11 +67,14 @@ if st.button("Book an Appointment", key="book_appointment"):
             response = requests.get(url)
             if response.status_code == 200:
                 availability_details = response.json()
-                st.write("Here are the details for the selected availability:")
+                st.write("Here are the details for the selected appointment:")
                 st.write(f"**Availability ID:** {availability_details['AvailabilityID']}")
-                st.write(f"**Start Date:** {availability_details['StartDate']}")
-                st.write(f"**End Date:** {availability_details['EndDate']}")
-                st.write(f"**Mentor Name:** {availability_details['MentorName']}")
+                st.write(f"**Start Time:** {availability_details['StartDate']}")
+                st.write(f"**End Time:** {availability_details['EndDate']}")
+                st.write(f"**Duration:** {duration}")
+                st.write(f"**Mentor First Name:** {availability_details['MentorFirstName']}")
+                st.write(f"**Mentor Name:** {availability_details['MentorLastName']}")
+
             else:
                 st.error(f"Failed to fetch availability details: {response.status_code}")
         except Exception as e:
