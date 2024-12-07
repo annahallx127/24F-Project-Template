@@ -163,30 +163,24 @@ CREATE TABLE IF NOT EXISTS `DataDeletion` (
 
 
 CREATE TABLE IF NOT EXISTS `StudentPermissions` (
-  `AdminInCharge` integer NOT NULL,
   `StudentID` integer NOT NULL,
   `AccessLevel` integer,
   `AccessDescription` text,
-        FOREIGN KEY (AdminInCharge) REFERENCES SystemsAdministrator(AdminID) ON UPDATE CASCADE ON DELETE RESTRICT,
     FOREIGN KEY (StudentID) REFERENCES Student(StudentID) ON DELETE CASCADE
 
 );
 
 CREATE TABLE IF NOT EXISTS `EmployerPermissions` (
-  `AdminInCharge` integer NOT NULL,
   `EmployerID` integer NOT NULL,
   `AccessLevel` integer,
   `AccessDescription` text,
-    FOREIGN KEY (AdminInCharge) REFERENCES SystemsAdministrator(AdminID) ON UPDATE CASCADE ON DELETE RESTRICT,
     FOREIGN KEY (EmployerID) REFERENCES HiringManager(EmployerID) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS `AdminPermissions` (
-  `AdminInCharge` integer NOT NULL,
   `AdminID` integer NOT NULL,
   `AccessLevel` integer,
   `AccessDescription` text,
-    FOREIGN KEY (AdminInCharge) REFERENCES SystemsAdministrator(AdminID) ON UPDATE CASCADE ON DELETE RESTRICT,
     FOREIGN KEY (AdminID) REFERENCES SystemsAdministrator(AdminID) ON DELETE CASCADE
 );
 
@@ -342,18 +336,18 @@ VALUES
 (1, 1, '2024-08-15', 500),
 (2, 2, '2024-02-29', 127);
 
-INSERT INTO StudentPermissions (AdminInCharge, StudentID, AccessLevel, AccessDescription)
+INSERT INTO StudentPermissions (StudentID, AccessLevel, AccessDescription)
 VALUES
-(1, 1, 2, 'Can apply for Co-op'),
-(1, 2, 4, 'Can apply for Co-op and submit Coffee Chat Availibility');
+(1, 2, 'Can apply for Co-op'),
+(2, 4, 'Can apply for Co-op and submit Coffee Chat Availibility');
 
-INSERT INTO EmployerPermissions (AdminInCharge, EmployerID, AccessLevel, AccessDescription)
+INSERT INTO EmployerPermissions (EmployerID, AccessLevel, AccessDescription)
 VALUES
-(1, 1, 5, 'Can Post new job openings');
+(1, 5, 'Can Post new job openings');
 
-INSERT INTO AdminPermissions (AdminInCharge, AdminID, AccessLevel, AccessDescription)
+INSERT INTO AdminPermissions (AdminID, AccessLevel, AccessDescription)
 VALUES
-(1, 1, 5, 'High Level Access');
+(1, 5, 'High Level Access');
 
 
 INSERT INTO AlertSystem (AlertID, ActivityType, GeneratedByStudent AS GeneratedBy, Description, Severity, Timestamp, Status)

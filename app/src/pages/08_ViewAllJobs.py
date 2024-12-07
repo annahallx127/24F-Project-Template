@@ -52,33 +52,54 @@ if st.button("Getting Available Coffee Chats", key="fetch_coffee_chat"):
             st.error(f"Failed to fetch availabilities: {response.status_code}")
             logger.error(f"Error fetching availabilities: {response.status_code}")
 
+st.write("Pick an availability time to book an appointment with the student by inputting an availability ID, the meeting subject, and the duration in minutes below.")
 
-st.write("Pick an availability time to book an appointment with the student by inputting an availability id, the meeting subject, and the duration in minutes below.")
-
+# Inputs
 availability_id = st.text_input("Availability ID", key="availability_id")
 meeting_subject = st.text_input("Meeting Subject", key="meeting_subject")
-duration = st.text_input("Duration", key="duration")
-if st.button("Book an Appointment", key="book_appointment"):
-    student_id = st.session_state.get("student_id")
-    with st.spinner("Fetching job listings..."):
-        if st.session_state.get('authenticated') and st.session_state.get('first_name') == 'Peter' and availability_id and meeting_subject:
-            if availability_id:
-            # You can replace these values with the actual session or user-specific details
-                chat_info = {
-                "MenteeID": student_id,
-                "AvailabilityID": availability_id,
-                "Duration": duration,
-                "MeetingSubject": meeting_subject
-        }
-            url = f"http://web-api:4000/ns/coffee-chat"
+duration = st.text_input("Duration (in minutes)", key="duration")
 
-            try:
-                response = requests.post(url, json=chat_info)
-                st.dataframe(response)
-            except Exception as e:
-                st.error("Appointment cannot be made based on this availability time.")
-        else:
-            st.warning(f"Failed to book appointment.")
+# Button to book an appointment
+if st.button("Book an Appointment", key="book_appointment"):
+    if availability_id and meeting_subject and duration:
+        try:
+            # Validate duration is a number
+            duration = int(duration)
+        except ValueError:
+            st.error("Duration must be a valid number (in minutes).")
+            st.stop()
+
+        # Hardcoded or fetched student_id
+        student_id = st.session_state.get("student_id", 1)  # Default to 2 for now
+
+        # Construct payload
+        chat_info = {
+            "MenteeID": student_id,
+            "AvailabilityID": availability_id,
+            "Duration": duration,
+            "MeetingSubject": meeting_subject
+        }
+
+        st.dataframe(chat_info)
+
+        # API URL
+        url = "http://web-api:4000/ns/coffee-chat"
+
+        try:
+            # Send POST request
+            response = requests.post(url, json=chat_info)
+
+            # Check the response status
+            if response.status_code == 201:
+                st.success("Appointment successfully booked!")
+                st.write("Response:", response.json())
+            else:
+                st.error(f"Failed to book appointment: {response.status_code}")
+                st.write("Response:", response.text)
+        except requests.exceptions.RequestException as e:
+            st.error(f"Error while booking the appointment: {e}")
+    else:
+        st.warning("Please fill out all fields.")
 
 # Section: Apply for a Job
 st.header("Apply for a Job")
