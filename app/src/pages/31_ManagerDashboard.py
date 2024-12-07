@@ -29,4 +29,3 @@ if st.button("Manage Candidate", type="primary", use_container_width=True):
 # Button to view career projections
 if st.button("Candidate Ranks ", type="primary", use_container_width=True):
     st.switch_page("pages/34_Rank.py")  # Link to the career projections page
-

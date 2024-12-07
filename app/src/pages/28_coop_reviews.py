@@ -14,6 +14,7 @@ try:
     response = requests.get(url_completed_coops)
     if response.status_code == 200:
         completed_coops = response.json()
+        st.dataframe(completed_coops)
         if completed_coops:
             st.write("Here are your completed co-ops:")
             for coop in completed_coops:

@@ -155,39 +155,25 @@ def fetch_completed_coops():
 
     try:
         cursor = db.get_db().cursor()  # Ensure rows are returned as dictionaries
-
-        # Fetch completed co-ops for the given student
-        query = '''
-            SELECT
-                Coop.CoopID,
-                Coop.StudentID,
-                Coop.JobTitle,
-                Coop.StartDate,
-                Coop.EndDate,
-                Coop.CompanyName
-            FROM Coop
-            WHERE Coop.StudentID = 2;   
-        '''
-        cursor.execute(query)
-        coops = cursor.fetchall()  # Fetch all rows
+        cursor.execute('''
+        SELECT *
+        FROM Coop
+        WHERE StudentID= %s
+        ''', (2,))
     
-        if not coops:
-            return jsonify({'message': 'No completed co-ops found'}), 404
-
-        # Format results for JSON response
-        results = [
-            {
-                "CoopID": coop.get('CoopID'),
-                "JobTitle": coop.get('JobTitle'),
-                "StartDate": coop.get('StartDate').strftime('%Y-%m-%d') if coop.get('StartDate') else None,
-                "EndDate": coop.get('EndDate').strftime('%Y-%m-%d') if coop.get('EndDate') else None,
-                "CompanyName": coop.get('CompanyName'),
-            }
-            for coop in coops
-        ]
-
-        current_app.logger.info(f"Completed co-ops fetched successfully: {results}")
-        return jsonify(results), 200
+    # Fetch the student data
+        coops = cursor.fetchall()
+    
+        # # Fetch completed co-ops for the given student
+        # query = '''
+        #     SELECT *
+        #     FROM Coop
+        #     WHERE Coop.StudentID = 2   
+        # '''
+        # cursor.execute(query)
+        # coops = cursor.fetchall()  # Fetch all rows
+    
+        return jsonify(coops), 200
 
     except Exception as e:
         current_app.logger.error(f"Error fetching completed co-ops: {str(e)}")

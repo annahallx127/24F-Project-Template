@@ -254,3 +254,4 @@ def get_unique_rankings_with_students():
     except Exception as e:
         current_app.logger.error(f"Error fetching unique rankings with students: {e}")
         return jsonify({"error": f"Error fetching rankings: {str(e)}"}), 500
+
