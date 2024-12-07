@@ -1,3 +1,4 @@
+import pandas as pd
 import streamlit as st
 import requests
 
@@ -11,10 +12,16 @@ SideBarLinks(show_home=True)
 st.header("Retrieve Users")
 user_type_filter = st.selectbox("Filter by User Type", ["All", "Student", "Employer", "Admin"], key="user_type_filter")
 if st.button("Fetch Users"):
-    params = {"type": None if user_type_filter == "All" else user_type_filter}
+    # Define parameters for the API request
+    params = {"type": user_type_filter if user_type_filter != "All" else None}
     response = requests.get("http://web-api:4000/a/users", params=params)
+
     if response.status_code == 200:
-        st.json(response.json())
+        data = response.json()
+        if data:
+            st.dataframe(pd.DataFrame(data)) 
+        else:
+            st.info("No users found.")
     else:
         st.error("Failed to fetch users.")
 
@@ -43,28 +50,6 @@ if st.button("Fetch Permissions"):
         st.json(response.json())
     else:
         st.error("Failed to fetch permissions.")
-
-# Section: Assign Permissions
-st.header("Assign Permissions to a New User")
-user_id = st.text_input("User ID", key="assign_user_id")
-access_level = st.text_input("Access Level", key="assign_access_level")
-description = st.text_area("Description", key="assign_description")
-user_type = st.selectbox("User Type", ["Student", "Employer", "Admin"], key="assign_user_type")
-if st.button("Assign Permissions"):
-    if user_id and access_level and description:
-        payload = {
-            "user_id": user_id,
-            "access_level": access_level,
-            "description": description,
-            "user_type": user_type
-        }
-        response = requests.post("http://web-api:4000/a/permissions", json=payload)
-        if response.status_code == 200:
-            st.success("Permissions assigned successfully!")
-        else:
-            st.error("Failed to assign permissions.")
-    else:
-        st.warning("Please fill out all required fields.")
 
 # Section: Update Permissions
 st.header("Update Permissions for Existing Users or Roles")

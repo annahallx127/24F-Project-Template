@@ -29,48 +29,6 @@ def get_permissions():
     except Exception as e:
         return make_response({"error": str(e)}, 500)
 
-# Assign permissions to a new user type
-@admin.route('/permissions', methods=['POST'])
-def assign_permissions():
-    try:
-        data = request.json
-        user_id = data.get('user_id')  # Use `.get` to avoid KeyError if key is missing
-        access_level = data.get('access_level')
-        description = data.get('description')
-        user_type = data.get('user_type')
-
-        # Input validation
-        if not isinstance(user_id, int) or not isinstance(access_level, str) or not isinstance(description, str):
-            return make_response({"error": "Invalid input data. Ensure user_id is an integer, access_level and description are strings."}, 400)
-
-        # SQL queries with hardcoded Admin ID
-        if user_type == 'Student':
-            query = '''
-                INSERT INTO StudentPermissions (StudentID, AccessLevel, AccessDescription, AdminInCharge) 
-                VALUES (%s, %s, %s, 7)
-            '''
-        elif user_type == 'Employer':
-            query = '''
-                INSERT INTO EmployerPermissions (EmployerID, AccessLevel, AccessDescription, AdminInCharge) 
-                VALUES (%s, %s, %s, 7)
-            '''
-        elif user_type == 'Admin':
-            query = '''
-                INSERT INTO AdminPermissions (AdminID, AccessLevel, AccessDescription, AdminInCharge) 
-                VALUES (%s, %s, %s, 7)
-            '''
-
-        # Execute the query
-        cursor = db.get_db().cursor()
-        cursor.execute(query, (user_id, access_level, description))
-        db.get_db().commit()
-
-        return make_response("Permissions assigned successfully", 200)
-    except Exception as e:
-        current_app.logger.error(f"Error in assign_permissions: {str(e)}")
-        return make_response({"error": str(e)}, 500)
-
-
 
 # Update permissions for existing users or roles
 @admin.route('/permissions', methods=['PUT'])

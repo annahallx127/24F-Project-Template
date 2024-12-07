@@ -121,6 +121,33 @@ def post_availability():
         current_app.logger.error(f"Error posting availability: {str(e)}")
         return jsonify({'message': 'Failed to post availability', 'details': str(e)}), 500
 
+# delete availability for coffee chat
+@returning_student.route('/availabilities/<int:availability_id>', methods=['DELETE'])
+def delete_availability(availability_id):
+    current_app.logger.info(f"DELETE /availabilities/{availability_id} route")
+
+    try:
+        # Check if the availability exists
+        cursor = db.get_db().cursor()
+        cursor.execute('SELECT * FROM Availabilities WHERE AvailabilityID = %s', (availability_id,))
+        result = cursor.fetchone()
+
+        if not result:
+            current_app.logger.error(f"Availability with ID {availability_id} not found.")
+            return jsonify({'message': f'Availability with ID {availability_id} not found'}), 404
+
+        # Delete the availability
+        query = 'DELETE FROM Availabilities WHERE AvailabilityID = %s'
+        cursor.execute(query, (availability_id,))
+        db.get_db().commit()
+
+        current_app.logger.info(f"Availability with ID {availability_id} deleted successfully.")
+        return jsonify({'message': f'Availability with ID {availability_id} deleted successfully'}), 200
+
+    except Exception as e:
+        current_app.logger.error(f"Error deleting availability: {str(e)}")
+        return jsonify({'message': 'Failed to delete availability', 'details': str(e)}), 500
+
 
 # # Post availability so other students can schedule coffee chat
 # @returning_student.route('/availability', methods=['POST'])
