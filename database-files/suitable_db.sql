@@ -231,12 +231,12 @@ VALUES
 -- Hiring Manager Insert Statement--------------------------
 INSERT INTO HiringManager (EmployerId,ApplicantID, FirstName, LastName, Position)
 VALUES
-(1, 2, 5, 'Miles', 'Moralas','Hiring Manager');
+(1, 2, 5, 'Miles', 'Morales','Hiring Manager');
 
 ----Company Insert Statement---------------
 INSERT INTO Company (CompanyID, EmployerID, Name, Industry)
 VALUES
-(21, 1, 'Milies Moralas','Software');
+(21, 1, 'Miles Morales','Software');
 
 ------------JobListings Insert Statements------------
 INSERT INTO JobListings (JobListingID,CompanyID,JobDescription, JobPositionTitle, JobIsActive)
