@@ -34,6 +34,8 @@ CREATE TABLE IF NOT EXISTS `HiringManager` (
     FOREIGN KEY (ApplicantID) REFERENCES Student(StudentID) ON DELETE CASCADE
 );
 
+
+
 CREATE TABLE IF NOT EXISTS `Company` (
   `CompanyID` integer PRIMARY KEY AUTO_INCREMENT,
     `EmployerID` integer NOT NULL,
@@ -217,7 +219,22 @@ VALUES
 (1, 'Peter', 'Parker', 'Arachnology', FALSE, 'CENI'),
 (2, 'Mary', 'Jane', 'Computer Science', TRUE, 'DPSI'),
 (3, 'Aunt', 'May', 'Computer Science & Biology', TRUE, 'DPEI'),;
+(4, 'Gwen', 'Stacy', 'Physics', FALSE, 'APSI'),
+(5, 'Harry', 'Osborn', 'Business', TRUE, 'MCSI'),
+(6, 'Norman', 'Osborn', 'Chemistry', FALSE, 'IPCI'),
+(7, 'Flash', 'Thompson', 'Sports Science', TRUE, 'DPSI');
 
+
+-- Insert rankings into the Rank table
+INSERT INTO `Rank` (ApplicantID, RankNum)
+VALUES
+(1, 1), -- Peter Parker
+(3, 2), -- Aunt May
+(2, 3), -- Mary Jane
+(4, 4), -- Gwen Stacy
+(5, 5), -- Harry Osborn
+(6, 6), -- Norman Osborn
+(7, 7); -- Flash Thompson
 
 -- Insert into Availabilities table
 INSERT INTO Availabilities (AvailabilityID, StudentID, StartDate, EndDate)
@@ -251,7 +268,7 @@ VALUES
 (6, 1, 'Hiring a Mobile App Developer with experience in Kotlin and Swift to develop cross-platform applications for research and education.', 'Mobile App Developer', TRUE),
 (7, 1, 'Looking for an AI/ML Engineer with experience in deep learning frameworks (TensorFlow, PyTorch) and natural language processing.', 'AI/ML Engineer', FALSE),
 (8, 1, 'Opening for a Database Administrator with expertise in SQL, MongoDB, and cloud services like AWS RDS. Will manage large-scale data for computational biology.', 'Database Administrator', FALSE),
-(9, 1, 'Seeking an Arachnology Field Researcher to conduct field surveys on spider populations and document ecological data. Must have prior experience with taxonomy and habitat analysis.', 'Arachnology Field Researcher', TRUE),
+(9, 1, 'Seeking an Arachn ology Field Researcher to conduct field surveys on spider populations and document ecological data. Must have prior experience with taxonomy and habitat analysis.', 'Arachnology Field Researcher', TRUE),
 (10, 1, 'Hiring an Arachnology Laboratory Assistant to assist in studying arachnid venom and silk properties. Must be skilled in microscopy and chemical analysis.', 'Arachnology Laboratory Assistant', TRUE),
 (11, 1, 'Looking for a Wildlife Photographer specializing in arachnids to document rare species for a research database. Prior experience in macro photography is required.', 'Arachnid Wildlife Photographer', FALSE),
 (12, 1, 'Opening for an Arachnology Educator to create engaging content about arachnids for museums and educational platforms. Experience in public outreach is a plus.', 'Arachnology Educator', FALSE),

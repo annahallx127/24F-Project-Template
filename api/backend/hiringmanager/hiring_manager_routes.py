@@ -179,35 +179,54 @@ def delete_job_listing(job_id):
 
 
 # Get the ranking of candidates for a specific job listing
-@hiring_manager.route('/job-listings/<int:job_id>/candidates-ranking', methods=['GET'])
-def get_candidates_ranking_for_job(job_id):
+@hiring_manager.route('/job-listings/<int:job_id>/rank-candidates', methods=['GET', 'POST'])
+def rank_candidates(job_id):
+    """
+    Get and rank candidates who applied for a specific job.
+    """
     cursor = db.get_db().cursor()
 
-    # SQL query to get candidate ranking for a specific job listing
-    query = '''
-        SELECT s.StudentID, s.FirstName, s.LastName, r.RankNum, j.JobPositionTitle
-        FROM Rank r
-        JOIN Student s ON r.ApplicantID = s.StudentID
-        JOIN Application a ON a.StudentID = s.StudentID
-        JOIN JobListings j ON a.JobID = j.JobListingID
-        WHERE j.JobListingID = %s
-        ORDER BY r.RankNum ASC
-    '''
     try:
+        # Fetch all candidates for the job
+        query = '''
+            SELECT DISTINCT s.StudentID, s.FirstName, s.LastName, s.WCFI, a.Status
+            FROM Student s
+            JOIN Application a ON s.StudentID = a.StudentID
+            JOIN JobListings j ON a.JobID = j.JobListingID
+            WHERE j.JobListingID = %s
+        '''
         cursor.execute(query, (job_id,))
-        rows = cursor.fetchall()
+        candidates = cursor.fetchall()
+
+        if not candidates:
+            return jsonify({'message': f'No candidates found for Job ID {job_id}'}), 404
+
+        # If POST request, update the Rank table
+        if request.method == 'POST':
+            ranks = request.json.get('ranks', [])
+            if not ranks:
+                return jsonify({'message': 'No ranks provided'}), 400
+
+            # Update the Rank table
+            for rank in ranks:
+                cursor.execute('''
+                    INSERT INTO `Rank` (ApplicantID, RankNum)
+                    VALUES (%s, %s)
+                    ON DUPLICATE KEY UPDATE RankNum = %s
+                ''', (rank['ApplicantID'], rank['RankNum'], rank['RankNum']))
+
+            db.get_db().commit()
+            return jsonify({'message': 'Candidates ranked successfully!'}), 200
+
+        # Prepare response for GET request
         column_names = [desc[0] for desc in cursor.description]
+        result = [dict(zip(column_names, row)) for row in candidates]
+        return jsonify(result), 200
 
-        # Convert rows into a list of dictionaries
-        result = [dict(zip(column_names, row)) for row in rows]
-
-        if result:
-            return make_response(jsonify(result), 200)
-        else:
-            return make_response(jsonify({"message": f"No rankings found for job ID {job_id}"}), 404)
     except Exception as e:
-        return make_response(jsonify({"error": str(e)}), 500)
-    
+        current_app.logger.error(f"Error ranking candidates for Job ID {job_id}: {e}")
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+
 # Get the list of all candidates with their rankings
 @hiring_manager.route('/candidates-ranking', methods=['GET'])
 def get_all_candidates_ranking():
