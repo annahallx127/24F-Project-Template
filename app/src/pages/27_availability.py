@@ -53,6 +53,7 @@ update_availabilityID = st.text_input("AvailabilityID", key="update_availability
 StartDate = st.text_input("Start time in this format YYYY-MM-DD HH:MI:SS", key="updateStartTime")
 EndDate = st.text_input("End time in this format YYYY-MM-DD HH:MI:SS", key="updateEndTime")
 
+
 if st.button("Update Availability"):
     if update_availabilityID and StartDate and EndDate:
         if st.session_state.get('first_name') == 'Mary':
@@ -71,6 +72,48 @@ if st.button("Update Availability"):
                 st.error(f"Failed to update availability: {response.json()}")
         except requests.exceptions.RequestException as e:
             st.error(f"Error updating availability: {e}")
+    else:
+        st.warning("Please fill out all fields.")
+
+
+
+# Section: Post Availability
+st.header("Add New Availability")
+student_id = 2  
+StartDate = st.text_input("Start time (format: YYYY-MM-DD HH:MI:SS)", key="StartDate")
+EndDate = st.text_input("End time (format: YYYY-MM-DD HH:MI:SS)", key="EndDate")
+
+
+if st.button("Post Availability"):
+    if StartDate and EndDate:
+        # Validate the datetime format (YYYY-MM-DD HH:MI:SS)
+        try:
+            from datetime import datetime
+            datetime.strptime(StartDate, "%Y-%m-%d %H:%M:%S")
+            datetime.strptime(EndDate, "%Y-%m-%d %H:%M:%S")
+        except ValueError:
+            st.error("Invalid date-time format. Please use 'YYYY-MM-DD HH:MI:SS'.")
+            st.stop()
+
+        # Prepare the payload
+        payload = {
+            "StudentID": student_id,
+            "StartDate": StartDate,
+            "EndDate": EndDate
+        }
+        st.write("Payload to be sent:", payload)
+
+        # Send the POST request to the Flask API
+        url = "http://web-api:4000/rs/availabilities"
+        try:
+            response = requests.post(url, json=payload)  # Using POST request
+            if response.status_code == 201:
+                st.success("Availability posted successfully!")
+            else:
+                st.error(f"Failed to post availability: {response.status_code}")
+                st.error(f"Response: {response.text}")
+        except requests.exceptions.RequestException as e:
+            st.error(f"Error posting availability: {e}")
     else:
         st.warning("Please fill out all fields.")
 
