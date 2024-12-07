@@ -109,21 +109,19 @@ if student_id and resume_file and resume_name and work_experience and technical_
     }
 
     # Step 1: Submit the resume (when the user is ready)
-    if st.button("Submit Resume", key="submit_resume"):
-        response_resume = requests.post(f"http://web-api:4000/resume/{student_id}", files=files, data=payload)
-        if response_resume.status_code == 200:
-            st.success("Resume submitted successfully!")
-        else:
-            st.error("Failed to submit resume.")
+    response_resume = requests.post(f"http://web-api:4000/ns/resume/{student_id}", files=files, data=payload)
+    if response_resume.status_code == 200:
+        st.success("Resume submitted successfully!")
     else:
-        st.warning("Please fill out all required fields for the resume.")
+        st.error("Failed to submit resume.")
+   
 
 # Job Application Submission
 if st.button("Submit Application", key="submit_app"):
     # Check if the job application form is completed
     if job_id and status:
         application_payload = {"StudentID": student_id, "JobID": job_id, "Status": status}
-        response_application = requests.post("http://web-api:4000/applications", json=application_payload)
+        response_application = requests.post("http://web-api:4000/ns/applications", json=application_payload)
         if response_application.status_code == 201:
             st.success("Application submitted successfully!")
         else:
@@ -136,7 +134,7 @@ st.header("Delete Resume")
 delete_resume_name = st.text_input("Enter Resume Name", key="delete_resume_student_id")
 if st.button("Delete Resume"):
     if delete_resume_name:
-        response = requests.delete(f"http://web-api:4000/resume/{delete_resume_name}")
+        response = requests.delete(f"http://web-api:4000/ns/resume/{delete_resume_name}")
         if response.status_code == 200:
             st.success("Resume deleted successfully!")
         else:
