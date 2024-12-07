@@ -87,7 +87,7 @@ def CandidateRankingNav():
 
 #### ------------------------ System Admin Role ------------------------
 def AdminHomePageNav():
-    st.sidebar.page_link("pages/20_Admin_Home.py", label="System Admin", icon="🖥️")
+    st.sidebar.page_link("pages/20_SystemAdmin_Home.py", label="System Admin", icon="🖥️")
 
 def UpdateJobListingsNav():
     st.sidebar.page_link(
@@ -142,7 +142,7 @@ def SideBarLinks(show_home=False):
             ApplyForJobsNav()
 
         # If the user is an administrator, give them access to the administrator pages
-        if st.session_state["role"] == "administrator":
+        if st.session_state["role"] == "system_administrator":
             AdminHomePageNav()
             UpdateJobListingsNav()
             ManageUsersNav()
