@@ -300,7 +300,7 @@ VALUES
 (10, 2, '2024-12-05', 'Rejected', 6);  -- Mobile App Developer
 
 
-INSERT INTO CareerProjections (TimelineID,StudentID,EducationTimeline,CoopTimeline,FullTimeTimeline)
+INSERT INTO CareerProjections (TimelineID, StudentID, EducationTimeline, CoopTimeline, FullTimeTimeline)
 VALUES
 (1,2,'Plus one program - adding one year to your time at northeastern but graduating with a masters degree','Previous experience in SWE, Data Anlayst, roles','Reccomended full time in SWE role');
 
