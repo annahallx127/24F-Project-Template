@@ -126,14 +126,6 @@ def get_job_listing_details(JobListingID):
     if not job_listing:
         return jsonify({'message': 'Job listing not found'}), 404
 
-    # # Format the result into a dictionary for JSON response
-    # job_data = {
-    #     'JobID': job_listing[0],
-    #     'CompanyID': job_listing[1],
-    #     'Job Description': job_listing[3],
-    #     'JobPositionTitle': job_listing[4],
-    #     'JobIsActive': job_listing[5],
-    # }
 
     # If the student does not exist, return an error message
     if not job_listing:

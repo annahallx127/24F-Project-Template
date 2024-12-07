@@ -53,6 +53,7 @@ if st.button("Act as Peter Parker, a second year at Spider University",
     st.session_state['role'] = 'new_student'
     # we add the first name of the user (so it can be displayed on 
     # subsequent pages). 
+   
     st.session_state['first_name'] = 'Peter'
     # finally, we ask streamlit to switch to another page, in this case, the 
     # landing page for this particular user type

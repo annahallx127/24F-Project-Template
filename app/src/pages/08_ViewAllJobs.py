@@ -29,8 +29,6 @@ if st.button("Fetch Job Listings", key="fetch_job_listings"):
 
 
 st.header("Coffee Chat With A Student")
-st.write("Enter a job id you want to hear about from a student.")
-job_id = st.text_input("JobID", key="job_id")
 
 if st.button("Getting Available Coffee Chats", key="fetch_coffee_chat"):
     with st.spinner("Fetching coffee chats..."):
@@ -55,21 +53,32 @@ if st.button("Getting Available Coffee Chats", key="fetch_coffee_chat"):
             st.error(f"Failed to fetch availabilities: {response.status_code}")
             logger.error(f"Error fetching availabilities: {response.status_code}")
 
-st.write("Pick an availability time to book an appointment with the student.")
+st.write("Pick an availability time to book an appointment with the student by inputting an availability id below.")
 
-if st.button("Fetch Job Listings", key="fetch_job_listings"):
+availability_id = st.text_input("Availability ID", key="availability_id")
+if st.button("Book an Appointment", key="book_appointment"):
+    student_id = st.session_state.get("student_id")
     with st.spinner("Fetching job listings..."):
         if st.session_state.get('authenticated') and st.session_state.get('first_name') == 'Peter':
-            
-            url = f"http://web-api:4000/ns/job-listings"
+            if availability_id:
+            # You can replace these values with the actual session or user-specific details
+                chat_info = {
+                "MentorID": 1,  # Replace with actual MentorID from session or context
+                "MenteeID": 2,  # Replace with actual MenteeID from session or context
+                "AvailabilityID": availability_id,
+                "AppointmentDate": "2024-12-07T10:00:00",  # Dynamically set this value
+                "Duration": 30,  # Example duration, you can change as needed
+                "MeetingSubject": "Coffee Chat",  # Customizable subject
+        }
+            url = f"http://web-api:4000/ns/coffee-chat"
 
             try:
-                response = requests.get(url).json()
+                response = requests.post(url).json()
                 st.dataframe(response)
             except Exception as e:
-                st.error("No applications found for this student.")
+                st.error("Appointment cannot be made based on this availability time.")
         else:
-            st.warning(f"Failed to fetch applications.")
+            st.warning(f"Failed to book appointment.")
 
 # # Fetch all job listings from the API
 # response = requests.get("http://web-api:4000/ns/job-listings")
