@@ -224,38 +224,6 @@ def get_all_students():
         current_app.logger.error(f"Error fetching students: {e}")
         return jsonify({"error": str(e)}), 500
 
-# @hiring_manager.route('/students/rankings', methods=['GET'])
-# def get_students_with_rankings():
-#     """
-#     Fetch all students from the database along with their WCFI values and rankings from the Rank table.
-#     """
-#     cursor = db.get_db().cursor()
-
-#     query = '''
-#         SELECT 
-#             s.StudentID,
-#             CONCAT(s.FirstName, ' ', s.LastName) AS FullName,
-#             s.WCFI,
-#             r.RankNum AS Rank
-#         FROM Student s
-#         LEFT JOIN Rank r ON s.StudentID = r.ApplicantID
-#         ORDER BY r.RankNum ASC
-#     '''
-
-#     try:
-#         cursor.execute(query)
-#         rows = cursor.fetchall()
-
-#         column_names = [desc[0] for desc in cursor.description]
-#         result = [dict(zip(column_names, row)) for row in rows]
-
-#         if result:
-#             return jsonify(result), 200
-#         else:
-#             return jsonify({"message": "No students or rankings found"}), 404
-#     except Exception as e:
-#         current_app.logger.error(f"Error fetching student rankings: {e}")
-#         return jsonify({"error": str(e)}), 500
 
 @hiring_manager.route('/students/rankings', methods=['GET'])
 def get_students_with_rankings():
@@ -267,20 +235,19 @@ def get_students_with_rankings():
     query = '''
         SELECT 
             s.StudentID,
-            CONCAT(s.FirstName, ' ', s.LastName) AS FullName,
+            s.FirstName,
+            s.LastName,
             s.WCFI,
             COALESCE(r.RankNum, 'Unranked') AS Rank
         FROM Student s
         LEFT JOIN `Rank` r ON s.StudentID = r.ApplicantID
-        ORDER BY r.RankNum ASC;
+        ORDER BY r.RankNum ASC
     '''
 
     try:
         cursor.execute(query)
-        rows = cursor.fetchall()
-
-     
-        return jsonify(result), 200
+        students = cursor.fetchall()
+        return jsonify(students), 200
     except Exception as e:
         current_app.logger.error(f"Error fetching student rankings: {e}")
         return jsonify({"error": f"Error fetching rankings: {str(e)}"}), 500

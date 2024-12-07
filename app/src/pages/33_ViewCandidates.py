@@ -2,10 +2,11 @@ import streamlit as st
 import pandas as pd
 import requests
 import matplotlib.pyplot as plt
+from modules.nav import SideBarLinks  # Custom navigation component (if used)
 
 
-# Configure the Streamlit page
-st.set_page_config(page_title="All Students Overview", layout="wide")
+SideBarLinks()
+
 
 # Title of the page
 st.title("All Students Overview")

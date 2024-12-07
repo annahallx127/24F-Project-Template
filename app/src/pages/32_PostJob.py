@@ -2,12 +2,13 @@ import logging
 import pandas as pd
 import streamlit as st
 import requests
+from modules.nav import SideBarLinks  # Custom navigation component (if used)
+
+
+SideBarLinks()
 
 # Set up logging for debugging
 logger = logging.getLogger(__name__)
-
-# Configure the page layout
-st.set_page_config(layout="wide")
 
 # Title for the page
 st.title("Job Listing Management")
