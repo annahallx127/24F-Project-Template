@@ -277,6 +277,7 @@ def schedule_coffee_chat():
         availability_id = data.get('AvailabilityID')
         meeting_subject = data.get('MeetingSubject')
         duration = data.get('Duration')
+        start_date = data.get('StartDate')
 
         # Step 2: Validate input data
         if not all([mentee_id, availability_id, meeting_subject, duration]):
@@ -293,29 +294,32 @@ def schedule_coffee_chat():
         # Step 3: Fetch availability info from the database using availability_id
         cursor = db.get_db().cursor()
         cursor.execute("""
-            SELECT StudentID, StartDate FROM Availabilities WHERE AvailabilityID = %s
+            SELECT StudentID FROM Availabilities WHERE AvailabilityID = %s
         """, (availability_id,))
         availability_info = cursor.fetchone()
 
         if not availability_info:
             return jsonify({"message": "Availability not found"}), 404
 
-        mentor_id = availability_info['StudentID']
-        start_date = availability_info['StartDate']
+        # # Extract data from availability_info
+        mentor_id = availability_info[0]  # Assuming StudentID is the first column
+        # start_date = availability_info[1]  # Assuming StartDate is the second column
 
-        # Step 4: Schedule the coffee chat (insert into appointments table)
+        # Step 4: Schedule the coffee chat (insert into CoffeeChats table)
         cursor.execute("""
-            INSERT INTO CoffeeChats (MenteeID, MentorID, AvailabilityID, MeetingSubject, Duration)
-            VALUES (%s, %s, %s, %s, %s)
-        """, (mentee_id, mentor_id, availability_id, meeting_subject, duration))
+            INSERT INTO Appointment (MentorID, MenteeID, AvailabilityID, AppointmentDate, MeetingSubject, Duration)
+            VALUES (%s, %s, %s, %s, %s, %s)
+        """, (mentor_id, mentee_id, availability_id, start_date, meeting_subject, duration))
         db.get_db().commit()
 
+        # Respond with success
         current_app.logger.info("Coffee chat scheduled successfully")
-        return jsonify({"message": "Coffee chat scheduled successfully"}), 201
+        return jsonify({'message': 'Coffee Chat scheduled successfully'}), 201
 
     except Exception as e:
         current_app.logger.error(f"Error scheduling coffee chat: {str(e)}")
-        return jsonify({"message": "Failed to schedule coffee chat", "details": str(e)}), 500
+        return jsonify({"message": "Internal server error"}), 500
+
 
 #------------------------------------------------------------
 # Get all resumes

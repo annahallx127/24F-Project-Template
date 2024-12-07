@@ -56,6 +56,7 @@ st.write("Pick an availability time to book an appointment with the student by i
 
 # Inputs
 availability_id = st.text_input("Availability ID", key="availability_id")
+start_date = st.text_input("StartDate", key="start_date")
 meeting_subject = st.text_input("Meeting Subject", key="meeting_subject")
 duration = st.text_input("Duration (in minutes)", key="duration")
 
@@ -74,13 +75,14 @@ if st.button("Book an Appointment", key="book_appointment"):
 
         # Construct payload
         chat_info = {
+            "MentorID": 1,
             "MenteeID": student_id,
             "AvailabilityID": availability_id,
+            "StartDate": start_date,
             "Duration": duration,
             "MeetingSubject": meeting_subject
         }
 
-        st.dataframe(chat_info)
 
         # API URL
         url = "http://web-api:4000/ns/coffee-chat"
@@ -91,11 +93,10 @@ if st.button("Book an Appointment", key="book_appointment"):
 
             # Check the response status
             if response.status_code == 201:
+                st.dataframe(chat_info)
                 st.success("Appointment successfully booked!")
-                st.write("Response:", response.json())
             else:
                 st.error(f"Failed to book appointment: {response.status_code}")
-                st.write("Response:", response.text)
         except requests.exceptions.RequestException as e:
             st.error(f"Error while booking the appointment: {e}")
     else:
