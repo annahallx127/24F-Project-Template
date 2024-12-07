@@ -334,7 +334,6 @@ VALUES
 
 INSERT INTO AdminPermissions (AdminInCharge, AdminID, AccessLevel, AccessDescription)
 VALUES
-(1, 1, 5, 'High Level Access'),
 (1, 1, 5, 'High Level Access');
 
 INSERT INTO AlertSystem (AlertID, AdminInCharge, ActivityType, GeneratedBy, Description, Severity, TimeStamp, Status)

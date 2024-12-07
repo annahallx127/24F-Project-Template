@@ -21,13 +21,6 @@ if st.button('Manage All Users',
             type='primary',
             use_container_width=True):
   st.switch_page('pages/25_ManageUsers.py')
-  
-
-if st.button('Manage User Permissions',
-             type='primary',
-            use_container_width=True):
-  st.switch_page('pages/24_PermissionMgmt.py')
-
 
 if st.button('Manage System Updates',
              type='primary',

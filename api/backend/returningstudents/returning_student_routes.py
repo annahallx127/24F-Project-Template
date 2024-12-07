@@ -81,6 +81,47 @@ def update_availability(availability_id):
         current_app.logger.error(f"Error updating availability: {str(e)}")
         return jsonify({'message': 'Failed to update availability', 'details': str(e)}), 500
 
+# post availability for other students/mentees to view
+@returning_student.route('/availabilities', methods=['POST'])
+def post_availability():
+    current_app.logger.info("POST /availabilities route")
+
+    try:
+        # Parse the request body
+        availability_info = request.json
+        current_app.logger.info(f"Received payload: {availability_info}")
+
+        # Validate required fields
+        required_fields = ['StudentID', 'StartDate', 'EndDate']
+        for field in required_fields:
+            if field not in availability_info:
+                return jsonify({'message': f'Missing required field: {field}'}), 400
+
+        student_id = availability_info['StudentID']
+        StartDate = availability_info['StartDate']
+        EndDate = availability_info['EndDate']
+
+        # Validate that StudentID is 2 (or modify logic if necessary)
+        if student_id != 2:
+            return jsonify({'message': 'Unauthorized: Can only post availability for StudentID 2'}), 403
+
+        # Insert into the database
+        cursor = db.get_db().cursor()
+        query = '''
+            INSERT INTO Availabilities (StudentID, StartDate, EndDate)
+            VALUES (%s, %s, %s)
+        '''
+        cursor.execute(query, (student_id, StartDate, EndDate))
+        db.get_db().commit()
+
+        # Return a success message
+        return jsonify({'message': 'Availability posted successfully'}), 201
+
+    except Exception as e:
+        current_app.logger.error(f"Error posting availability: {str(e)}")
+        return jsonify({'message': 'Failed to post availability', 'details': str(e)}), 500
+
+
 # # Post availability so other students can schedule coffee chat
 # @returning_student.route('/availability', methods=['POST'])
 # def post_availability():
