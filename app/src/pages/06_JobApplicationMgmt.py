@@ -14,7 +14,7 @@ if st.button("Fetch Applications", type='primary', use_container_width=True):
         except Exception as e:
             st.error("No applications found for this student.")
     else:
-        st.warning(f"Failed to fetch applications. Status code: {response.status_code}")
+        st.warning(f"Failed to fetch applications.")
 
     
 

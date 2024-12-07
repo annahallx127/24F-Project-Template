@@ -25,6 +25,7 @@ def get_availabilities():
         WHERE StudentID = %s
     '''
 
+<<<<<<< HEAD
     try:
         # Execute the query with the hardcoded StudentID (e.g., Gwen Stacy's ID)
         cursor.execute(query, (2,))
@@ -34,6 +35,15 @@ def get_availabilities():
         # if not availabilities:
         #     current_app.logger.error("No availabilities found for the student.")
         #     return jsonify({'message': 'No availabilities found'}), 404
+=======
+        # Execute query for the hardcoded StudentID
+    cursor.execute(query, (2,))  # Replace `2` with Gwen Stacy's StudentID
+    availabilities = cursor.fetchall()
+
+        # If no availabilities found, return a 404 response
+    if not availabilities:
+        return jsonify({"error": "No availabilities found"}), 404
+>>>>>>> 55afb7e8030f2ec94dab2097943f4d802aa39b19
 
         # # Return the results directly (assuming cursor returns tuples)
         # # Convert datetime to string if necessary
@@ -56,6 +66,14 @@ def get_availabilities():
         current_app.logger.error(f"Error fetching availabilities: {e}")
         return jsonify({'error': 'Failed to fetch availabilities', 'details': str(e)}), 500
 
+<<<<<<< HEAD
+=======
+      # Return the student data as a JSON response
+    the_response = make_response(jsonify(availabilities))
+    the_response.status_code = 200
+    return the_response
+
+>>>>>>> 55afb7e8030f2ec94dab2097943f4d802aa39b19
 
 # # Post availability so other students can schedule coffee chat
 # @returning_student.route('/availability', methods=['POST'])

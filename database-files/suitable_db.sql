@@ -216,6 +216,7 @@ VALUES
 (1, 'Peter', 'Parker', 'Arachnology', FALSE, '1234'),
 (2, 'Mary', 'Jane', 'Computer Science', TRUE, '5678');
 
+-- Insert into Availabilities table
 INSERT INTO Availabilities (AvailabilityID, StudentID, StartDate, EndDate)
 VALUES
 (1, 2, '2024-12-10 10:00:00', '2024-12-10 12:00:00'),
@@ -224,189 +225,100 @@ VALUES
 -- Insert into Resume table
 INSERT INTO Resume (ResumeID, StudentID, ResumeName, WorkExperience, TechnicalSkills, SoftSkills)
 VALUES
-(1, 1, 'Alice Resume', 'Software Developer Intern at TechCorp', 'Java, SQL', 'Communication, Leadership'),
-(2, 2, 'Bob Resume', 'Junior Engineer at BuildCo', 'CAD Design, Prototyping', 'Problem-solving, Teamwork');
+(1, 1, 'Peter Resume', 'Entomology Intern at Central Park Zoo', 'PCR, Sanger sequencing, BLAST', 'Communication, Leadership'),
+(2, 2, 'Mary Resume', 'Software Developer Intern at Google', 'Java, C++', 'Problem-solving, Teamwork, Leadership');
 
---HIRING MANAGER NEW INSERT STATEMENTS ---------------------------------------
--- Insert into HiringManager table (One hiring manager for simplicity)
-INSERT INTO HiringManager (EmployerID, ApplicantID, FirstName, LastName, Position)
+-- Hiring Manager Insert Statement--------------------------
+INSERT INTO HiringManager (EmployerId,ApplicantID, FirstName, LastName, Position)
 VALUES
-(1, 1, 'Alex', 'Smith', 'Hiring Manager'); -- Alex is the hiring manager responsible for job postings and applicant tracking
+(1, 2, 5, 'Miles', 'Moralas','Hiring Manager');
 
--- Insert into Company table (A company associated with the hiring manager)
+----Company Insert Statement---------------
 INSERT INTO Company (CompanyID, EmployerID, Name, Industry)
 VALUES
-(1, 1, 'InnovativeTech', 'Technology');  -- InnovativeTech is the company where the hiring manager works
+(21, 1, 'Milies Moralas','Software');
 
--- Insert into JobListings table (Hiring manager posting job openings)
-INSERT INTO JobListings (JobListingID, CompanyID, JobDescription, JobPositionTitle, JobIsActive)
+------------JobListings Insert Statements------------
+INSERT INTO JobListings (JobListingID,CompanyID,JobDescription, JobPositionTitle, JobIsActive)
 VALUES
-(1, 1, 'Looking for a skilled software engineer to join our team and work on innovative projects.', 'Software Engineer', TRUE), -- Software Engineer position
-(2, 1,'Seeking a data analyst to help with data-driven decision making and business intelligence projects.', 'Data Analyst', TRUE); -- Data Analyst position
+(1,21,'Looking for a software engineer with REQUIRED experience in kotlin,java,sql,html,C++,C,Racket,Assembly,javascript, R, ruby, rust, perl, babbage. Must know all languages fluently to apply. $15 an hour ', 'SWE Role (HIGH PAYING)', true);
 
--- Insert into Application table (Applicants applying for job listings)
--- Assuming students have IDs 1 and 2 from previous data
+-- Insert into Application table
 INSERT INTO Application (ApplicationID, StudentID, AppliedDate, Status, JobID)
 VALUES
-(1, 1, '2024-12-01', 'Pending', 1),  -- Applicant 1 for Software Engineer
-(2, 2, '2024-12-02', 'Interview Scheduled', 2); -- Applicant 2 for Data Analyst
+(1, 1, '2024-12-06', 'Pending', 1),
+(2, 2, '2024-12-02', 'Applied', 1);
 
--- Insert into Rank table (Automated ranking based on applicant match with job descriptions)
--- Rank is calculated based on applicant match with job description (e.g., keyword matching, skills match)
+----CareerProjections Insert Statement------------
+INSERT INTO CareerProjections (TimelineID,StudentID,EducationTimeline,CoopTimeline,FullTimeTimeline)
+VALUES
+(1,2,'Plus one program - adding one year to your time at northeastern but graduating with a masters degree','Previous experience in SWE, Data Anlayst, roles','Reccomended full time in SWE role');
+
+-----------------Coop Insert Statement ---------------------------------
+INSERT INTO Coop(CoopID, StudentID, StartDate, EndDate, JobTitle, CompanyName, CoopReview, CoopRating)
+VALUES
+(1,1,2024-12-04,2025-06-18,'SWE at Apple','Apple Inc.','Very nice co-op I got a lot of free merch', 5);
+
+---------Rank Insert Statement ----------------
 INSERT INTO Rank (ApplicantID, RankNum)
-VALUES
-(1, 1),  -- Applicant 1 (Software Engineer) ranked 1 (high match)
-(2, 2);   -- Applicant 2 (Data Analyst) ranked 2 (moderate match)
+VALUES 
+(1,2);
+(2,1);
 
--- Insert into Resume table (Applicants' resumes)
-INSERT INTO Resume (StudentID, ResumeName, WorkExperience, TechnicalSkills, SoftSkills)
-VALUES
-(1, 'John Doe Resume', 'Software Developer Intern at TechCorp', 'Java, C++, SQL, Python', 'Problem-solving, Communication, Teamwork'),
-(2, 'Jane Smith Resume', 'Data Analyst Intern at DataCorp', 'Excel, PowerBI, SQL', 'Critical Thinking, Communication, Attention to Detail');
+--Appointment Insert Statement--
+INSERT INTO Appointment(AppointmentID, MentorID, MenteeID, AvailabilityID, AppointmentDate, Duration, MeetingSubject)
+VALUES 
+(1, 2, 1, 1, '2024-12-10 10:00:00', 2, 'Discuss Jobs')
 
--- Insert into CareerProjections table (Career projections for each applicant based on their future plans)
-INSERT INTO CareerProjections (StudentID, EducationTimeline, CoopTimeline, FullTimeTimeline)
-VALUES
-(1, '2024-2026: B.S. in Computer Science', 'Summer 2025: TechCorp Intern', '2026: Full-time at InnovativeTech'),
-(2, '2024-2026: B.S. in Data Science', 'Summer 2025: DataCorp Coop', '2026: Full-time at InnovativeTech');
 
--- Insert into Coop table (Co-op experiences that help the hiring manager assess applicants)
-INSERT INTO Coop (StudentID, StartDate, EndDate, JobTitle, CompanyName, CoopReview, CoopRating)
-VALUES
-(1, '2025-06-01', '2025-08-31', 'Software Intern', 'TechCorp', 'Great technical learning experience', 5),
-(2, '2025-06-01', '2025-08-31', 'Data Analyst Intern', 'DataCorp', 'Strong data analysis skills', 4);
-
--- Insert into MBTI_Assessments table (Work-based MBTI assessments incorporated into each applicant's profile)
--- Assuming MBTI assessment values are stored in a new table for this purpose
-CREATE TABLE IF NOT EXISTS MBTI_Assessments (
-  `AssessmentID` integer PRIMARY KEY AUTO_INCREMENT,
-  `StudentID` integer NOT NULL,
-  `MBTI_Type` varchar(4),
-  `AssessmentDate` date,
-  FOREIGN KEY (StudentID) REFERENCES Student(StudentID) ON DELETE CASCADE
-);
-
--- Insert mock MBTI assessment data for applicants
-INSERT INTO MBTI_Assessments (StudentID, MBTI_Type, AssessmentDate)
-VALUES
-(1, 'INTJ', '2024-11-30'), -- Applicant 1: INTJ personality (Strategic and analytical)
-(2, 'ENTP', '2024-12-01'); -- Applicant 2: ENTP personality (Innovative and communicative)
-
--- Insert into JobListingManagement table (Job status updates - Expired or Filled job listings)
--- Here we mark the Software Engineer job as filled and the Data Analyst job as expired
-INSERT INTO JobListingManagement (AdminInCharge, JobID, UpdateID)
-VALUES
-(1, 1, 1), -- Job listing for Software Engineer filled by hiring manager Alex Smith
-(1, 2, 2); -- Job listing for Data Analyst expired (no longer accepting applications)
-
--- Insert into SystemUpdate table (System updates related to job listings)
-INSERT INTO SystemUpdate (UpdateType, AdminID, UpdateDate, Description)
-VALUES
-('Job Listing Filled', 1, '2024-12-05', 'Software Engineer position filled by a candidate'),
-('Job Listing Expired', 1, '2024-12-05', 'Data Analyst position expired, no more applicants');
-
----NEW HIRING MANAGER INSERTS END----------------------------------------------------------------------------------------------------------------------
--- Insert into HiringManager table
-INSERT INTO HiringManager (ApplicantID,FirstName, LastName, Position)
-VALUES
-(1, 'John', 'Doe', 'Technical Lead'),
-(2, 'Jane', 'Roe', 'Engineering Manager');
-
--- Insert into Company table
-INSERT INTO Company (EmployerID, Name, Industry)
-VALUES
-(1, 'TechCorp', 'Technology'),
-(2, 'BuildCo', 'Engineering');
-
-INSERT INTO JobListings (JobListingID, JobDescription, JobPositionTitle, JobIsActive, CompanyID)
-VALUES
-(3, 'Software Engineer Intern', 'Software Intern', TRUE, 1),
-(4, 'Mechanical Engineer Intern', 'Mechanical Intern', TRUE, 2);
-
--- Insert into CareerProjections table
-INSERT INTO CareerProjections (StudentID, EducationTimeline, CoopTimeline, FullTimeTimeline)
-VALUES
-(1, '2024-2026: B.S. Computer Science', 'Summer 2025: TechCorp Intern', '2026: Full-time at TechCorp'),
-(2, '2024-2026: B.S. Mechanical Engineering', 'Summer 2025: BuildCo Coop', '2026: Full-time at BuildCo');
-
--- Insert into Coop table
-INSERT INTO Coop (StudentID, StartDate, EndDate, JobTitle, CompanyName, CoopReview, CoopRating)
-VALUES
-(1, '2025-06-01', '2025-08-31', 'Software Intern', 'TechCorp', 'Great learning experience', 5),
-(2, '2025-06-01', '2025-08-31', 'Mechanical Engineering Coop', 'BuildCo', 'Great team collaboration', 4);
-
--- Insert into Availabilities table
-INSERT INTO Availabilities (StudentID, StartDate, EndDate)
-VALUES
-(1, '2024-12-01 09:00:00', '2024-12-01 17:00:00'),
-(2, '2024-12-02 09:00:00', '2024-12-02 17:00:00');
-
--- Insert into Appointment table
-INSERT INTO Appointment (MentorID, MenteeID, AvailabilityID, AppointmentDate, Duration, MeetingSubject)
-VALUES
-(1, 2, 1, '2024-12-01 10:00:00', 60, 'Career Advice'),
-(2, 1, 2, '2024-12-02 14:00:00', 45, 'Engineering Insights');
-
--- Insert into Rank table
-INSERT INTO `Rank` (ApplicantID, RankNum)
-VALUES
-(1, 2),
-(2, 1);
-
--- Insert into SystemsAdministrator table
+-- System Administrator Insert Statements --
 INSERT INTO SystemsAdministrator (AdminID, FirstName, LastName)
 VALUES
 (1, 'Gwen', 'Stacy'),
 (2, 'Mary', 'Jane');
 
--- Insert into SystemUpdate table
-INSERT INTO SystemUpdate (UpdateType, AdminID, UpdateDate, Description)
-VALUES
-('Security Patch', 1, '2024-11-01', 'Applied a security patch for vulnerabilities'),
-('System Maintenance', 2, '2024-11-05', 'Scheduled system maintenance for optimization');
+INSERT INTO SystemUpdate (UpdateID, UpdateType, AdminID, UpdateDate)
+VALUES 
+(1, 'Delete Old Data', 1, '2024-10-13'),
+(2, 'System Update Version 12', 2, '2024-08-25');
 
--- Insert into DataArchive table
-INSERT INTO DataArchive (DataType, ArchiveDate, AdminID)
+INSERT INTO DataArchive (UpdateID, DataType, ArchiveDate, AdminID)
 VALUES
-('Resume Data', '2024-11-01', 1),
-('Job Listings', '2024-11-05', 2);
+(3, 'Old Users', '2024-04-26', 2),
+(4, 'EmployerIDs', '2024-09-09', 1);
 
--- Insert into DataBackup table
-INSERT INTO DataBackup (UpdateID, BackupDate, DataSize)
+INSERT INTO DataBackup (BackupID, UpdateID, BackupDate, DataSize)
+VALUES 
+(1, 5, '2023-04-06', 6400),
+(2, 6, '2024-09-04', 127000);
+
+INSERT INTO DataDeletion (DeletionID, UpdateID, DeletionDate, DataRemoved)
+VALUES 
+(1, 7, '2024-08-15', 500),
+(2, 8, '2024-02-29', 127);
+
+INSERT INTO StudentPermissions (AdminInCharge, StudentID, AccessLevel, AccessDescription),
+VALUES 
+(1, 1, 2, 'Can apply for Co-op'),
+(2, 2, 4, 'Can apply for Co-op and submit Coffee Chat Availibility');
+
+INSERT INTO EmployerPermissions (AdminInCharge, EmployerID, AccessLevel, AccessDescription),
 VALUES
-(1, '2024-11-02', 500),
-(2, '2024-11-06', 300);
+(1, 1, 5, 'Can Post new job openings'),
+(2, 2, 5, 'Can Post new job openings');
 
--- Insert into DataDeletion table
-INSERT INTO DataDeletion (UpdateID, DeletionDate, DataRemoved)
+INSERT INTO AdminPermisssions (AdminInCharge, AdminID, AccessLevel, AccessDescription)
 VALUES
-(1, '2024-11-03', 200),
-(2, '2024-11-07', 150);
+(1, 3, 5, 'High Level Access'),
+(2, 4, 5, 'High Level Access');
 
-
--- Insert into StudentPermissions table
-INSERT INTO StudentPermissions (AdminInCharge, StudentID, AccessLevel, AccessDescription)
+INSERT INTO AlertSystem (AlertID, AdminInCharge, ActivityType, GeneratedBy, Description, Severtiy, TimeStamp, Status)
 VALUES
-(1, 1, 1, 'Full Access to Dashboard'),
-(2, 2, 2, 'Limited Access to Job Listings');
+(1, 2, 'Glitch', 4, 'User has experienced a glitch when logging into their account', 2, '2024-12-10 10:00:00', 'Resolved')
+(2, 1, 'Lag', 4, 'User experienced a lag when changing pages', 1, '2024-10-12 12:22:22', 'Resolved')
 
--- Insert into EmployerPermissions table
-INSERT INTO EmployerPermissions (AdminInCharge, EmployerID, AccessLevel, AccessDescription)
+INSERT INTO JobListingManagement (AdminInCharge, JobID, UpdateID)
 VALUES
-(1, 1, 1, 'Full Access to Job Listings'),
-(2, 2, 2, 'Limited Access to Applicant Data');
-
--- Insert into AdminPermissions table
-INSERT INTO AdminPermissions (AdminInCharge, AdminID, AccessLevel, AccessDescription)
-VALUES
-(1, 1, 1, 'Super Admin Permissions'),
-(2, 2, 2, 'Data Manager Permissions');
-
-SELECT * FROM Availabilities WHERE StudentID = 2;
--- Insert expired job listings into the JobListings table
-INSERT INTO JobListings (JobListingID, JobDescription, JobPositionTitle, JobIsActive, CompanyID)
-VALUES
-(5, 'Expired Job 1 Description', 'Expired Position 1', FALSE, 1),
-(6, 'Expired Job 2 Description', 'Expired Position 2', FALSE, 2),
-(7, 'Expired Job 3 Description', 'Expired Position 3', FALSE, 1);
+(1, 1, 1),
+(2, 2, 2);
 

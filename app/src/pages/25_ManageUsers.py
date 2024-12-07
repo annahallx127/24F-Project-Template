@@ -12,7 +12,7 @@ st.header("Retrieve Users")
 user_type_filter = st.selectbox("Filter by User Type", ["All", "Student", "Employer", "Admin"], key="user_type_filter")
 if st.button("Fetch Users"):
     params = {"type": None if user_type_filter == "All" else user_type_filter}
-    response = requests.get("http://web-api:4000/users", params=params)
+    response = requests.get("http://web-api:4000/a/users", params=params)
     if response.status_code == 200:
         st.json(response.json())
     else:
@@ -25,7 +25,7 @@ delete_user_type = st.selectbox("User Type", ["Student", "Employer", "Admin"], k
 if st.button("Delete User"):
     if delete_user_id:
         params = {"id": delete_user_id, "user_type": delete_user_type}
-        response = requests.delete("http://web-api:4000/users", params=params)
+        response = requests.delete("http://web-api:4000/a/users", params=params)
         if response.status_code == 200:
             st.success("User deleted successfully!")
         else:
