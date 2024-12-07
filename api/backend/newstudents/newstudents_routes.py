@@ -139,6 +139,47 @@ def get_job_listing_details(JobListingID):
     the_response.status_code = 200
     return the_response
 
+# Change application details (e.g., rank candidates, update resume)
+@new_students.route('/applications/<application_id>', methods=['PUT'])
+def update_application(application_id):
+    current_app.logger.info(f'PUT /applications/{application_id} route')
+
+    # Get the data from the request body
+    application_info = request.json
+    status = application_info.get('status')
+
+    cursor = db.get_db().cursor()
+
+    # Step 1: Check if the application exists
+    cursor.execute("SELECT * FROM Application WHERE ApplicationID = %s", (application_id,))
+    application = cursor.fetchone()
+
+    if not application:
+        return jsonify({'message': 'Application not found'}), 404
+
+    # Step 2: Prepare the update query for application details
+    updates = []
+    values = []
+
+    
+    if status:
+        updates.append("Status = %s")
+        values.append(status)
+
+#
+    # Step 4: Execute the application update query
+    if updates:
+        query = f"UPDATE Application SET {', '.join(updates)} WHERE ApplicationID = %s"
+        values.append(application_id)  # Add ApplicationID as the last parameter for the WHERE clause
+
+        cursor.execute(query, tuple(values))
+        db.get_db().commit()
+
+        # Return success message
+        return jsonify({'message': 'Application updated successfully'}), 200
+    else:
+        return jsonify({'message': 'No fields to update provided'}), 400
+
 #------------------------------------------------------------
 # Apply for a job
 @new_students.route('/applications', methods=['POST'])
@@ -248,92 +289,29 @@ def schedule_coffee_chat():
     the_response = make_response(jsonify(availability_info))
     the_response.status_code = 200
     return the_response
-    # if not availability_info:
-    #     return jsonify({"message": "Availability not found"}), 404
-
-    # mentor_id = availability_info[0]  # This is the StudentID of the mentor
-    # start_date = availability_info[1]  # This is the start date of the availability
-
-    # # Step 4: Insert the appointment into the Appointments table
-    # cursor.execute("""
-    #     INSERT INTO Appointments (MentorID, MenteeID, AvailabilityID, AppointmentDate, Duration, MeetingSubject)
-    #     VALUES (%s, %s, %s, %s, %s, %s)
-    # """, (mentor_id, mentee_id, availability_id, start_date, duration, meeting_subject))
-
-    # # Commit the transaction
-    # db.get_db().commit()
-
-    # # Step 5: Return success response
-    # return jsonify({"message": "Appointment successfully scheduled"}), 201
-
-
-
+  
 
 #------------------------------------------------------------
-# Change application details (e.g., rank candidates, update resume)
-@new_students.route('/applications/<application_id>', methods=['PUT'])
-def update_application(application_id):
-    current_app.logger.info(f'PUT /applications/{application_id} route')
-
-    # Get the data from the request body
-    application_info = request.json
-    rank = application_info.get('rank')
-    status = application_info.get('status')
-    resume_id = application_info.get('resume_id')  # Optional, for updating the resume
-
+# Get all resumes
+@new_students.route('/resumes', methods=['GET'])
+def get_all_resumes():
+    current_app.logger.info(f'GET /job-listings route')
+    
     cursor = db.get_db().cursor()
+    query = "SELECT * FROM Resume r JOIN Student s ON s.StudentID = r.StudentID WHERE FirstName = %s"
+    cursor.execute(query, ('Peter',) )
+    resumes = cursor.fetchall()
 
-    # Step 1: Check if the application exists
-    cursor.execute("SELECT * FROM Application WHERE ApplicationID = %s", (application_id,))
-    application = cursor.fetchone()
+    if not resumes:
+        return jsonify({'message': 'No resumes available'}), 404
+    
+    # Return the student data as a JSON response
+    the_response = make_response(jsonify(resumes))
+    the_response.status_code = 200
+    return the_response
 
-    if not application:
-        return jsonify({'message': 'Application not found'}), 404
-
-    # Step 2: Prepare the update query for application details
-    updates = []
-    values = []
-
-    if rank is not None:
-        updates.append("Rank = %s")
-        values.append(rank)
-    if status:
-        updates.append("Status = %s")
-        values.append(status)
-
-    # Step 3: Prepare the update query for resume details if provided
-    if resume_id:
-        cursor.execute("SELECT * FROM Resume WHERE ResumeID = %s", (resume_id,))
-        resume = cursor.fetchone()
-
-        if not resume:
-            return jsonify({'message': 'Resume not found'}), 404
-        
-        # Check if the resume belongs to the same student
-        cursor.execute("SELECT StudentID FROM Application WHERE ApplicationID = %s", (application_id,))
-        student_id = cursor.fetchone()[0]
-
-        if student_id != resume['StudentID']:
-            return jsonify({'message': 'Resume does not belong to the student of this application'}), 403
-
-        updates.append("ResumeID = %s")
-        values.append(resume_id)
-
-    # Step 4: Execute the application update query
-    if updates:
-        query = f"UPDATE Application SET {', '.join(updates)} WHERE ApplicationID = %s"
-        values.append(application_id)  # Add ApplicationID as the last parameter for the WHERE clause
-
-        cursor.execute(query, tuple(values))
-        db.get_db().commit()
-
-        # Return success message
-        return jsonify({'message': 'Application updated successfully'}), 200
-    else:
-        return jsonify({'message': 'No fields to update provided'}), 400
-
-
-
+#------------------------------------------------------------
+# Post resumes
 @new_students.route('/resume', methods=['POST'])
 def submit_resume():
     current_app.logger.info(f'POST /resume route')
@@ -364,15 +342,18 @@ def submit_resume():
     #------------------------------------------------------------
 # Delete a student's resume
 @new_students.route('/resume/<resume_name>', methods=['DELETE'])
-def delete_resume(ResumeName):
-    current_app.logger.info(f'DELETE /resume/{ResumeName} route')
-    
+def delete_resume(resume_name):  # Change ResumeName to resume_name
+    current_app.logger.info(f'DELETE /resume/{resume_name} route')
+    if not resume_name:
+        return jsonify({'message': 'Invalid resume name.'}), 400
+    cursor = db.get_db().cursor()
 
     # Delete the resume record from the database
-    cursor.execute("DELETE FROM Resume WHERE ResumeName = %s", (ResumeName,))
+    cursor.execute("DELETE FROM Resume WHERE ResumeName = %s", (resume_name,))
     db.get_db().commit()
 
     return jsonify({'message': 'Resume deleted successfully'}), 200
+
 
 @new_students.route('/availabilities', methods=['GET'])
 def get_availabilities():

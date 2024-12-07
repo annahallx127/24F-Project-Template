@@ -20,13 +20,11 @@ if st.button("Fetch Update"):
 st.header("Submit System Report")
 update_type = st.text_input("Update Type", key="create_update_type")
 description = st.text_area("Description", key="create_description")
-admin_id = st.text_input("Admin ID", key="create_admin_id")
 if st.button("Submit Report"):
-    if update_type and description and admin_id:
+    if update_type and description:
         payload = {
             "update_type": update_type,
             "description": description,
-            "admin_id": admin_id
         }
         response = requests.post("http://web-api:4000/a/system-update", json=payload)
         if response.status_code == 200:

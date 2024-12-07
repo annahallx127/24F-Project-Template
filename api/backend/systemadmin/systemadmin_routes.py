@@ -81,9 +81,8 @@ def revoke_permissions():
 @admin.route('/system-update', methods=['GET'])
 def get_system_status():
     query = '''
-        SELECT su.UpdateID, su.UpdateType, su.UpdateDate, su.Description, sa.FirstName, sa.LastName
+        SELECT *
         FROM SystemUpdate su
-        JOIN SystemsAdministrator sa ON su.AdminID = sa.AdminID
     '''
     cursor = db.get_db().cursor()
     cursor.execute(query)
@@ -96,12 +95,14 @@ def submit_system_report():
     data = request.json
     update_type = data['update_type']
     description = data['description']
-    admin_id = data['admin_id']
+    # Hardcoding AdminID as 1
+    admin_id = 1  
     query = 'INSERT INTO SystemUpdate (UpdateType, AdminID, UpdateDate, Description) VALUES (%s, %s, NOW(), %s)'
     cursor = db.get_db().cursor()
     cursor.execute(query, (update_type, admin_id, description))
     db.get_db().commit()
     return make_response("System event submitted successfully", 200)
+
 
 # Update system health monitoring configurations or thresholds
 @admin.route('/system-update', methods=['PUT'])
@@ -155,7 +156,7 @@ def submit_alert():
     description = data['description']
     severity = data['severity']
     generated_by = data['generated_by']
-    query = 'INSERT INTO AlertSystem (ActivityType, Description, Severity, Timestamp, GeneratedBy) VALUES (%s, %s, %s, NOW(), %s)'
+    query = 'INSERT INTO AlertSystem (ActivityType, Description, Severity, Timestamp, GeneratedByStudent) VALUES (%s, %s, %s, NOW(), %s)'
     cursor = db.get_db().cursor()
     cursor.execute(query, (activity_type, description, severity, generated_by))
     db.get_db().commit()
@@ -262,25 +263,33 @@ def delete_job_listing(id):
 #Get users
 @admin.route('/users', methods=['GET'])
 def get_users():
-    user_type = request.args.get('type')  
-    if user_type == 'Student':
-        query = 'SELECT StudentID, FirstName, LastName, Major, isMentor, WCFI FROM Student'
-    elif user_type == 'Employer':
-        query = 'SELECT EmployerID, FirstName, LastName, Position FROM HiringManager'
-    elif user_type == 'Admin':
-        query = 'SELECT AdminID, FirstName, LastName FROM SystemsAdministrator'
-    else:
-        query = '''
-            SELECT 'Student' AS UserType, StudentID AS ID, FirstName, LastName FROM Student
-            UNION ALL
-            SELECT 'Employer', EmployerID, FirstName, LastName FROM HiringManager
-            UNION ALL
-            SELECT 'Admin', AdminID, FirstName, LastName FROM SystemsAdministrator
-        '''
-    cursor = db.get_db().cursor()
-    cursor.execute(query)
-    data = cursor.fetchall()
-    return make_response(jsonify(data), 200)
+    try:
+        user_type = request.args.get('type')
+        current_app.logger.info(f"Fetching users with type: {user_type}")
+        
+        if user_type == 'Student':
+            query = 'SELECT StudentID, FirstName, LastName, Major, isMentor, WCFI FROM Student'
+        elif user_type == 'Employer':
+            query = 'SELECT EmployerID, FirstName, LastName, Position FROM HiringManager'
+        elif user_type == 'Admin':
+            query = 'SELECT AdminID, FirstName, LastName FROM SystemsAdministrator'
+        else:
+            query = '''
+                SELECT 'Student' AS UserType, StudentID AS ID, FirstName, LastName FROM Student
+                UNION ALL
+                SELECT 'Employer', EmployerID, FirstName, LastName FROM HiringManager
+                UNION ALL
+                SELECT 'Admin', AdminID, FirstName, LastName FROM SystemsAdministrator
+            '''
+        cursor = db.get_db().cursor()
+        cursor.execute(query)
+        data = cursor.fetchall()
+        current_app.logger.info(f"Fetched users: {data}")
+        return make_response(jsonify(data), 200)
+    except Exception as e:
+        current_app.logger.error(f"Error fetching users: {str(e)}")
+        return make_response({"error": str(e)}, 500)
+
 
 # Delete a user account
 @admin.route('/users', methods=['DELETE'])

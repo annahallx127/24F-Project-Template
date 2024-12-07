@@ -130,7 +130,9 @@ CREATE TABLE IF NOT EXISTS `SystemUpdate` (
   `AdminID` integer NOT NULL,
   `UpdateDate` date,
   `Description` text,
-    FOREIGN KEY (AdminID) REFERENCES SystemsAdministrator(AdminID) ON DELETE CASCADE
+    FOREIGN KEY (AdminID) REFERENCES SystemsAdministrator(AdminID) 
+    ON UPDATE CASCADE
+    ON DELETE RESTRICT
 );
 
 CREATE TABLE IF NOT EXISTS `DataArchive` (
@@ -139,7 +141,7 @@ CREATE TABLE IF NOT EXISTS `DataArchive` (
   `ArchiveDate` date,
   `AdminID` integer NOT NULL,
     FOREIGN KEY (UpdateID) REFERENCES SystemUpdate(UpdateID) ON DELETE CASCADE,
-    FOREIGN KEY (AdminID) REFERENCES SystemsAdministrator(AdminID) ON DELETE CASCADE
+    FOREIGN KEY (AdminID) REFERENCES SystemsAdministrator(AdminID) ON UPDATE CASCADE ON DELETE RESTRICT
 );
 
 CREATE TABLE IF NOT EXISTS `DataBackup` (
@@ -165,7 +167,7 @@ CREATE TABLE IF NOT EXISTS `StudentPermissions` (
   `StudentID` integer NOT NULL,
   `AccessLevel` integer,
   `AccessDescription` text,
-        FOREIGN KEY (AdminInCharge) REFERENCES SystemsAdministrator(AdminID) ON DELETE CASCADE,
+        FOREIGN KEY (AdminInCharge) REFERENCES SystemsAdministrator(AdminID) ON UPDATE CASCADE ON DELETE RESTRICT,
     FOREIGN KEY (StudentID) REFERENCES Student(StudentID) ON DELETE CASCADE
 
 );
@@ -175,7 +177,7 @@ CREATE TABLE IF NOT EXISTS `EmployerPermissions` (
   `EmployerID` integer NOT NULL,
   `AccessLevel` integer,
   `AccessDescription` text,
-    FOREIGN KEY (AdminInCharge) REFERENCES SystemsAdministrator(AdminID) ON DELETE CASCADE,
+    FOREIGN KEY (AdminInCharge) REFERENCES SystemsAdministrator(AdminID) ON UPDATE CASCADE ON DELETE RESTRICT,
     FOREIGN KEY (EmployerID) REFERENCES HiringManager(EmployerID) ON DELETE CASCADE
 );
 
@@ -184,13 +186,12 @@ CREATE TABLE IF NOT EXISTS `AdminPermissions` (
   `AdminID` integer NOT NULL,
   `AccessLevel` integer,
   `AccessDescription` text,
-    FOREIGN KEY (AdminInCharge) REFERENCES SystemsAdministrator(AdminID) ON DELETE CASCADE,
+    FOREIGN KEY (AdminInCharge) REFERENCES SystemsAdministrator(AdminID) ON UPDATE CASCADE ON DELETE RESTRICT,
     FOREIGN KEY (AdminID) REFERENCES SystemsAdministrator(AdminID) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS `AlertSystem` (
     `AlertID` integer PRIMARY KEY AUTO_INCREMENT,
-    `AdminInCharge` integer NOT NULL,
     `ActivityType` varchar(100),
     `GeneratedByStudent` integer,
     `GeneratedByEmployer` integer,
@@ -199,10 +200,9 @@ CREATE TABLE IF NOT EXISTS `AlertSystem` (
     `Severity` varchar(100),
     `Timestamp` datetime,
     `Status` varchar(100),
-    FOREIGN KEY (`AdminInCharge`) REFERENCES SystemsAdministrator(`AdminID`) ON DELETE CASCADE,
     FOREIGN KEY (`GeneratedByStudent`) REFERENCES Student(`StudentID`) ON DELETE CASCADE,
     FOREIGN KEY (`GeneratedByEmployer`) REFERENCES HiringManager(`EmployerID`) ON DELETE CASCADE,
-    FOREIGN KEY (`GeneratedByAdmin`) REFERENCES SystemsAdministrator(`AdminID`) ON DELETE CASCADE
+    FOREIGN KEY (`GeneratedByAdmin`) REFERENCES SystemsAdministrator(`AdminID`) ON UPDATE CASCADE ON DELETE RESTRICT
 );
 
 
@@ -210,7 +210,7 @@ CREATE TABLE IF NOT EXISTS `JobListingManagement` (
     `AdminInCharge` integer NOT NULL,
     `JobID` integer NOT NULL,
     `UpdateID` integer,
-    FOREIGN KEY (AdminInCharge) REFERENCES SystemsAdministrator(AdminID) ON DELETE CASCADE ,
+    FOREIGN KEY (AdminInCharge) REFERENCES SystemsAdministrator(AdminID) ON UPDATE CASCADE ON DELETE RESTRICT ,
     FOREIGN KEY (JobID) REFERENCES JobListings(JobListingID) ON DELETE CASCADE,
     FOREIGN KEY (UpdateID) REFERENCES SystemUpdate(UpdateID) ON DELETE CASCADE
 );
@@ -323,10 +323,9 @@ INSERT INTO SystemsAdministrator (AdminID, FirstName, LastName)
 VALUES
 (1, 'Gwen', 'Stacy');
 
-INSERT INTO SystemUpdate (UpdateID, UpdateType, AdminID, UpdateDate)
+INSERT INTO SystemUpdate (UpdateID, UpdateType, AdminID, UpdateDate, Description)
 VALUES
-(1, 'Delete Old Data', 1, '2024-10-13'),
-(2, 'System Update Version 12', 1, '2024-08-25');
+(1, 'Delete Old Data', 1, '2024-10-13', 'Removed outdated data.'),
 
 INSERT INTO DataArchive (UpdateID, DataType, ArchiveDate, AdminID)
 VALUES
@@ -357,12 +356,12 @@ VALUES
 (1, 1, 5, 'High Level Access');
 
 
-INSERT INTO AlertSystem (AlertID, AdminInCharge, ActivityType, GeneratedByStudent, Description, Severity, Timestamp, Status)
-VALUES (1, 1, 'Glitch', 1, 'User has experienced a glitch when logging into their account', 'High', '2024-12-10 10:00:00', 'Resolved');
+INSERT INTO AlertSystem (AlertID, ActivityType, GeneratedByStudent AS GeneratedBy, Description, Severity, Timestamp, Status)
+VALUES (1, 'Glitch', 1, 'User has experienced a glitch when logging into their account', 'High', '2024-12-05 10:00:00', 'Resolved');
 
 
-INSERT INTO AlertSystem(AlertID, AdminInCharge, ActivityType, GeneratedByEmployer, Description, Severity, Timestamp,status)
-VALUES (2, 1, 'Lag', 1, 'User experienced lag when switching pages', 'Low', '2024-10-13 12:00:13', 'Pending');
+INSERT INTO AlertSystem(AlertID, ActivityType, GeneratedByEmployer AS GeneratedBy, Description, Severity, Timestamp, status)
+VALUES (2, 'Lag', 1, 'User experienced lag when switching pages', 'Low', '2024-10-13 12:00:13', 'Pending');
 
 
 INSERT INTO JobListingManagement (AdminInCharge, JobID, UpdateID)
