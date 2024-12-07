@@ -82,45 +82,54 @@ if st.button("Book an Appointment", key="book_appointment"):
 
 # Section: Apply for a Job
 st.header("Apply for a Job")
-job_id = st.text_input("Job ID", key="apply_job_id")
-status = st.selectbox("Status", ["Applied", "Interested", "Rejected"], key="apply_status")
-if st.button("Submit Application"):
-    student_id = st.session_state.get("student_id")
 
-    if student_id and job_id and status:
-        payload = {"StudentID": student_id, "JobID": job_id, "Status": status}
-        response = requests.post("http://web-api:4000/applications", json=payload)
-        if response.status_code == 201:
+# Job Application Form
+status = st.selectbox("Status", ["Applied", "Interested", "Rejected"], key="apply_status")
+job_id = st.text_input("Job ID", key="apply_job_id")
+
+# Section: Submit Resume
+resume_file = st.file_uploader("Upload Resume", type=["pdf", "docx", "txt", "rtf"], key="resume_file")
+resume_name = st.text_input("Resume Name", key="resume_name")
+work_experience = st.text_area("Enter Your Most Recent Work Experience", key="work_experience")
+technical_skills = st.text_area("Technical Skills", key="technical_skills")
+soft_skills = st.text_area("Soft Skills", key="soft_skills")
+
+# Ensure the student_id is retrieved from the session state
+student_id = st.session_state.get("student_id")
+
+# Always check if the resume and other required fields are provided
+if student_id and resume_file and resume_name and work_experience and technical_skills and soft_skills:
+    # Prepare the resume data to be sent in the request
+    files = {"resume": resume_file}
+    payload = {
+        "ResumeName": resume_name,
+        "WorkExperience": work_experience,
+        "TechnicalSkills": technical_skills,
+        "SoftSkills": soft_skills,
+    }
+
+    # Step 1: Submit the resume (when the user is ready)
+    if st.button("Submit Resume", key="submit_resume"):
+        response_resume = requests.post(f"http://web-api:4000/resume/{student_id}", files=files, data=payload)
+        if response_resume.status_code == 200:
+            st.success("Resume submitted successfully!")
+        else:
+            st.error("Failed to submit resume.")
+    else:
+        st.warning("Please fill out all required fields for the resume.")
+
+# Job Application Submission
+if st.button("Submit Application", key="submit_app"):
+    # Check if the job application form is completed
+    if job_id and status:
+        application_payload = {"StudentID": student_id, "JobID": job_id, "Status": status}
+        response_application = requests.post("http://web-api:4000/applications", json=application_payload)
+        if response_application.status_code == 201:
             st.success("Application submitted successfully!")
         else:
             st.error("Failed to submit application.")
     else:
-        st.warning("Please fill out all required fields.")
-
-    # Section: Submit Resume
-    st.write("Submit Resume")
-    resume_file = st.file_uploader("Upload Resume", type=["pdf", "docx", "txt", "rtf"], key="resume_file")
-    resume_name = st.text_input("Resume Name", key="resume_name")
-    work_experience = st.text_area("Enter Your Most Recent Work Experience", key="work_experience")
-    technical_skills = st.text_area("Technical Skills", key="technical_skills")
-    soft_skills = st.text_area("Soft Skills", key="soft_skills")
-    if st.button("Submit Resume"):
-        student_id = st.session_state.get("student_id")
-        if student_id and resume_file:
-            files = {"resume": resume_file}
-            payload = {
-                "ResumeName": resume_name,
-                "WorkExperience": work_experience,
-                "TechnicalSkills": technical_skills,
-                "SoftSkills": soft_skills,
-            }
-            response = requests.post(f"http://web-api:4000/resume/{resume_student_id}", files=files, data=payload)
-            if response.status_code == 200:
-                st.success("Resume submitted successfully!")
-            else:
-                st.error("Failed to submit resume.")
-        else:
-            st.warning("Please fill out all required fields.")
+        st.warning("Please fill out the job application details.")
 
 # Section: Delete Resume
 st.header("Delete Resume")
