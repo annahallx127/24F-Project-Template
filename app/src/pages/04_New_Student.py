@@ -28,8 +28,3 @@ if st.button('View All Jobs',
   st.switch_page('pages/08_ViewAllJobs.py')
 
 
-if st.button('Apply For Jobs',
-             type='primary',
-            use_container_width=True):
-  st.switch_page('pages/09_ApplyForJob.py')
-

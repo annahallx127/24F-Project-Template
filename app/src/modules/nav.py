@@ -34,8 +34,6 @@ def ManageJobApplicationsNav():
 def ViewJobsNav():
     st.sidebar.page_link("pages/08_ViewAllJobs.py", label="View All Jobs", icon="👩‍💻")
 
-def ApplyForJobsNav():
-    st.sidebar.page_link("pages/09_ApplyForJob.py", label="Apply For Jobs", icon="✍️")
 
 
 ## ------------------------ Examples for Role of returning student ------------------------
@@ -133,7 +131,6 @@ def SideBarLinks(show_home=False):
             ManageStudentInfoNav()
             ManageJobApplicationsNav()
             ViewJobsNav()
-            ApplyForJobsNav()
 
         # If the user is an administrator, give them access to the administrator pages
         if st.session_state["role"] == "system_administrator":
