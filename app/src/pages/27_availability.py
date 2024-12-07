@@ -28,8 +28,9 @@ st.header("Fetch Returning Student Availability")
 if st.button("Fetch Availability", type='primary', use_container_width=True):
     if st.session_state.get('authenticated') and st.session_state.get('first_name') == 'Mary':
         # Call the Flask API to get Mary Jane's availability
-        url = "http://web-api:4000/rs/availabilities"  # Define the URL here
+        url = f"http://web-api:4000/rs/availabilities"  # Define the URL here
         response = requests.get(url)
+
 
         # Check for successful response
         if response.status_code == 200:

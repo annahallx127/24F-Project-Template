@@ -12,7 +12,7 @@ returning_student = Blueprint('returning_student', __name__)
 @returning_student.route('/availabilities', methods=['GET'])
 def get_availabilities():
     """
-    Fetch all availabilities for a hardcoded StudentID (e.g., Gwen Stacy).
+    Fetch all availabilities for a hardcoded StudentID.
     """
     cursor = db.get_db().cursor()
 
@@ -23,7 +23,7 @@ def get_availabilities():
     '''
 
         # Execute query for the hardcoded StudentID
-    cursor.execute(query, (2,))  # Replace `2` with Gwen Stacy's StudentID
+    cursor.execute(query, (2,)) 
     availabilities = cursor.fetchall()
 
         # If no availabilities found, return a 404 response
@@ -221,4 +221,3 @@ def get_availabilities():
 #         the_response = make_response(jsonify({"error": str(e)}), 500)
 
 #     return the_response
-
