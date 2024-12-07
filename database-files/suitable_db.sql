@@ -241,7 +241,7 @@ VALUES
 ------------JobListings Insert Statements------------
 INSERT INTO JobListings (JobListingID,CompanyID,JobDescription, JobPositionTitle, JobIsActive)
 VALUES
-(1,21,'Looking for a software engineer with REQUIRED experience in kotlin,java,sql,html,C++,C,Racket,Assembly,javascript, R, ruby, rust, perl, babbage. Must know all languages fluently to apply. $15 an hour ', 'SWE Role (HIGH PAYING)', true);
+(1,21,'Looking for a software engineer with REQUIRED experience...', 'SWE Role (HIGH PAYING)', 1);
 
 -- Insert into Application table
 INSERT INTO Application (ApplicationID, StudentID, AppliedDate, Status, JobID)
@@ -297,25 +297,25 @@ VALUES
 (1, 7, '2024-08-15', 500),
 (2, 8, '2024-02-29', 127);
 
-INSERT INTO StudentPermissions (AdminInCharge, StudentID, AccessLevel, AccessDescription),
+INSERT INTO StudentPermissions (AdminInCharge, StudentID, AccessLevel, AccessDescription)
 VALUES 
 (1, 1, 2, 'Can apply for Co-op'),
 (2, 2, 4, 'Can apply for Co-op and submit Coffee Chat Availibility');
 
-INSERT INTO EmployerPermissions (AdminInCharge, EmployerID, AccessLevel, AccessDescription),
+INSERT INTO EmployerPermissions (AdminInCharge, EmployerID, AccessLevel, AccessDescription)
 VALUES
 (1, 1, 5, 'Can Post new job openings'),
 (2, 2, 5, 'Can Post new job openings');
 
-INSERT INTO AdminPermisssions (AdminInCharge, AdminID, AccessLevel, AccessDescription)
+INSERT INTO AdminPermissions (AdminInCharge, AdminID, AccessLevel, AccessDescription)
 VALUES
 (1, 3, 5, 'High Level Access'),
 (2, 4, 5, 'High Level Access');
 
-INSERT INTO AlertSystem (AlertID, AdminInCharge, ActivityType, GeneratedBy, Description, Severtiy, TimeStamp, Status)
+INSERT INTO AlertSystem (AlertID, AdminInCharge, ActivityType, GeneratedBy, Description, Severity, TimeStamp, Status)
 VALUES
-(1, 2, 'Glitch', 4, 'User has experienced a glitch when logging into their account', 2, '2024-12-10 10:00:00', 'Resolved')
-(2, 1, 'Lag', 4, 'User experienced a lag when changing pages', 1, '2024-10-12 12:22:22', 'Resolved')
+(1, 2, 'Glitch', 4, 'User has experienced a glitch when logging into their account', 2, '2024-12-10 10:00:00', 'Resolved'),
+(2, 1, 'Lag', 4, 'User experienced a lag when changing pages', 1, '2024-10-12 12:22:22', 'Resolved');
 
 INSERT INTO JobListingManagement (AdminInCharge, JobID, UpdateID)
 VALUES
