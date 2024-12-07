@@ -234,9 +234,9 @@ VALUES
 (1, 'Alex', 'Smith', 'Hiring Manager'); -- Alex is the hiring manager responsible for job postings and applicant tracking
 
 -- Insert into Company table (A company associated with the hiring manager)
-INSERT INTO Company (EmployerID, Name, Industry)
+INSERT INTO Company (CompanyID, EmployerID, Name, Industry)
 VALUES
-(1, 'InnovativeTech', 'Technology');  -- InnovativeTech is the company where the hiring manager works
+(1, 1, 'InnovativeTech', 'Technology');  -- InnovativeTech is the company where the hiring manager works
 
 -- Insert into JobListings table (Hiring manager posting job openings)
 INSERT INTO JobListings (JobListingID, JobDescription, JobPositionTitle, JobIsActive, CompanyID)
