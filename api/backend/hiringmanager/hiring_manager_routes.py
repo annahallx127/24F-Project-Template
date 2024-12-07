@@ -210,3 +210,21 @@ def get_all_candidates_ranking():
             return make_response(jsonify({"message": "No candidates found"}), 404)
     except Exception as e:
         return make_response(jsonify({"error": str(e)}), 500)
+
+
+@hiring_manager.route('/job-listings', methods=['GET'])
+def get_job_listings():
+    current_app.logger.info(f'GET /job-listings route')
+    
+    cursor = db.get_db().cursor()
+    query = "SELECT * FROM JobListings"
+    cursor.execute(query)
+    job_listings = cursor.fetchall()
+
+    if not job_listings:
+        return jsonify({'message': 'No job listings available'}), 404
+    
+    # Return the student data as a JSON response
+    the_response = make_response(jsonify(job_listings))
+    the_response.status_code = 200
+    return the_response

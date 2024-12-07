@@ -21,26 +21,17 @@ if st.button("Fetch Job Listings", key="fetch_job_listings"):
     with st.spinner("Fetching job listings..."):
         if st.session_state.get('authenticated') and st.session_state.get('first_name') == 'Miles':
             
-            url = f"http://localhost:4000/hm/hiring-manager/job-listings"
-            # Fetch job listings from backend API
-            response = requests.get(url)
-            
-            if response.status_code == 200:
-                job_listings = response.json()
+            url = f"http://web-api:4000/hm/job-listings"
 
-                # Check if 'job_listings' key exists in the response
-                if 'job_listings' in job_listings:
-                    job_listings = job_listings['job_listings']
-                
-                # Display job listings if available
-                if job_listings:
-                    df = pd.DataFrame(job_listings, columns=["JobListingID", "CompanyID", "JobDescription", "JobPositionTitle","JobIsActive"])
-                    st.table(df)
-                else:
-                    st.warning("No job listings available.")
-            else:
-                error_message = response.json().get('message', 'Unknown error')
-                st.error(f"Failed to fetch job listings. Error: {error_message}")
+            try:
+                response = requests.get(url).json()
+                st.dataframe(response)
+            except Exception as e:
+                st.error("No applications found for this student.")
+        else:
+            st.warning(f"Failed to fetch applications.")
+           
+          
     
 # # ------------------------------------------------------------
 # # Section: Add New Job Listing
