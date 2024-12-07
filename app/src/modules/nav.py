@@ -109,7 +109,7 @@ def AlertSystemNav():
     st.sidebar.page_link("pages/22_AlertSystem.py", label="Alert System", icon="📬")
 
 def ManageUsersNav():
-    st.sidebar.page_link("pages/25_ManageUsers.py", label="Manager Users", icon="🖇️")
+    st.sidebar.page_link("pages/25_ManageUsers.py", label="Manage Users", icon="🖇️")
 
 
 # --------------------------------Links Function -----------------------------------------------
