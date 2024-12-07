@@ -7,10 +7,9 @@ st.title("Manage Your Co-op Reviews")
 
 # Section: Display Co-ops the student has completed
 st.header("Completed Co-ops")
-student_id = 2  # Hardcoded for StudentID = 2
 
 # Fetch completed co-ops
-url_completed_coops = f"http://web-api:4000/rs/completed_coops/{student_id}"
+url_completed_coops = f"http://web-api:4000/rs/completed_coops/{2}"
 try:
     response = requests.get(url_completed_coops)
     if response.status_code == 200:

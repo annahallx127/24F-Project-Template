@@ -150,9 +150,9 @@ def delete_availability(availability_id):
 
 "-------------------------------------------------------------------------------------------------------------------"
 
-@returning_student.route('/completed_coops/<int:student_id>', methods=['GET'])
-def fetch_completed_coops(student_id):
-    current_app.logger.info(f"GET /completed_coops/{student_id} route")
+@returning_student.route('/completed_coops', methods=['GET'])
+def fetch_completed_coops():
+    current_app.logger.info(f"GET /completed_coops route")
 
     try:
         cursor = db.get_db().cursor()
@@ -164,7 +164,7 @@ def fetch_completed_coops(student_id):
             JOIN JobListings ON Coop.CoopID = JobListings.JobListingID
             WHERE StudentID = %s
         '''
-        cursor.execute(query, (student_id,))
+        cursor.execute(query, (2,))
         coops = cursor.fetchall()
 
         if not coops:

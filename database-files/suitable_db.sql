@@ -370,3 +370,14 @@ VALUES
 (1, 1, 1),
 (1, 1, 7);
 
+-- Co-op 1: Full Stack Developer
+INSERT INTO Coop (CoopID, StudentID, StartDate, EndDate, JobTitle, CompanyName)
+VALUES
+(3, 2, '2024-05-01', '2024-11-01', 'Full Stack Developer', 'Tech Innovators Inc.');
+
+-- Co-op 2: Data Scientist
+INSERT INTO Coop (CoopID, StudentID, StartDate, EndDate, JobTitle, CompanyName, CoopReview, CoopRating)
+VALUES
+(4, 2, '2025-01-15', '2025-07-15', 'Data Scientist', 'Big Data Solutions Ltd.');
+
+
