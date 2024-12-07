@@ -48,54 +48,75 @@ def get_candidates_wcfi(job_id):
     """
     cursor = db.get_db().cursor()
 
+    # Query to fetch FirstName, LastName, and WCFI for candidates applied to the specified job ID
     query = '''
         SELECT DISTINCT s.FirstName, s.LastName, s.WCFI
         FROM Student s
         JOIN Application a ON s.StudentID = a.StudentID
-        WHERE a.JobID = %s
+        JOIN JobListings j ON a.JobID = j.JobListingID
+        WHERE j.JobListingID = %s
     '''
 
     try:
+        # Execute the query with the provided job_id
         cursor.execute(query, (job_id,))
         rows = cursor.fetchall()
-        column_names = [desc[0] for desc in cursor.description]
 
-        # Convert rows into a list of dictionaries
-        result = [dict(zip(column_names, row)) for row in rows]
-
-        if result:
-            return jsonify(result), 200
+        if rows:
+            # Include WCFI in the response
+            column_names = [desc[0] for desc in cursor.description]
+            result = [dict(zip(column_names, row)) for row in rows]
+            return make_response(jsonify(result), 200)
         else:
-            return jsonify({"message": f"No candidates found for job ID {job_id}"}), 404
+            return make_response(jsonify({"message": f"No candidates found for Job ID {job_id}"}), 404)
+
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-
-#Post job listing    
+        return make_response(jsonify({"error": f"An error occurred: {str(e)}"}), 500)
+    
 @hiring_manager.route('/hiring-manager/job-listings', methods=['POST'])
-def post_job_listing():
-    current_app.logger.info('POST /hiring-manager/job-listings route')
+def add_job_listing():
+    """
+    Add a new job listing. Requires JobDescription, JobPositionTitle, JobIsActive.
+    Hardcodes the CompanyID to Miles Morales' company.
+    """
+    try:
+        # Parse the request payload
+        data = request.get_json()
 
-    job_data = request.json
-    required_fields = ['HiringManagerID', 'JobPositionTitle', 'JobDescription', 'JobIsActive']
+        # Validate required fields
+        required_fields = ["JobDescription", "JobPositionTitle", "JobIsActive"]
+        if not all(field in data for field in required_fields):
+            return jsonify({"message": "Missing required fields"}), 400
 
-    # Validate input fields
-    if not all(field in job_data for field in required_fields):
-        return jsonify({'message': 'Missing required fields'}), 400
+        # Validate JobIsActive as boolean
+        job_is_active = data["JobIsActive"]
+        if not isinstance(job_is_active, bool):
+            return jsonify({"message": "JobIsActive must be a boolean"}), 400
 
-    # Ensure JobIsActive is a valid boolean
-    job_is_active = job_data['JobIsActive']
-    if not isinstance(job_is_active, (bool, int)) or job_is_active not in [True, False, 1, 0]:
-        return jsonify({'message': 'JobIsActive must be a boolean'}), 400
+        
+        # Hardcoded CompanyID for SpiderVerse
+        company_id = 1  # Hardcoded based on insert statements
 
-    cursor = db.get_db().cursor()
-    cursor.execute("""
-        INSERT INTO JobListing (HiringManagerID, JobPositionTitle, JobDescription, JobIsActive)
-        VALUES (%s, %s, %s, %s)
-    """, (job_data['HiringManagerID'], job_data['JobPositionTitle'], job_data['JobDescription'], bool(job_is_active)))
-    db.get_db().commit()
+ # Insert into the JobListings table
+        cursor = db.get_db().cursor()
+        query = '''
+            INSERT INTO JobListings (CompanyID, JobDescription, JobPositionTitle, JobIsActive)
+            VALUES (%s, %s, %s, %s)
+        '''
+        cursor.execute(query, (
+            company_id,
+            data["JobDescription"],
+            data["JobPositionTitle"],
+            True  # Automatically set to active
+        ))
+        db.get_db().commit()
 
-    return jsonify({'message': 'Job listing created successfully'}), 201
+        return jsonify({"message": "Job listing added successfully!"}), 201
+
+    except Exception as e:
+        current_app.logger.error(f"Error adding job listing: {e}")
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+
 
 # Update a job listing based on JobListingID 
 @hiring_manager.route('/hiring-manager/job-listings/<int:job_id>', methods=['PUT'])
@@ -235,3 +256,4 @@ def get_job_listings():
     the_response = make_response(jsonify(job_listings))
     the_response.status_code = 200
     return the_response
+

@@ -34,25 +34,28 @@ if st.button("Fetch Job Listings", key="fetch_job_listings"):
           
     
 # ------------------------------------------------------------
-# Section: Add New Job Listing
-st.header("Add a New Job Listing")
+st.title("Add a New Job Listing")
+
+# Input fields for the job listing
 job_title = st.text_input("Job Title", key="job_title_input")
 job_description = st.text_area("Job Description", key="job_description_input")
-is_active_add = st.checkbox("Is Active?", value=True, key="is_active_checkbox_add")
 
+# Button to submit the job listing
 if st.button("Add Job Listing", key="add_job_listing"):
     if job_title and job_description:
         payload = {
             "JobPositionTitle": job_title,
             "JobDescription": job_description,
-            "JobIsActive": is_active_add
+            "JobIsActive": True  # Automatically set to active
         }
         with st.spinner("Adding job listing..."):
             try:
+                # Send POST request to the backend API
                 response = requests.post("http://web-api:4000/hm/hiring-manager/job-listings", json=payload)
                 if response.status_code == 201:
                     st.success("Job listing added successfully!")
                 else:
+                    # Extract and display error message from the backend response
                     error_message = response.json().get('message', 'Unknown error')
                     st.error(f"Failed to add job listing. Error: {error_message}")
             except requests.exceptions.RequestException as e:

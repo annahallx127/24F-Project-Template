@@ -215,7 +215,7 @@ CREATE TABLE IF NOT EXISTS `JobListingManagement` (
 INSERT INTO Student (StudentID, FirstName, LastName, Major, isMentor, WCFI)
 VALUES
 (1, 'Peter', 'Parker', 'Arachnology', FALSE, 'CENI'),
-(2, 'Mary', 'Jane', 'Computer Science', TRUE, 'DPSI');
+(2, 'Mary', 'Jane', 'Computer Science', TRUE, 'DPSI')
 
 -- Insert into Availabilities table
 INSERT INTO Availabilities (AvailabilityID, StudentID, StartDate, EndDate)
