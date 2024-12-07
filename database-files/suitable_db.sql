@@ -222,7 +222,7 @@ VALUES
 (1, 'Peter', 'Parker', 'Arachnology', FALSE, 'CENI'),
 (2, 'Mary', 'Jane', 'Computer Science', TRUE, 'DPSI'),
 (3, 'Aunt', 'May', 'Computer Science & Biology', TRUE, 'DPEI'),
-(4, 'Gwen', 'Stacy', 'Physics', FALSE, 'APSI'),
+(4, 'Ned', 'Leeds', 'Physics', FALSE, 'APSI'),
 (5, 'Harry', 'Osborn', 'Business', TRUE, 'MCSI'),
 (6, 'Norman', 'Osborn', 'Chemistry', FALSE, 'IPCI'),
 (7, 'Flash', 'Thompson', 'Sports Science', TRUE, 'DPSI');
@@ -234,7 +234,7 @@ VALUES
 (1, 1), -- Peter Parker
 (3, 2), -- Aunt May
 (2, 3), -- Mary Jane
-(4, 4), -- Gwen Stacy
+(4, 4), -- Ned Leeds
 (5, 5), -- Harry Osborn
 (6, 6), -- Norman Osborn
 (7, 7); -- Flash Thompson
