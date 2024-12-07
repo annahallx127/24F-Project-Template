@@ -301,7 +301,7 @@ def schedule_coffee_chat():
         if not availability_info:
             return jsonify({"message": "Availability not found"}), 404
 
-        # # Extract data from availability_info
+        # # Extract data from availability_info    
         mentor_id = availability_info[0]  # Assuming StudentID is the first column
         # start_date = availability_info[1]  # Assuming StartDate is the second column
 
