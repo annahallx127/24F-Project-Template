@@ -2,36 +2,35 @@ import streamlit as st
 import pandas as pd
 import requests
 
-st.set_page_config(page_title="Candidate WCFI Overview", layout="wide")
-st.title("Candidate WCFI Overview for Job Listing")
-st.header("Candidates, WCFI, and Status")
+# Configure the Streamlit page
+st.set_page_config(page_title="Candidate Rankings Overview", layout="wide")
 
-job_id = st.text_input("Enter Job ID", help="Enter the Job Listing ID to view candidate details.")
+# Title of the page
+st.title("Candidate Rankings Overview")
 
-if job_id.strip():
-    with st.spinner("Fetching candidates' WCFI and Status..."):
-        url = f"http://web-api:4000/hm/job-listings/{job_id}/candidates-wcfi"
-        try:
-            response = requests.get(url)
-            st.write("Raw API Response:", response.text)  # Debugging
+# Section: Fetch Rankings
+st.header("Candidates, WCFI, and Rankings")
+st.write("View all candidates/students along with their WCFI values and rankings.")
 
-            if response.status_code == 200:
-                suitable = response.json()
+if st.button("Fetch Rankings", type='primary', use_container_width=True):
+    # API endpoint to fetch rankings
+    url = "http://web-api:4000/hm/students/rankings"
 
-                if suitable:
-                    df_candidates = pd.DataFrame(suitable)
-                    st.write("DataFrame Contents:", df_candidates)  # Debugging
+    try:
+        response = requests.get(url)
+        if response.status_code == 200:
+            rankings = response.json()
 
-                    required_columns = {"FirstName", "LastName", "Status", "WCFI"}
-                    if required_columns.issubset(df_candidates.columns):
-                        st.table(df_candidates[["FirstName", "LastName", "Status", "WCFI"]])
-                    else:
-                        st.error(f"Response is missing required columns: {required_columns}")
-                else:
-                    st.info(f"No candidates found for Job ID {job_id}.")
+            if rankings and isinstance(rankings, list):
+                # Convert the JSON response to a DataFrame
+                df = pd.DataFrame(rankings)
+
+                # Display the rankings table
+                st.write("List of All Candidates with Rankings:")
+                st.table(df[["FullName", "WCFI", "Rank"]])  # Display relevant columns
             else:
-                st.error(f"Failed to fetch data. Server responded with status code {response.status_code}.")
-        except Exception as e:
-            st.error(f"Error occurred while fetching data: {str(e)}")
-else:
-    st.info("Please enter a Job ID to view candidates.")
+                st.info("No rankings found in the database.")
+        else:
+            st.error(f"Failed to fetch rankings. Server responded with status code {response.status_code}.")
+    except Exception as e:
+        st.error(f"An error occurred while fetching rankings: {e}")
