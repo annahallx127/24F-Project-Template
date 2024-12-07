@@ -398,3 +398,30 @@ def delete_resume(student_id):
     db.get_db().commit()
 
     return jsonify({'message': 'Resume deleted successfully'}), 200
+
+@new_student.route('/availabilities', methods=['GET'])
+def get_availabilities():
+    """
+    Fetch all availabilities for a hardcoded StudentID.
+    """
+    cursor = db.get_db().cursor()
+
+    query = '''
+        SELECT AvailabilityID, StudentID, StartDate, EndDate 
+        FROM Availabilities 
+        WHERE StudentID = %s;
+    '''
+
+        # Execute query for the hardcoded StudentID
+    cursor.execute(query, (2,)) 
+    availabilities = cursor.fetchall()
+
+        # If no availabilities found, return a 404 response
+    if not availabilities:
+        return jsonify({"error": "No availabilities found"}), 404
+
+  
+      # Return the student data as a JSON response
+    the_response = make_response(jsonify(availabilities))
+    the_response.status_code = 200
+    return the_response

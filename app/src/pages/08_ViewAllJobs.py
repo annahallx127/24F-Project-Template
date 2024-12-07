@@ -28,6 +28,49 @@ if st.button("Fetch Job Listings", key="fetch_job_listings"):
             st.warning(f"Failed to fetch applications.")
 
 
+st.header("Coffee Chat With A Student")
+st.write("Enter a job id you want to hear about from a student.")
+job_id = st.text_input("JobID", key="resume_student_id")
+
+if st.button("Getting Available Coffee Chats", key="fetch_coffee_chat"):
+    with st.spinner("Fetching coffee chats..."):
+        if st.session_state.get('authenticated') and st.session_state.get('first_name') == 'Peter':
+            
+            url = f"http://web-api:4000/ns/availabilities"
+
+        response = requests.get(url)
+
+        # Check for successful response
+        if response.status_code == 200:
+            availabilities = response.json()
+
+            if availabilities:
+                st.write("List of Availabilities:")
+                # Display availabilities in a DataFrame table
+                df = pd.DataFrame(availabilities, columns=["AvailabilityID", "StudentID", "StartDate", "EndDate"])
+                st.table(df)
+            else:
+                st.info("No availabilities found for Mary Jane.")
+        else:
+            st.error(f"Failed to fetch availabilities: {response.status_code}")
+            logger.error(f"Error fetching availabilities: {response.status_code}")
+
+
+
+# if st.button("Fetch Job Listings", key="fetch_job_listings"):
+#     with st.spinner("Fetching job listings..."):
+#         if st.session_state.get('authenticated') and st.session_state.get('first_name') == 'Peter':
+            
+#             url = f"http://web-api:4000/ns/job-listings"
+
+#             try:
+#                 response = requests.get(url).json()
+#                 st.dataframe(response)
+#             except Exception as e:
+#                 st.error("No applications found for this student.")
+#         else:
+#             st.warning(f"Failed to fetch applications.")
+
 # # Fetch all job listings from the API
 # response = requests.get("http://web-api:4000/ns/job-listings")
 # if response.status_code == 200:
