@@ -47,11 +47,11 @@ if st.button("Fetch Availability", type='primary', use_container_width=True):
             st.error(f"Failed to fetch availabilities: {response.status_code}")
             logger.error(f"Error fetching availabilities: {response.status_code}")
 
-# Section: Update Student Information
+# Section: Update Availabilty
 st.header("Update your availability")
 update_availabilityID = st.text_input("AvailabilityID", key="update_availabilityID")
-updateStartTime = st.text_input("Start time in this format YYYY-MM-DD HH:MI:SS", key="updateStartTime")
-updateEndTime = st.text_input("End time in this format YYYY-MM-DD HH:MI:SS", key="updateEndTime")
+StartDate = st.text_input("Start time in this format YYYY-MM-DD HH:MI:SS", key="updateStartTime")
+EndDate = st.text_input("End time in this format YYYY-MM-DD HH:MI:SS", key="updateEndTime")
 
 if st.button("Update Availability"):
     if update_availabilityID and StartDate and EndDate:

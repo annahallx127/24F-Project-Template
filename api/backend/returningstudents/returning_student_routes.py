@@ -50,7 +50,7 @@ def update_availability(availability_id):
 
         # Check if the availability exists
         cursor = db.get_db().cursor()
-        cursor.execute('SELECT StudentID FROM Availabilities WHERE AvailabilityID = %s', (AvailabilityID,))
+        cursor.execute('SELECT StudentID FROM Availabilities WHERE AvailabilityID = %s', (availability_id,))
         result = cursor.fetchone()
 
         if not result or result['StudentID'] != 2:
@@ -68,7 +68,7 @@ def update_availability(availability_id):
 
         if updates:
             query = f"UPDATE Availabilities SET {', '.join(updates)} WHERE AvailabilityID = %s"
-            values.append(AvailabilityID)
+            values.append(availability_id)
             cursor.execute(query, tuple(values))
             db.get_db().commit()
             return jsonify({'message': 'Availability updated successfully'}), 200
