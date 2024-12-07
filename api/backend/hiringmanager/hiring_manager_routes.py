@@ -40,31 +40,37 @@ def get_candidates_by_job(job_id):
             return make_response(jsonify({"message": f"No candidates found for job ID {job_id}"}), 404)
     except Exception as e:
         return make_response(jsonify({"error": str(e)}), 500)
-
-# Get MBTI distribution for all candidates of a specific job
-@hiring_manager.route('/job-listings/<int:job_id>/mbti-distribution', methods=['GET'])
-def get_mbti_distribution(job_id):
-    cursor = db.get_db().cursor()
     
-    # SQL query to fetch MBTI results for candidates of a specific job
+@hiring_manager.route('/job-listings/<int:job_id>/candidates-wcfi', methods=['GET'])
+def get_candidates_wcfi(job_id):
+    """
+    Fetch WCFI values for students who applied for a specific job.
+    """
+    cursor = db.get_db().cursor()
+
     query = '''
-        SELECT MBTIResult, COUNT(*) as Count
-        FROM Candidate
-        WHERE AppliedJobID = %s
-        GROUP BY MBTIResult
+        SELECT DISTINCT s.FirstName, s.LastName, s.WCFI
+        FROM Student s
+        JOIN Application a ON s.StudentID = a.StudentID
+        WHERE a.JobID = %s
     '''
+
     try:
         cursor.execute(query, (job_id,))
         rows = cursor.fetchall()
         column_names = [desc[0] for desc in cursor.description]
-        
+
         # Convert rows into a list of dictionaries
         result = [dict(zip(column_names, row)) for row in rows]
-        
-        return make_response(jsonify(result), 200)
+
+        if result:
+            return jsonify(result), 200
+        else:
+            return jsonify({"message": f"No candidates found for job ID {job_id}"}), 404
     except Exception as e:
-        return make_response(jsonify({"error": str(e)}), 500)
-    
+        return jsonify({"error": str(e)}), 500
+
+
 #Post job listing    
 @hiring_manager.route('/hiring-manager/job-listings', methods=['POST'])
 def post_job_listing():
@@ -184,6 +190,7 @@ def get_candidates_ranking_for_job(job_id):
             return make_response(jsonify({"message": f"No rankings found for job ID {job_id}"}), 404)
     except Exception as e:
         return make_response(jsonify({"error": str(e)}), 500)
+    
 # Get the list of all candidates with their rankings
 @hiring_manager.route('/candidates-ranking', methods=['GET'])
 def get_all_candidates_ranking():
