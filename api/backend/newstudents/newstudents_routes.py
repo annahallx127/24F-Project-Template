@@ -196,7 +196,7 @@ def apply_for_job():
 
 #------------------------------------------------------------
 # Get all the jobs a student has applied for
-@new_students.route('/applications', methods=['GET'])
+@new_students.route('/applications/new_student', methods=['GET'])
 def get_student_applications():
     current_app.logger.info(f'GET /applications route')
     
