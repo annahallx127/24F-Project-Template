@@ -139,6 +139,47 @@ def get_job_listing_details(JobListingID):
     the_response.status_code = 200
     return the_response
 
+# Change application details (e.g., rank candidates, update resume)
+@new_students.route('/applications/<application_id>', methods=['PUT'])
+def update_application(application_id):
+    current_app.logger.info(f'PUT /applications/{application_id} route')
+
+    # Get the data from the request body
+    application_info = request.json
+    status = application_info.get('status')
+
+    cursor = db.get_db().cursor()
+
+    # Step 1: Check if the application exists
+    cursor.execute("SELECT * FROM Application WHERE ApplicationID = %s", (application_id,))
+    application = cursor.fetchone()
+
+    if not application:
+        return jsonify({'message': 'Application not found'}), 404
+
+    # Step 2: Prepare the update query for application details
+    updates = []
+    values = []
+
+    
+    if status:
+        updates.append("Status = %s")
+        values.append(status)
+
+#
+    # Step 4: Execute the application update query
+    if updates:
+        query = f"UPDATE Application SET {', '.join(updates)} WHERE ApplicationID = %s"
+        values.append(application_id)  # Add ApplicationID as the last parameter for the WHERE clause
+
+        cursor.execute(query, tuple(values))
+        db.get_db().commit()
+
+        # Return success message
+        return jsonify({'message': 'Application updated successfully'}), 200
+    else:
+        return jsonify({'message': 'No fields to update provided'}), 400
+
 #------------------------------------------------------------
 # Apply for a job
 @new_students.route('/applications', methods=['POST'])
