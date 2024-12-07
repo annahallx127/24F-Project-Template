@@ -216,33 +216,33 @@ VALUES
 (1, 'Peter', 'Parker', 'Arachnology', FALSE, '1234'),
 (2, 'Mary', 'Jane', 'Computer Science', TRUE, '5678');
 
-INSERT INTO Availabilities (StudentID, StartDate, EndDate)
+INSERT INTO Availabilities (AvailabilityID, StudentID, StartDate, EndDate)
 VALUES
-(2, '2024-12-10 10:00:00', '2024-12-10 12:00:00'),
-(2, '2024-12-15 08:00:00', '2024-12-15 10:00:00');
+(1, 2, '2024-12-10 10:00:00', '2024-12-10 12:00:00'),
+(2, 2, '2024-12-15 08:00:00', '2024-12-15 10:00:00');
 
 -- Insert into Resume table
-INSERT INTO Resume (StudentID, ResumeName, WorkExperience, TechnicalSkills, SoftSkills)
+INSERT INTO Resume (ResumeID, StudentID, ResumeName, WorkExperience, TechnicalSkills, SoftSkills)
 VALUES
-(1, 'Alice Resume', 'Software Developer Intern at TechCorp', 'Java, SQL', 'Communication, Leadership'),
-(2, 'Bob Resume', 'Junior Engineer at BuildCo', 'CAD Design, Prototyping', 'Problem-solving, Teamwork');
+(1, 1, 'Alice Resume', 'Software Developer Intern at TechCorp', 'Java, SQL', 'Communication, Leadership'),
+(2, 2, 'Bob Resume', 'Junior Engineer at BuildCo', 'CAD Design, Prototyping', 'Problem-solving, Teamwork');
 
 --HIRING MANAGER NEW INSERT STATEMENTS ---------------------------------------
 -- Insert into HiringManager table (One hiring manager for simplicity)
-INSERT INTO HiringManager (ApplicantID, FirstName, LastName, Position)
+INSERT INTO HiringManager (EmployerID, ApplicantID, FirstName, LastName, Position)
 VALUES
-(1, 'Alex', 'Smith', 'Hiring Manager'); -- Alex is the hiring manager responsible for job postings and applicant tracking
+(1, 1, 'Alex', 'Smith', 'Hiring Manager'); -- Alex is the hiring manager responsible for job postings and applicant tracking
 
 -- Insert into Company table (A company associated with the hiring manager)
-INSERT INTO Company (EmployerID, Name, Industry)
+INSERT INTO Company (CompanyID, EmployerID, Name, Industry)
 VALUES
-(1, 'InnovativeTech', 'Technology');  -- InnovativeTech is the company where the hiring manager works
+(1, 1, 'InnovativeTech', 'Technology');  -- InnovativeTech is the company where the hiring manager works
 
 -- Insert into JobListings table (Hiring manager posting job openings)
-INSERT INTO JobListings (JobListingID, JobDescription, JobPositionTitle, JobIsActive, CompanyID)
+INSERT INTO JobListings (JobListingID, CompanyID, JobDescription, JobPositionTitle, JobIsActive)
 VALUES
-(1, 'Looking for a skilled software engineer to join our team and work on innovative projects.', 'Software Engineer', TRUE, 1), -- Software Engineer position
-(2, 'Seeking a data analyst to help with data-driven decision making and business intelligence projects.', 'Data Analyst', TRUE, 1); -- Data Analyst position
+(1, 1, 'Looking for a skilled software engineer to join our team and work on innovative projects.', 'Software Engineer', TRUE), -- Software Engineer position
+(2, 1,'Seeking a data analyst to help with data-driven decision making and business intelligence projects.', 'Data Analyst', TRUE); -- Data Analyst position
 
 -- Insert into Application table (Applicants applying for job listings)
 -- Assuming students have IDs 1 and 2 from previous data

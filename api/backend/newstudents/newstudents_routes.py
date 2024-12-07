@@ -196,9 +196,9 @@ def apply_for_job():
 
 #------------------------------------------------------------
 # Get all the jobs a student has applied for
-@new_students.route('/applications/', methods=['GET'])
+@new_students.route('/applications/new_student', methods=['GET'])
 def get_student_applications():
-    current_app.logger.info(f'GET /applications/ route')
+    current_app.logger.info(f'GET /applications route')
     
     # Query to get all job details for a student
     cursor = db.get_db().cursor()
@@ -206,7 +206,8 @@ def get_student_applications():
         SELECT j.JobListingID, j.JobPositionTitle, j.JobDescription, a.Status, a.AppliedDate
         FROM Application a
         JOIN JobListings j ON a.JobID = j.JobListingID
-        WHERE a.FirstName = %s
+        JOIN Student s ON a.StudentID = s.StudentID
+        WHERE s.FirstName = %s
     """, ('Peter',))
     
     # Fetch all results

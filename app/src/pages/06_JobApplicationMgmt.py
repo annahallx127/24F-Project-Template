@@ -5,18 +5,18 @@ st.title("Application Management")
 
 # Section: View Applications
 st.header("View Applications")
-if st.button("Fetch Applications"):
+if st.button("Fetch Applications", type='primary', use_container_width=True):
     if st.session_state.get('authenticated') and st.session_state.get('first_name') == 'Peter':
-        response = requests.get(f"http://web-api:4000/ns/applications")
-        if response.status_code == 200:
-            try:
-                data = response.json()
-                st.json(data)
-            except ValueError:  # Catch JSONDecodeError
-                st.warning("No data found for this student.")
-        else:
-            st.error(f"Failed to fetch applications. Status code: {response.status_code}")
+        url = (f"http://web-api:4000/ns/applications/new_student")
+        try:
+            response = requests.get(url).json()
+            st.dataframe(response)
+        except Exception as e:
+            st.error("No applications found for this student.")
+    else:
+        st.warning(f"Failed to fetch applications. Status code: {response.status_code}")
 
+    
 
 # Section: Withdraw Application
 st.header("Withdraw Application")
