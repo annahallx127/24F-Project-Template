@@ -44,18 +44,18 @@ def ReturningStudentHomeNav():
 
 def ManageAvailabilityNav():
     st.sidebar.page_link(
-        "pages/27_availability.py", label="Manage Availability", icon="📈"
+        "pages/27_availability.py", label="View and Manage Coffee Chat Availability", icon="📈"
     )
 
 
 def ManageCoopNav():
     st.sidebar.page_link(
-        "pages/28_coop_reviews.py", label="Manage Co-ops", icon="🌺"
+        "pages/28_coop_reviews.py", label="View and Manage Co-op Reviews", icon="🌺"
     )
 
 def ViewCareerProjNav():
     st.sidebar.page_link(
-        "pages/29_career_projections.py", label="View Career Projections", icon="🌺"
+        "pages/29_career_projections.py", label="View Options for the Future", icon="👩‍💻"
     )
 
 
@@ -73,7 +73,7 @@ def ManageJobListingsNav():
 
 def ManageCandidatesNav():
     st.sidebar.page_link(
-        "pages/33_ViewCandidates.py", label="Manage Candidates", icon="🌺"
+        "pages/33_ViewCandidates.py", label="Manage Candidates", icon="🗂️"
     )
 
 def CandidateRankingNav():
@@ -139,6 +139,19 @@ def SideBarLinks(show_home=False):
             ManageUsersNav()
             ManageSystemUpdatesNav()
             AlertSystemNav()
+
+        
+        if st.session_state["role"] == "returning_student":
+            ReturningStudentHomeNav()
+            ManageAvailabilityNav()
+            ManageCoopNav()
+            ViewCareerProjNav()
+
+        if st.session_state["role"] == "hiring_manager":
+            HiringManagerHomeNav()
+            ManageJobListingsNav()
+            ManageCandidatesNav()
+            CandidateRankingNav()
 
 
     # Always show the About page at the bottom of the list of links

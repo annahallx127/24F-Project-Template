@@ -170,30 +170,94 @@ def fetch_completed_coops():
         current_app.logger.error(f"Error fetching completed co-ops: {str(e)}")
         return jsonify({'message': 'Failed to fetch completed co-ops', 'details': str(e)}), 500
 
-@returning_student.route('/coop-review/<int:coop_id>', methods=['DELETE'])
-def delete_coop_review(coop_id):
+@returning_student.route('/coop-review', methods=['POST'])
+def post_coop_review():
     """
-    Delete a co-op review by its CoopID
+    Add a co-op review by CoopID and StudentID
     """
-    current_app.logger.info(f"DELETE /coop-review/{coop_id} route")
+    current_app.logger.info(f"POST /coop-review route")
 
     try:
+        # Parse the request JSON
+        data = request.json
+
+        # Validate input fields
+        required_fields = ['CoopID', 'StudentID', 'CoopReview', 'CoopRating']
+        for field in required_fields:
+            if field not in data:
+                return jsonify({'message': f'Missing required field: {field}'}), 400
+
+        # Extract fields from the request
+        coop_id = data['CoopID']
+        student_id = data['StudentID']
+        coop_review = data['CoopReview']
+        coop_rating = data['CoopRating']
+
+        # Ensure the review is being added only for StudentID = 2
+        if student_id != 2:
+            return jsonify({'message': 'Unauthorized: Can only post review for StudentID = 2'}), 403
+
+        # Update the review in the database
+        cursor = db.get_db().cursor()
+        query = '''
+            UPDATE Coop 
+            SET CoopReview = %s, CoopRating = %s 
+            WHERE CoopID = %s AND StudentID = %s
+        '''
+        cursor.execute(query, (coop_review, coop_rating, coop_id, student_id))
+        db.get_db().commit()
+
+        current_app.logger.info(f"Co-op review for CoopID {coop_id} added/updated successfully.")
+        return jsonify({'message': 'Co-op review posted successfully'}), 200
+
+    except Exception as e:
+        current_app.logger.error(f"Error posting co-op review: {str(e)}")
+        return jsonify({'message': 'Failed to post co-op review', 'details': str(e)}), 500
+
+
+@returning_student.route('/coop-review', methods=['DELETE'])
+def delete_coop_review():
+    """
+    Delete a co-op review by CoopID for StudentID = 2
+    """
+    current_app.logger.info("DELETE /coop-review route")
+
+    try:
+        # Parse the request JSON
+        data = request.get_json()
+        coop_id = data.get('CoopID')
+
+        # Validate input
+        if not coop_id:
+            return jsonify({'message': 'Missing required field: CoopID'}), 400
+
+        # Hardcoded to allow only StudentID = 2
+        student_id = 2
+
         # Connect to the database
         cursor = db.get_db().cursor()
 
-        # Check if the review exists
-        cursor.execute("SELECT * FROM Coop WHERE CoopID = %s", (coop_id,))
+        # Check if the review exists for StudentID = 2 and the given CoopID
+        cursor.execute("""
+            SELECT CoopID 
+            FROM Coop 
+            WHERE CoopID = %s AND StudentID = %s
+        """, (coop_id, student_id))
         review = cursor.fetchone()
 
         if not review:
-            current_app.logger.error(f"No review found with CoopID: {coop_id}")
-            return jsonify({'message': 'Review not found'}), 404
+            current_app.logger.error(f"No review found for CoopID: {coop_id} and StudentID: {student_id}")
+            return jsonify({'message': 'Review not found or unauthorized'}), 404
 
-        # Delete the review from the database
-        cursor.execute("UPDATE Coop SET CoopReview = NULL, CoopRating = NULL WHERE CoopID = %s", (coop_id,))
+        # Delete the review by nullifying CoopReview and CoopRating
+        cursor.execute("""
+            UPDATE Coop 
+            SET CoopReview = NULL, CoopRating = NULL 
+            WHERE CoopID = %s AND StudentID = %s
+        """, (coop_id, student_id))
         db.get_db().commit()
 
-        current_app.logger.info(f"Review with CoopID {coop_id} deleted successfully")
+        current_app.logger.info(f"Review for CoopID {coop_id} and StudentID {student_id} deleted successfully")
         return jsonify({'message': 'Co-op review deleted successfully'}), 200
 
     except Exception as e:
