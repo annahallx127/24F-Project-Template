@@ -218,7 +218,7 @@ INSERT INTO Student (StudentID, FirstName, LastName, Major, isMentor, WCFI)
 VALUES
 (1, 'Peter', 'Parker', 'Arachnology', FALSE, 'CENI'),
 (2, 'Mary', 'Jane', 'Computer Science', TRUE, 'DPSI'),
-(3, 'Aunt', 'May', 'Computer Science & Biology', TRUE, 'DPEI'),;
+(3, 'Aunt', 'May', 'Computer Science & Biology', TRUE, 'DPEI'),
 (4, 'Gwen', 'Stacy', 'Physics', FALSE, 'APSI'),
 (5, 'Harry', 'Osborn', 'Business', TRUE, 'MCSI'),
 (6, 'Norman', 'Osborn', 'Chemistry', FALSE, 'IPCI'),
