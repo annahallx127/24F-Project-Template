@@ -1,9 +1,10 @@
-import datetime
 from flask import Blueprint
 from flask import jsonify
 from flask import make_response
 from flask import current_app
 from backend.db_connection import db
+import logging
+from backend.ml_models.model01 import predict
 
 # Create a new Blueprint object for returning students
 returning_student = Blueprint('returning_student', __name__)
@@ -11,69 +12,30 @@ returning_student = Blueprint('returning_student', __name__)
 @returning_student.route('/availabilities', methods=['GET'])
 def get_availabilities():
     """
-    Fetch all availabilities for a specific student.
+    Fetch all availabilities for a hardcoded StudentID.
     """
-    current_app.logger.info("GET /availabilities route")
-
-    # Get the database cursor
     cursor = db.get_db().cursor()
 
-    # SQL query to fetch availabilities for the student
     query = '''
-        SELECT AvailabilityID, StudentID, StartDate, EndDate
-        FROM Availabilities
-        WHERE StudentID = %s
+        SELECT AvailabilityID, StudentID, StartDate, EndDate 
+        FROM Availabilities 
+        WHERE StudentID = %s;
     '''
 
-<<<<<<< HEAD
-    try:
-        # Execute the query with the hardcoded StudentID (e.g., Gwen Stacy's ID)
-        cursor.execute(query, (2,))
-        availabilities = cursor.fetchall()
-
-        # # If no results found, return a 404 error
-        # if not availabilities:
-        #     current_app.logger.error("No availabilities found for the student.")
-        #     return jsonify({'message': 'No availabilities found'}), 404
-=======
         # Execute query for the hardcoded StudentID
-    cursor.execute(query, (2,))  # Replace `2` with Gwen Stacy's StudentID
+    cursor.execute(query, (2,)) 
     availabilities = cursor.fetchall()
 
         # If no availabilities found, return a 404 response
     if not availabilities:
         return jsonify({"error": "No availabilities found"}), 404
->>>>>>> 55afb7e8030f2ec94dab2097943f4d802aa39b19
 
-        # # Return the results directly (assuming cursor returns tuples)
-        # # Convert datetime to string if necessary
-        # results = [
-        #     {
-        #         "AvailabilityID": row[0],
-        #         "StudentID": row[1],
-        #         "StartDate": row[2].strftime('%Y-%m-%d %H:%M:%S') if isinstance(row[2], datetime) else row[2],
-        #         "EndDate": row[3].strftime('%Y-%m-%d %H:%M:%S') if isinstance(row[3], datetime) else row[3]
-        #     }
-        #     for row in availabilities
-        # ]
-
-        # Return results as a JSON response
-        the_response = make_response(jsonify(availabilities))
-        the_response.status_code = 200
-        return the_response
-
-    except Exception as e:
-        current_app.logger.error(f"Error fetching availabilities: {e}")
-        return jsonify({'error': 'Failed to fetch availabilities', 'details': str(e)}), 500
-
-<<<<<<< HEAD
-=======
+  
       # Return the student data as a JSON response
     the_response = make_response(jsonify(availabilities))
     the_response.status_code = 200
     return the_response
 
->>>>>>> 55afb7e8030f2ec94dab2097943f4d802aa39b19
 
 # # Post availability so other students can schedule coffee chat
 # @returning_student.route('/availability', methods=['POST'])
@@ -259,4 +221,3 @@ def get_availabilities():
 #         the_response = make_response(jsonify({"error": str(e)}), 500)
 
 #     return the_response
-
