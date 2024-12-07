@@ -40,21 +40,17 @@ def get_candidates_by_job(job_id):
             return make_response(jsonify({"message": f"No candidates found for job ID {job_id}"}), 404)
     except Exception as e:
         return make_response(jsonify({"error": str(e)}), 500)
-
-
-  #GET WCFI  
+    
 @hiring_manager.route('/job-listings/<int:job_id>/candidates-wcfi', methods=['GET'])
 def get_candidates_wcfi(job_id):
     """
-    Fetch WCFI values for students who applied for a specific job, including application status.
+    Fetch WCFI values for students who applied for a specific job.
     """
-    current_app.logger.info(f'GET /job-listings/{job_id}/candidates-wcfi route')
-
     cursor = db.get_db().cursor()
 
-    # SQL query to fetch candidate details with application status
+    # Query to fetch FirstName, LastName, and WCFI for candidates applied to the specified job ID
     query = '''
-        SELECT DISTINCT s.FirstName, s.LastName, s.WCFI, a.Status
+        SELECT DISTINCT s.FirstName, s.LastName, s.WCFI
         FROM Student s
         JOIN Application a ON s.StudentID = a.StudentID
         JOIN JobListings j ON a.JobID = j.JobListingID
@@ -62,23 +58,64 @@ def get_candidates_wcfi(job_id):
     '''
 
     try:
-        # Execute query
+        # Execute the query with the provided job_id
         cursor.execute(query, (job_id,))
-        candidates = cursor.fetchall()
+        rows = cursor.fetchall()
 
-        if not candidates:
-            return jsonify({'message': f'No candidates found for Job ID {job_id}'}), 404
-
-        # Prepare response
-        column_names = [desc[0] for desc in cursor.description]
-        result = [dict(zip(column_names, row)) for row in candidates]
-
-        return jsonify(result), 200
+        if rows:
+            # Include WCFI in the response
+            column_names = [desc[0] for desc in cursor.description]
+            result = [dict(zip(column_names, row)) for row in rows]
+            return make_response(jsonify(result), 200)
+        else:
+            return make_response(jsonify({"message": f"No candidates found for Job ID {job_id}"}), 404)
 
     except Exception as e:
-        current_app.logger.error(f"Error fetching candidates' WCFI and Status: {e}")
-        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+        return make_response(jsonify({"error": f"An error occurred: {str(e)}"}), 500)
+    
+@hiring_manager.route('/hiring-manager/job-listings', methods=['POST'])
+def add_job_listing():
+    """
+    Add a new job listing. Requires JobDescription, JobPositionTitle, JobIsActive.
+    Hardcodes the CompanyID to Miles Morales' company.
+    """
+    try:
+        # Parse the request payload
+        data = request.get_json()
 
+        # Validate required fields
+        required_fields = ["JobDescription", "JobPositionTitle", "JobIsActive"]
+        if not all(field in data for field in required_fields):
+            return jsonify({"message": "Missing required fields"}), 400
+
+        # Validate JobIsActive as boolean
+        job_is_active = data["JobIsActive"]
+        if not isinstance(job_is_active, bool):
+            return jsonify({"message": "JobIsActive must be a boolean"}), 400
+
+        
+        # Hardcoded CompanyID for SpiderVerse
+        company_id = 1  # Hardcoded based on insert statements
+
+ # Insert into the JobListings table
+        cursor = db.get_db().cursor()
+        query = '''
+            INSERT INTO JobListings (CompanyID, JobDescription, JobPositionTitle, JobIsActive)
+            VALUES (%s, %s, %s, %s)
+        '''
+        cursor.execute(query, (
+            company_id,
+            data["JobDescription"],
+            data["JobPositionTitle"],
+            True  # Automatically set to active
+        ))
+        db.get_db().commit()
+
+        return jsonify({"message": "Job listing added successfully!"}), 201
+
+    except Exception as e:
+        current_app.logger.error(f"Error adding job listing: {e}")
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
 
 # Update a job listing based on JobListingID 
@@ -179,54 +216,35 @@ def delete_job_listing(job_id):
 
 
 # Get the ranking of candidates for a specific job listing
-@hiring_manager.route('/job-listings/<int:job_id>/rank-candidates', methods=['GET', 'POST'])
-def rank_candidates(job_id):
-    """
-    Get and rank candidates who applied for a specific job.
-    """
+@hiring_manager.route('/job-listings/<int:job_id>/candidates-ranking', methods=['GET'])
+def get_candidates_ranking_for_job(job_id):
     cursor = db.get_db().cursor()
 
+    # SQL query to get candidate ranking for a specific job listing
+    query = '''
+        SELECT s.StudentID, s.FirstName, s.LastName, r.RankNum, j.JobPositionTitle
+        FROM Rank r
+        JOIN Student s ON r.ApplicantID = s.StudentID
+        JOIN Application a ON a.StudentID = s.StudentID
+        JOIN JobListings j ON a.JobID = j.JobListingID
+        WHERE j.JobListingID = %s
+        ORDER BY r.RankNum ASC
+    '''
     try:
-        # Fetch all candidates for the job
-        query = '''
-            SELECT DISTINCT s.StudentID, s.FirstName, s.LastName, s.WCFI, a.Status
-            FROM Student s
-            JOIN Application a ON s.StudentID = a.StudentID
-            JOIN JobListings j ON a.JobID = j.JobListingID
-            WHERE j.JobListingID = %s
-        '''
         cursor.execute(query, (job_id,))
-        candidates = cursor.fetchall()
-
-        if not candidates:
-            return jsonify({'message': f'No candidates found for Job ID {job_id}'}), 404
-
-        # If POST request, update the Rank table
-        if request.method == 'POST':
-            ranks = request.json.get('ranks', [])
-            if not ranks:
-                return jsonify({'message': 'No ranks provided'}), 400
-
-            # Update the Rank table
-            for rank in ranks:
-                cursor.execute('''
-                    INSERT INTO `Rank` (ApplicantID, RankNum)
-                    VALUES (%s, %s)
-                    ON DUPLICATE KEY UPDATE RankNum = %s
-                ''', (rank['ApplicantID'], rank['RankNum'], rank['RankNum']))
-
-            db.get_db().commit()
-            return jsonify({'message': 'Candidates ranked successfully!'}), 200
-
-        # Prepare response for GET request
+        rows = cursor.fetchall()
         column_names = [desc[0] for desc in cursor.description]
-        result = [dict(zip(column_names, row)) for row in candidates]
-        return jsonify(result), 200
 
+        # Convert rows into a list of dictionaries
+        result = [dict(zip(column_names, row)) for row in rows]
+
+        if result:
+            return make_response(jsonify(result), 200)
+        else:
+            return make_response(jsonify({"message": f"No rankings found for job ID {job_id}"}), 404)
     except Exception as e:
-        current_app.logger.error(f"Error ranking candidates for Job ID {job_id}: {e}")
-        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
-
+        return make_response(jsonify({"error": str(e)}), 500)
+    
 # Get the list of all candidates with their rankings
 @hiring_manager.route('/candidates-ranking', methods=['GET'])
 def get_all_candidates_ranking():
@@ -235,33 +253,24 @@ def get_all_candidates_ranking():
     # SQL query to get all candidate rankings
     query = '''
         SELECT s.StudentID, s.FirstName, s.LastName, r.RankNum
-        FROM `Rank` r
+        FROM Rank r
         JOIN Student s ON r.ApplicantID = s.StudentID
         ORDER BY r.RankNum ASC
     '''
-    # # try:
-    # cursor.execute(query)
-    # rows = cursor.fetchall()
-    # # column_names = [desc[0] for desc in cursor.description]
+    try:
+        cursor.execute(query)
+        rows = cursor.fetchall()
+        column_names = [desc[0] for desc in cursor.description]
 
-    # #     # If the student does not exist, return an error message
-    # # if not student:
-    # #     current_app.logger.error(f"Student Information not found.")
-    # #     return jsonify({'message': 'Student not found'}), 404
+        # Convert rows into a list of dictionaries
+        result = [dict(zip(column_names, row)) for row in rows]
 
-    # # Return the student data as a JSON response
-    # the_response = make_response(jsonify(rows))
-    # the_response.status_code = 200
-    # return the_response
-    #     # Convert rows into a list of dictionaries
-    #     # result = [dict(zip(column_names, row)) for row in rows]
-
-    # #     if result:
-    # #         return make_response(jsonify(result), 200)
-    # #     else:
-    # #         return make_response(jsonify({"message": "No candidates found"}), 404)
-    # # except Exception as e:
-    # #     return make_response(jsonify({"error": str(e)}), 500)
+        if result:
+            return make_response(jsonify(result), 200)
+        else:
+            return make_response(jsonify({"message": "No candidates found"}), 404)
+    except Exception as e:
+        return make_response(jsonify({"error": str(e)}), 500)
 
 
 @hiring_manager.route('/job-listings', methods=['GET'])
@@ -280,4 +289,3 @@ def get_job_listings():
     the_response = make_response(jsonify(job_listings))
     the_response.status_code = 200
     return the_response
-
