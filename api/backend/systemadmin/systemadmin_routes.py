@@ -70,16 +70,47 @@ def get_system_status():
 # Submit a report or notification about a system event or issue
 @admin.route('/system-update', methods=['POST'])
 def submit_system_report():
-    data = request.json
-    update_type = data['update_type']
-    description = data['description']
-    # Hardcoding AdminID as 1
-    admin_id = 1  
-    query = 'INSERT INTO SystemUpdate (UpdateType, AdminID, UpdateDate, Description) VALUES (%s, %s, NOW(), %s)'
-    cursor = db.get_db().cursor()
-    cursor.execute(query, (update_type, admin_id, description))
-    db.get_db().commit()
-    return make_response("System event submitted successfully", 200)
+    try:
+        data = request.json
+        # Validate input keys
+        update_type = data.get('update_type')  # Use .get() to avoid KeyError
+        update_date = data.get('update_date')  # Use .get() to allow missing key
+        description = data.get('description', 'No description provided')  # Default value
+
+        # Ensure all required fields are provided
+        if not update_type or not description:
+            return make_response({"error": "update_type and description are required"}, 400)
+
+        # Hardcoding AdminID as 1
+        admin_id = 1
+
+        # Use NOW() for update_date if not provided
+        if not update_date:
+            query = '''
+                INSERT INTO SystemUpdate (UpdateType, UpdateDate, Description) 
+                VALUES (%s, NOW(), %s)
+            '''
+            params = (update_type, description)
+        else:
+            query = '''
+                INSERT INTO SystemUpdate (UpdateType, UpdateDate, Description) 
+                VALUES (%s, %s, %s)
+            '''
+            params = (update_type, update_date, description)
+
+        # Execute query
+        cursor = db.get_db().cursor()
+        cursor.execute(query, params)
+        db.get_db().commit()
+
+        return make_response("System event submitted successfully", 200)
+    except KeyError as e:
+        current_app.logger.error(f"Missing key in request: {str(e)}")
+        return make_response({"error": f"Missing key: {str(e)}"}, 400)
+    except Exception as e:
+        current_app.logger.error(f"Error submitting system report: {str(e)}")
+        return make_response({"error": str(e)}, 500)
+
 
 
 # Update system health monitoring configurations or thresholds

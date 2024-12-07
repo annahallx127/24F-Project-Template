@@ -127,12 +127,8 @@ CREATE TABLE IF NOT EXISTS `SystemsAdministrator` (
 CREATE TABLE IF NOT EXISTS `SystemUpdate` (
   `UpdateID` integer PRIMARY KEY AUTO_INCREMENT,
   `UpdateType` varchar(100),
-  `AdminID` integer NOT NULL,
   `UpdateDate` date,
-  `Description` text,
-    FOREIGN KEY (AdminID) REFERENCES SystemsAdministrator(AdminID) 
-    ON UPDATE CASCADE
-    ON DELETE RESTRICT
+  `Description` text
 );
 
 CREATE TABLE IF NOT EXISTS `DataArchive` (
@@ -317,9 +313,9 @@ INSERT INTO SystemsAdministrator (AdminID, FirstName, LastName)
 VALUES
 (1, 'Gwen', 'Stacy');
 
-INSERT INTO SystemUpdate (UpdateID, UpdateType, AdminID, UpdateDate, Description)
+INSERT INTO SystemUpdate (UpdateID, UpdateType, UpdateDate, Description)
 VALUES
-(1, 'Delete Old Data', 1, '2024-10-13', 'Removed outdated data.'),
+(1, 'Delete Old Data', '2024-10-13', 'Removed outdated data.'),
 
 INSERT INTO DataArchive (UpdateID, DataType, ArchiveDate, AdminID)
 VALUES

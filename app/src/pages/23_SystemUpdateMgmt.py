@@ -1,3 +1,4 @@
+import pandas as pd
 import streamlit as st
 import requests
 from modules.nav import SideBarLinks
@@ -8,11 +9,15 @@ SideBarLinks(show_home=True)
 st.title("System Update Management")
 
 # Section: Retrieve Current System Status
-st.header("Retrieve Latest Update")
 if st.button("Fetch Update"):
     response = requests.get("http://web-api:4000/a/system-update")
     if response.status_code == 200:
-        st.json(response.json())
+        data = response.json() 
+        if data:
+            df = pd.DataFrame(data)
+            st.table(df)  
+        else:
+            st.warning("No updates found.")
     else:
         st.error("Failed to fetch system status.")
 
