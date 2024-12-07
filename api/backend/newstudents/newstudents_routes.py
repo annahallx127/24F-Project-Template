@@ -332,55 +332,35 @@ def update_application(application_id):
     else:
         return jsonify({'message': 'No fields to update provided'}), 400
 
-# Define the upload folder for resume storage (change this path as necessary)
-UPLOAD_FOLDER = '/path/to/your/uploads'
-ALLOWED_EXTENSIONS = {'pdf', 'docx', 'txt', 'rtf'}
 
-# Helper function to check the file extension
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-#------------------------------------------------------------
-# Submit a resume for a student
-@new_students.route('/resume/<int:student_id>', methods=['POST'])
-def submit_resume(student_id):
-    current_app.logger.info(f'POST /resume/{student_id} route')
+@new_students.route('/resume', methods=['POST'])
+def submit_resume():
+    current_app.logger.info(f'POST /resume route')
     
-    # Ensure a file is part of the request
-    if 'resume' not in request.files:
-        return jsonify({'message': 'No file part'}), 400
+    # Use request.get_json() instead of request.json for better compatibility with JSON payloads
+    resume_info = request.get_json()
+    current_app.logger.info(f"Received payload: {resume_info}")
     
-    file = request.files['resume']
-    
-    # Check if a file is selected and has a valid extension
-    if file.filename == '':
-        return jsonify({'message': 'No selected file'}), 400
-    
-    if file and allowed_file(file.filename):
-        # Save the resume file
-        filename = f"{student_id}_resume.{file.filename.rsplit('.', 1)[1].lower()}"
-        file_path = os.path.join(UPLOAD_FOLDER, filename)
-        file.save(file_path)
+    # Get additional details from the payload (as it is a JSON object)
+    student_id = resume_info.get('StudentID')
+    resume_name = resume_info.get('ResumeName')
+    work_experience = resume_info.get('WorkExperience')
+    technical_skills = resume_info.get('TechnicalSkills')
+    soft_skills = resume_info.get('SoftSkills')
 
-        # Insert resume details into the database
-        resume_info = request.json
-        work_experience = resume_info.get('WorkExperience')
-        technical_skills = resume_info.get('TechnicalSkills')
-        soft_skills = resume_info.get('SoftSkills')
-        resume_name = resume_info.get('ResumeName', filename)
+    # Insert into the database
+    cursor = db.get_db().cursor()
+    query = '''
+        INSERT INTO Resume (StudentID, WorkExperience, ResumeName, TechnicalSkills, SoftSkills)
+        VALUES (%s, %s, %s, %s, %s)
+    '''
+    cursor.execute(query, (student_id, work_experience, resume_name, technical_skills, soft_skills))
+    db.get_db().commit()
 
-        cursor = db.get_db().cursor()
-        cursor.execute("""
-            INSERT INTO Resume (StudentID, WorkExperience, ResumeName, TechnicalSkills, SoftSkills)
-            VALUES (%s, %s, %s, %s, %s)
-        """, (student_id, work_experience, resume_name, technical_skills, soft_skills))
-        
-        db.get_db().commit()
+    # Return a success message
+    return jsonify({'message': 'Resume submitted successfully'}), 201
 
-        return jsonify({'message': 'Resume submitted successfully'}), 200
-    else:
-        return jsonify({'message': 'Invalid file format'}), 400
-    
     #------------------------------------------------------------
 # Delete a student's resume
 @new_students.route('/resume/<resume_name>', methods=['DELETE'])

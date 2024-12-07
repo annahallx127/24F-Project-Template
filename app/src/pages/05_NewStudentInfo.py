@@ -61,3 +61,36 @@ if st.button("Update Student Information"):
             st.error(f"Error updating student information: {e}")
     else:
         st.warning("Please provide a valid Student ID.")
+
+# Section: Submit Resume
+st.header("Submit Resume")
+resume_name = st.text_input("Resume Name", key="resume_name")
+work_experience = st.text_area("Enter Your Most Recent Work Experience", key="work_experience")
+technical_skills = st.text_area("Technical Skills", key="technical_skills")
+soft_skills = st.text_area("Soft Skills", key="soft_skills")
+
+
+if st.button("Submit Resume", key="submit_resume"):
+    if resume_name and work_experience and technical_skills and soft_skills:
+        # Prepare the resume data to be sent in the request
+        payload = {
+            "StudentID": 1,
+            "ResumeName": resume_name,
+            "WorkExperience": work_experience,
+            "TechnicalSkills": technical_skills,
+            "SoftSkills": soft_skills,
+        }
+
+        # Step 1: Submit the resume as JSON
+        response_resume = requests.post(
+            "http://web-api:4000/ns/resume",
+            json=payload,  # use json parameter to send JSON data
+            headers={"Content-Type": "application/json"}  # Ensure correct header
+        )
+        
+        if response_resume.status_code == 201:  # Status code 201 for successful creation
+            st.success("Resume submitted successfully!")
+        else:
+            st.error(f"Failed to submit resume. Status Code: {response_resume.status_code}")
+    else:
+        st.warning("Please fill out all required fields to submit your resume.")
