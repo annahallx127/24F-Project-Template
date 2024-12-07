@@ -32,32 +32,44 @@ def get_permissions():
 # Assign permissions to a new user type
 @admin.route('/permissions', methods=['POST'])
 def assign_permissions():
-    data = request.json
-    access_level = data['access_level']
-    description = data['description']
-    user_type = data['user_type']
-    admin_id = 7  # Hardcoded Admin ID
-    
-    if user_type == 'Student':
-        query = '''
-            INSERT INTO StudentPermissions (StudentID, AccessLevel, AccessDescription, AdminID) 
-            VALUES (%s, %s, %s, %s)
-        '''
-    elif user_type == 'Employer':
-        query = '''
-            INSERT INTO EmployerPermissions (EmployerID, AccessLevel, AccessDescription, AdminID) 
-            VALUES (%s, %s, %s, %s)
-        '''
-    else:  # Admin
-        query = '''
-            INSERT INTO AdminPermissions (AdminID, AccessLevel, AccessDescription, AssignedByAdminID) 
-            VALUES (%s, %s, %s, %s)
-        '''
-    
-    cursor = db.get_db().cursor()
-    cursor.execute(query, (data['user_id'], access_level, description, admin_id))
-    db.get_db().commit()
-    return make_response("Permissions assigned successfully", 200)
+    try:
+        data = request.json
+        user_id = data.get('user_id')  # Use `.get` to avoid KeyError if key is missing
+        access_level = data.get('access_level')
+        description = data.get('description')
+        user_type = data.get('user_type')
+
+        # Input validation
+        if not isinstance(user_id, int) or not isinstance(access_level, str) or not isinstance(description, str):
+            return make_response({"error": "Invalid input data. Ensure user_id is an integer, access_level and description are strings."}, 400)
+
+        # SQL queries with hardcoded Admin ID
+        if user_type == 'Student':
+            query = '''
+                INSERT INTO StudentPermissions (StudentID, AccessLevel, AccessDescription, AdminInCharge) 
+                VALUES (%s, %s, %s, 7)
+            '''
+        elif user_type == 'Employer':
+            query = '''
+                INSERT INTO EmployerPermissions (EmployerID, AccessLevel, AccessDescription, AdminInCharge) 
+                VALUES (%s, %s, %s, 7)
+            '''
+        elif user_type == 'Admin':
+            query = '''
+                INSERT INTO AdminPermissions (AdminID, AccessLevel, AccessDescription, AdminInCharge) 
+                VALUES (%s, %s, %s, 7)
+            '''
+
+        # Execute the query
+        cursor = db.get_db().cursor()
+        cursor.execute(query, (user_id, access_level, description))
+        db.get_db().commit()
+
+        return make_response("Permissions assigned successfully", 200)
+    except Exception as e:
+        current_app.logger.error(f"Error in assign_permissions: {str(e)}")
+        return make_response({"error": str(e)}, 500)
+
 
 
 # Update permissions for existing users or roles
@@ -216,10 +228,6 @@ def delete_old_logs():
 @admin.route('/job-listings/expired', methods=['GET'])
 def get_expired_job_listings():
     current_app.logger.info('GET /job-listings/expired route')
-
-    # Get the current date and time to compare with job expiry date
-    from datetime import datetime
-    current_time = datetime.now()
 
     # Query to fetch job listings where the expiration date (JobIsActive) is less than the current time
     cursor = db.get_db().cursor()
