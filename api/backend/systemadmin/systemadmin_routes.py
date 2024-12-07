@@ -1,3 +1,4 @@
+import logging
 from flask import Blueprint, request, jsonify, make_response, current_app
 from backend.db_connection import db
 
@@ -129,19 +130,22 @@ def clear_logs():
 # Retrieve audit logs of user actions and system changes
 @admin.route('/alert-system/audit-logs', methods=['GET'])
 def get_audit_logs():
-    query = '''
-        SELECT a.AlertID, a.ActivityType, a.Description, a.Severity, a.Timestamp, a.Status,
-               CASE 
-                   WHEN a.GeneratedBy IN (SELECT StudentID FROM Student) THEN 'Student'
-                   WHEN a.GeneratedBy IN (SELECT EmployerID FROM HiringManager) THEN 'Employer'
-                   WHEN a.GeneratedBy IN (SELECT AdminID FROM SystemsAdministrator) THEN 'Admin'
-               END AS GeneratedByType
-        FROM AlertSystem a
-    '''
-    cursor = db.get_db().cursor()
-    cursor.execute(query)
-    data = cursor.fetchall()
-    return make_response(jsonify(data), 200)
+    try:
+        query = '''
+            SELECT a.AlertID, a.ActivityType, a.Description, a.Severity, a.Timestamp, a.Status,
+                   CASE 
+                       WHEN a.GeneratedByStudent IS NOT NULL THEN 'Student'
+                       WHEN a.GeneratedByEmployer IS NOT NULL THEN 'Employer'
+                       WHEN a.GeneratedByAdmin IS NOT NULL THEN 'Admin'
+                   END AS GeneratedByType
+            FROM AlertSystem a
+        '''
+        cursor = db.get_db().cursor()
+        cursor.execute(query)
+        data = cursor.fetchall()
+        return make_response(jsonify(data), 200)
+    except Exception as e:
+        return make_response({"error": str(e)}, 500)
 
 # Submit new alerts or event flags
 @admin.route('/alert-system', methods=['POST'])
@@ -242,7 +246,6 @@ def get_users():
     elif user_type == 'Admin':
         query = 'SELECT AdminID, FirstName, LastName FROM SystemsAdministrator'
     else:
-        # Retrieve all users by combining queries
         query = '''
             SELECT 'Student' AS UserType, StudentID AS ID, FirstName, LastName FROM Student
             UNION ALL

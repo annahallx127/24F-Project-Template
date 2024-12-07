@@ -8,20 +8,24 @@ SideBarLinks(show_home=True)
 # Section: Retrieve Audit Logs
 st.header("Retrieve Audit Logs")
 if st.button("Fetch Audit Logs"):
-    response = requests.get("http://web-api:4000/a/alert-system/audit-logs")
-    if response.status_code == 200:
-        try:
+    try:
+        response = requests.get("http://web-api:4000/a/alert-system/audit-logs")
+        if response.status_code == 200:
             data = response.json()
             if data:
-                st.json(data)
+                # Convert data to a Pandas DataFrame for better visualization
+                df = pd.DataFrame(data, columns=[
+                    "AlertID", "ActivityType", "Description", "Severity",
+                    "Timestamp", "Status", "GeneratedByType"
+                ])
+                st.write("Audit Logs:")
+                st.dataframe(df)  # Display the DataFrame as an interactive table
             else:
                 st.info("No audit logs found.")
-        except ValueError:
-            st.error("Invalid response format from API.")
-    elif response.status_code == 404:
-        st.warning("No audit logs found.")
-    else:
-        st.error(f"Failed to fetch audit logs: {response.status_code}")
+        else:
+            st.error(f"Failed to fetch audit logs: {response.status_code}")
+    except Exception as e:
+        st.error(f"Error occurred: {str(e)}")
 
 
 # Section: Submit New Alert
