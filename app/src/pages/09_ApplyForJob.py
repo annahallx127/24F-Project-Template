@@ -7,7 +7,6 @@ st.title("Manage Applications")
 
 # Section: Apply for a Job
 st.header("Apply for a Job")
-apply_student_id = st.text_input("Student ID", key="apply_student_id")
 job_id = st.text_input("Job ID", key="apply_job_id")
 status = st.selectbox("Status", ["Applied", "Interested", "Rejected"], key="apply_status")
 if st.button("Submit Application"):
