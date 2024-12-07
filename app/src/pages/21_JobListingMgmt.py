@@ -30,11 +30,17 @@ if st.button("Fetch Active Job Listings"):
 # Section: Retrieve Job Listing Details
 st.header("Find Job Listing Details")
 job_id_get = st.text_input("Enter Job Listing ID", key="get_job_id")
+
 if st.button("Fetch Job Details"):
     if job_id_get:
         response = requests.get(f"http://web-api:4000/a/job-listings/{job_id_get}")
         if response.status_code == 200:
-            st.json(response.json())
+            data = response.json()  
+            if data:
+                df = pd.DataFrame(data)
+                st.table(df)  
+            else:
+                st.warning("No job listing details found.")
         else:
             st.error("Failed to fetch job details.")
     else:
