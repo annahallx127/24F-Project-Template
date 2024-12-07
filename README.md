@@ -1,6 +1,6 @@
 # Fall 2024 CS 3200 Project Template Repository
 
-This repo is for our team WASSABI- Afra Ankita, Bella Chin, Isabel Yeow, Anna Hall we created a data drive web application Suitable. Our mission is to create a better NUWorks for students, hiring managers, and system adminstrators. 
+This repo is for our team WASABI- Afra Ankita, Bella Chin, Isabel Yeow, Anna Hall we created a data drive web application Suitable. Our mission is to create a better NUWorks for students, hiring managers, and system adminstrators. 
 
 ## Prerequisites
 
