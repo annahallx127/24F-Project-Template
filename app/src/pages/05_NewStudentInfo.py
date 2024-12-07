@@ -46,7 +46,7 @@ if st.button("Update Student Information"):
     student_id = st.session_state.get("student_id")
     if student_id:
         student_info = {
-            "WCFI": update_wcfi
+            "Major": update_major
         }
 
         # Send the PUT request to the Flask API
