@@ -261,7 +261,6 @@ def withdraw_application(id):
 
 #------------------------------------------------------------
 # Schedule a coffee chat by creating an appointment between a mentor and mentee
-# Schedule a coffee chat by creating an appointment between a mentor and mentee
 @new_students.route('/coffee-chat', methods=['POST'])
 def schedule_coffee_chat():
     current_app.logger.info("POST /coffee-chat route")
