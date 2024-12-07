@@ -54,53 +54,31 @@ if st.button("Getting Available Coffee Chats", key="fetch_coffee_chat"):
 
 st.write("Pick an availability time to book an appointment with the student by inputting an availability ID, the meeting subject, and the duration in minutes below.")
 
-# Inputs
+ # Inputs
 availability_id = st.text_input("Availability ID", key="availability_id")
-start_date = st.text_input("StartDate", key="start_date")
-meeting_subject = st.text_input("Meeting Subject", key="meeting_subject")
-duration = st.text_input("Duration (in minutes)", key="duration")
 
 # Button to book an appointment
 if st.button("Book an Appointment", key="book_appointment"):
-    if availability_id and meeting_subject and duration:
-        try:
-            # Validate duration is a number
-            duration = int(duration)
-        except ValueError:
-            st.error("Duration must be a valid number (in minutes).")
-            st.stop()
-
-        # Hardcoded or fetched student_id
-        student_id = st.session_state.get("student_id", 1)  # Default to 2 for now
-
-        # Construct payload
-        chat_info = {
-            "MentorID": 1,
-            "MenteeID": student_id,
-            "AvailabilityID": availability_id,
-            "StartDate": start_date,
-            "Duration": duration,
-            "MeetingSubject": meeting_subject
-        }
-
-
+    if availability_id:
         # API URL
-        url = "http://web-api:4000/ns/coffee-chat"
+        url = f"http://web-api:4000/ns/book-appointment/{availability_id}"
 
         try:
-            # Send POST request
-            response = requests.post(url, json=chat_info)
-
-            # Check the response status
-            if response.status_code == 201:
-                st.dataframe(chat_info)
-                st.success("Appointment successfully booked!")
+            response = requests.get(url)
+            if response.status_code == 200:
+                availability_details = response.json()
+                st.write("Here are the details for the selected availability:")
+                st.write(f"**Availability ID:** {availability_details['AvailabilityID']}")
+                st.write(f"**Start Date:** {availability_details['StartDate']}")
+                st.write(f"**End Date:** {availability_details['EndDate']}")
+                st.write(f"**Mentor Name:** {availability_details['MentorName']}")
             else:
-                st.error(f"Failed to book appointment: {response.status_code}")
-        except requests.exceptions.RequestException as e:
-            st.error(f"Error while booking the appointment: {e}")
+                st.error(f"Failed to fetch availability details: {response.status_code}")
+        except Exception as e:
+            st.error(f"Error fetching availability details: {e}")
     else:
-        st.warning("Please fill out all fields.")
+        st.warning("Please enter an Availability ID.")
+
 
 # Section: Apply for a Job
 st.header("Apply for a Job")

@@ -4,7 +4,6 @@ from flask import request
 from flask import make_response
 from flask import current_app
 from backend.db_connection import db
-from backend.ml_models.model01 import predict
 
 # Create a new Blueprint object for returning students
 returning_student = Blueprint('returning_student', __name__)
