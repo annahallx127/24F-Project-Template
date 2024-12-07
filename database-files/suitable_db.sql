@@ -215,7 +215,9 @@ CREATE TABLE IF NOT EXISTS `JobListingManagement` (
 INSERT INTO Student (StudentID, FirstName, LastName, Major, isMentor, WCFI)
 VALUES
 (1, 'Peter', 'Parker', 'Arachnology', FALSE, 'CENI'),
-(2, 'Mary', 'Jane', 'Computer Science', TRUE, 'DPSI')
+(2, 'Mary', 'Jane', 'Computer Science', TRUE, 'DPSI'),
+(3, 'Aunt', 'May', 'Computer Science & Biology', TRUE, 'DPEI'),;
+
 
 -- Insert into Availabilities table
 INSERT INTO Availabilities (AvailabilityID, StudentID, StartDate, EndDate)
@@ -266,7 +268,7 @@ VALUES
 -- Insert into Application table
 INSERT INTO Application (ApplicationID, StudentID, AppliedDate, Status, JobID)
 VALUES
-(1, 1, '2024-12-06', 'Pending', 2),  -- Arachnology Researcher
+(1, 3, '2024-12-06', 'Pending', 2),  -- Arachnology Researcher
 (2, 1, '2024-12-03', 'Pending', 5),  -- Arachnology Technician
 (3, 1, '2024-11-30', 'Accepted', 9),  -- Arachnology Field Researcher
 (4, 1, '2024-12-01', 'Applied', 10),  -- Arachnology Laboratory Assistant
