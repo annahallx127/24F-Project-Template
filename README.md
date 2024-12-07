@@ -35,7 +35,7 @@ Currently, there are three major components which will each run in their own Doc
 
 
 
-##Handling User Role Access and Control in the "Wasabi" Project
+## Handling User Role Access and Control in the "Wasabi" Project
 In the Wasabi project, we developed a dynamic system that manages role-based access for multiple user types, such as new students, mentors, hiring managers, and system administrators. Each user role interacts with unique features tailored to their responsibilities while sharing some overlapping functionality. This concept, known as Role-Based Access Control (RBAC), ensures a secure, intuitive, and personalized user experience.
 
 Our implementation demonstrates how to integrate RBAC seamlessly within a Streamlit-powered app while managing user interactions and navigation efficiently.
