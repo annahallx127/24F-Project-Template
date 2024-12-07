@@ -61,19 +61,11 @@ def update_new_student(StudentID):
     updates = []
     values = []
 
-    if 'FirstName' in student_info:
-        updates.append("FirstName = %s")
-        values.append(student_info['FirstName'])
-    if 'LastName' in student_info:
-        updates.append("LastName = %s")
-        values.append(student_info['LastName'])
+   
     if 'Major' in student_info:
         updates.append("Major = %s")
         values.append(student_info['Major'])
-    if 'WCFI' in student_info:
-        updates.append("WCFI = %s")
-        values.append(student_info['WCFI'])
-
+    
     if updates:
         query = f"UPDATE Student SET {', '.join(updates)} WHERE StudentID = %s"
         values.append(StudentID)

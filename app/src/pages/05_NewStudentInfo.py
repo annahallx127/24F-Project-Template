@@ -41,13 +41,11 @@ if st.button("Fetch Student Details", type='primary', use_container_width=True):
 # Section: Update Student Information
 st.header("Update Student Information")
 update_major = st.text_input("Major", key="update_major")
-update_wcfi = st.text_input("WCFI", key="update_wcfi")
 
 if st.button("Update Student Information"):
     student_id = st.session_state.get("student_id")
     if student_id:
         student_info = {
-            "Major": update_major,
             "WCFI": update_wcfi
         }
 
