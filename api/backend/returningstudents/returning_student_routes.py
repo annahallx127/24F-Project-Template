@@ -1,9 +1,9 @@
 from flask import Blueprint
 from flask import jsonify
+from flask import request
 from flask import make_response
 from flask import current_app
 from backend.db_connection import db
-import logging
 from backend.ml_models.model01 import predict
 
 # Create a new Blueprint object for returning students
@@ -36,6 +36,50 @@ def get_availabilities():
     the_response.status_code = 200
     return the_response
 
+@returning_student.route('/availabilities/<int:availability_id>', methods=['PUT'])
+def update_availability(availability_id):
+    current_app.logger.info(f"PUT /availabilities/{availability_id} route")
+    
+    try:
+        # Parse request body
+        availability_info = request.json
+        current_app.logger.info(f"Received payload: {availability_info}")
+
+        if not availability_info:
+            raise ValueError("Request body is empty or invalid JSON")
+
+        # Check if the availability exists
+        cursor = db.get_db().cursor()
+        cursor.execute('SELECT StudentID FROM Availabilities WHERE AvailabilityID = %s', (AvailabilityID,))
+        result = cursor.fetchone()
+
+        if not result or result['StudentID'] != 2:
+            return jsonify({'message': 'Availability not found or unauthorized'}), 404
+
+        # Prepare the update query
+        updates = []
+        values = []
+        if 'StartDate' in availability_info:
+            updates.append("StartDate = %s")
+            values.append(availability_info['StartDate'])
+        if 'EndDate' in availability_info:
+            updates.append("EndDate = %s")
+            values.append(availability_info['EndDate'])
+
+        if updates:
+            query = f"UPDATE Availabilities SET {', '.join(updates)} WHERE AvailabilityID = %s"
+            values.append(AvailabilityID)
+            cursor.execute(query, tuple(values))
+            db.get_db().commit()
+            return jsonify({'message': 'Availability updated successfully'}), 200
+        else:
+            return jsonify({'message': 'No fields to update provided'}), 400
+    except ValueError as ve:
+        current_app.logger.error(f"ValueError: {ve}")
+        return jsonify({'message': str(ve)}), 400
+    except Exception as e:
+        current_app.logger.error(f"Error updating availability: {str(e)}")
+        return jsonify({'message': 'Failed to update availability', 'details': str(e)}), 500
 
 # # Post availability so other students can schedule coffee chat
 # @returning_student.route('/availability', methods=['POST'])
