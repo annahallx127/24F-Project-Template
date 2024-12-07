@@ -6,6 +6,8 @@
 # https://docs.streamlit.io/develop/api-reference/configuration/config.toml
 # ------------------------------------------------------------
 
+[server]
+enableStaticServing = true
 
 [client]
 # Turning the default sidebar navigation off so we 
@@ -17,6 +19,5 @@ showSidebarNavigation = false
 base="light"
 primaryColor="#3f3f40"
 font="monospace"
-enableStaticServing = true
 
 
