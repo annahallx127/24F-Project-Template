@@ -216,40 +216,40 @@ VALUES
 (1, 'Peter', 'Parker', 'Arachnology', FALSE, '1234'),
 (2, 'Mary', 'Jane', 'Computer Science', TRUE, '5678');
 
-INSERT INTO Availabilities (StudentID, StartDate, EndDate)
+INSERT INTO Availabilities (AvailabilityID, StudentID, StartDate, EndDate)
 VALUES
-(2, '2024-12-10 10:00:00', '2024-12-10 12:00:00'),
-(2, '2024-12-15 08:00:00', '2024-12-15 10:00:00');
+(1, 2, '2024-12-10 10:00:00', '2024-12-10 12:00:00'),
+(2, 2, '2024-12-15 08:00:00', '2024-12-15 10:00:00');
 
 -- Insert into Resume table
-INSERT INTO Resume (StudentID, ResumeName, WorkExperience, TechnicalSkills, SoftSkills)
+INSERT INTO Resume (ResumeID, StudentID, ResumeName, WorkExperience, TechnicalSkills, SoftSkills)
 VALUES
-(1, 'Alice Resume', 'Software Developer Intern at TechCorp', 'Java, SQL', 'Communication, Leadership'),
-(2, 'Bob Resume', 'Junior Engineer at BuildCo', 'CAD Design, Prototyping', 'Problem-solving, Teamwork');
+(1, 1, 'Alice Resume', 'Software Developer Intern at TechCorp', 'Java, SQL', 'Communication, Leadership'),
+(2, 2, 'Bob Resume', 'Junior Engineer at BuildCo', 'CAD Design, Prototyping', 'Problem-solving, Teamwork');
 
 --HIRING MANAGER NEW INSERT STATEMENTS ---------------------------------------
 -- Insert into HiringManager table (One hiring manager for simplicity)
-INSERT INTO HiringManager (ApplicantID, FirstName, LastName, Position)
+INSERT INTO HiringManager (EmployerID, ApplicantID, FirstName, LastName, Position)
 VALUES
-(1, 'Alex', 'Smith', 'Hiring Manager'); -- Alex is the hiring manager responsible for job postings and applicant tracking
+(1, 1, 'Alex', 'Smith', 'Hiring Manager'); -- Alex is the hiring manager responsible for job postings and applicant tracking
 
 -- Insert into Company table (A company associated with the hiring manager)
-INSERT INTO Company (EmployerID, Name, Industry)
+INSERT INTO Company (CompanyID, EmployerID, Name, Industry)
 VALUES
-(1, 'InnovativeTech', 'Technology');  -- InnovativeTech is the company where the hiring manager works
+(1, 1, 'InnovativeTech', 'Technology');  -- InnovativeTech is the company where the hiring manager works
 
 -- Insert into JobListings table (Hiring manager posting job openings)
-INSERT INTO JobListings (JobListingID, JobDescription, JobPositionTitle, JobIsActive, CompanyID)
+INSERT INTO JobListings (JobListingID, CompanyID, JobDescription, JobPositionTitle, JobIsActive)
 VALUES
-(1, 'Looking for a skilled software engineer to join our team and work on innovative projects.', 'Software Engineer', TRUE, 1), -- Software Engineer position
-(2, 'Seeking a data analyst to help with data-driven decision making and business intelligence projects.', 'Data Analyst', TRUE, 1); -- Data Analyst position
+(1, 1, 'Looking for a skilled software engineer to join our team and work on innovative projects.', 'Software Engineer', TRUE), -- Software Engineer position
+(2, 1,'Seeking a data analyst to help with data-driven decision making and business intelligence projects.', 'Data Analyst', TRUE); -- Data Analyst position
 
 -- Insert into Application table (Applicants applying for job listings)
 -- Assuming students have IDs 1 and 2 from previous data
-INSERT INTO Application (StudentID, JobID, AppliedDate, Status)
+INSERT INTO Application (ApplicationID, StudentID, AppliedDate, Status, JobID)
 VALUES
-(1, 1, '2024-12-01', 'Pending'),  -- Applicant 1 for Software Engineer
-(2, 2, '2024-12-02', 'Interview Scheduled'); -- Applicant 2 for Data Analyst
+(1, 1, '2024-12-01', 'Pending', 1),  -- Applicant 1 for Software Engineer
+(2, 2, '2024-12-02', 'Interview Scheduled', 2); -- Applicant 2 for Data Analyst
 
 -- Insert into Rank table (Automated ranking based on applicant match with job descriptions)
 -- Rank is calculated based on applicant match with job description (e.g., keyword matching, skills match)
@@ -323,12 +323,6 @@ VALUES
 (3, 'Software Engineer Intern', 'Software Intern', TRUE, 1),
 (4, 'Mechanical Engineer Intern', 'Mechanical Intern', TRUE, 2);
 
--- Insert into Application table
-INSERT INTO Application (StudentID, JobID, AppliedDate, Status)
-VALUES
-(1, 1,  '2024-11-01', 'Pending'),
-(2, 2, '2024-11-02', 'Interview Scheduled');
-
 -- Insert into CareerProjections table
 INSERT INTO CareerProjections (StudentID, EducationTimeline, CoopTimeline, FullTimeTimeline)
 VALUES
@@ -360,10 +354,10 @@ VALUES
 (2, 1);
 
 -- Insert into SystemsAdministrator table
-INSERT INTO SystemsAdministrator (FirstName, LastName)
+INSERT INTO SystemsAdministrator (AdminID, FirstName, LastName)
 VALUES
-('John', 'Doe'),
-('Jane', 'Smith');
+(1, 'Gwen', 'Stacy'),
+(2, 'Mary', 'Jane');
 
 -- Insert into SystemUpdate table
 INSERT INTO SystemUpdate (UpdateType, AdminID, UpdateDate, Description)
@@ -408,14 +402,11 @@ VALUES
 (1, 1, 1, 'Super Admin Permissions'),
 (2, 2, 2, 'Data Manager Permissions');
 
-<<<<<<< HEAD
 SELECT * FROM Availabilities WHERE StudentID = 2;
-=======
 -- Insert expired job listings into the JobListings table
 INSERT INTO JobListings (JobListingID, JobDescription, JobPositionTitle, JobIsActive, CompanyID)
 VALUES
 (5, 'Expired Job 1 Description', 'Expired Position 1', FALSE, 1),
 (6, 'Expired Job 2 Description', 'Expired Position 2', FALSE, 2),
 (7, 'Expired Job 3 Description', 'Expired Position 3', FALSE, 1);
->>>>>>> 4eb21c3e639ff4f00f9f075d9e6158a2f39d53c1
 
