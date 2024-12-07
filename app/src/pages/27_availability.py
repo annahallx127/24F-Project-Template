@@ -50,7 +50,6 @@ if st.button("Fetch Availability", type='primary', use_container_width=True):
 
 # Section: Post Availability
 st.header("Add New Availability")
-student_id = 2  
 StartDate = st.text_input("Start time (format: YYYY-MM-DD HH:MI:SS)", key="StartDate")
 EndDate = st.text_input("End time (format: YYYY-MM-DD HH:MI:SS)", key="EndDate")
 
@@ -67,7 +66,7 @@ if st.button("Post Availability"):
 
         # Prepare the payload
         payload = {
-            "StudentID": student_id,
+            "StudentID": 2,
             "StartDate": StartDate,
             "EndDate": EndDate
         }
