@@ -91,7 +91,7 @@ def AdminHomePageNav():
 
 def UpdateJobListingsNav():
     st.sidebar.page_link(
-        "pages/21_JobListingMgmt.py", label="Admin Update Job Listing", icon="💼"
+        "pages/21_JobListingMgmt.py", label="Update Job Listing", icon="💼"
     )
 
 
