@@ -223,12 +223,11 @@ def get_all_students():
     except Exception as e:
         current_app.logger.error(f"Error fetching students: {e}")
         return jsonify({"error": str(e)}), 500
-
-
+    
 @hiring_manager.route('/students/rankings', methods=['GET'])
-def get_students_with_rankings():
+def get_unique_rankings_with_students():
     """
-    Fetch all students from the database along with their WCFI values and rankings.
+    Fetch all unique student rankings along with their details from the Rank and Student tables.
     """
     cursor = db.get_db().cursor()
 
@@ -238,16 +237,20 @@ def get_students_with_rankings():
             s.FirstName,
             s.LastName,
             s.WCFI,
-            COALESCE(r.RankNum, 'Unranked') AS Rank
+            r.RankNum
         FROM Student s
-        LEFT JOIN `Rank` r ON s.StudentID = r.ApplicantID
+        JOIN `Rank` r ON s.StudentID = r.ApplicantID
         ORDER BY r.RankNum ASC
     '''
 
     try:
         cursor.execute(query)
-        students = cursor.fetchall()
-        return jsonify(students), 200
+        rows = cursor.fetchall()
+
+        if rows:
+            return jsonify(rows), 200
+        else:
+            return jsonify({"message": "No rankings or students found"}), 404
     except Exception as e:
-        current_app.logger.error(f"Error fetching student rankings: {e}")
+        current_app.logger.error(f"Error fetching unique rankings with students: {e}")
         return jsonify({"error": f"Error fetching rankings: {str(e)}"}), 500
