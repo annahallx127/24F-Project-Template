@@ -140,7 +140,6 @@ def SideBarLinks(show_home=False):
             AdminHomePageNav()
             UpdateJobListingsNav()
             ManageUsersNav()
-            ManageUserPermissionsNav()
             ManageSystemUpdatesNav()
             AlertSystemNav()
 
