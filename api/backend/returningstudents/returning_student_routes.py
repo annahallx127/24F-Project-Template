@@ -23,12 +23,12 @@ def get_availabilities():
     '''
 
         # Execute query for the hardcoded StudentID
-        cursor.execute(query, (2,))  # Replace `2` with Gwen Stacy's StudentID
-        availabilities = cursor.fetchone()
+    cursor.execute(query, (2,))  # Replace `2` with Gwen Stacy's StudentID
+    availabilities = cursor.fetchall()
 
         # If no availabilities found, return a 404 response
-        if not availabilities:
-            return jsonify({"error": "No availabilities found"}), 404
+    if not availabilities:
+        return jsonify({"error": "No availabilities found"}), 404
 
         # Convert rows into a JSON-serializable format, ensuring datetime fields are converted to strings
         results = [
@@ -41,7 +41,11 @@ def get_availabilities():
             for row in availabilities
         ]
 
-        return jsonify(results), 200
+      # Return the student data as a JSON response
+    the_response = make_response(jsonify(availabilities))
+    the_response.status_code = 200
+    return the_response
+
 
 # # Post availability so other students can schedule coffee chat
 # @returning_student.route('/availability', methods=['POST'])
