@@ -229,9 +229,9 @@ VALUES
 
 --HIRING MANAGER NEW INSERT STATEMENTS ---------------------------------------
 -- Insert into HiringManager table (One hiring manager for simplicity)
-INSERT INTO HiringManager (ApplicantID, FirstName, LastName, Position)
+INSERT INTO HiringManager (EmployerID, ApplicantID, FirstName, LastName, Position)
 VALUES
-(1, 'Alex', 'Smith', 'Hiring Manager'); -- Alex is the hiring manager responsible for job postings and applicant tracking
+(1, 1, 'Alex', 'Smith', 'Hiring Manager'); -- Alex is the hiring manager responsible for job postings and applicant tracking
 
 -- Insert into Company table (A company associated with the hiring manager)
 INSERT INTO Company (CompanyID, EmployerID, Name, Industry)
