@@ -73,7 +73,7 @@ if st.button("Act as Mary Jane, a third year at Spider University",
     logger.info("Logging in as Returning Student")
     st.switch_page('pages/26_ReturningStudentDashboard.py') 
 
-if st.button('Act as Miles Morales, a hiring manager', 
+if st.button('Act as Miles Morales, a hiring manager for Spoody Inc.', 
             type = 'primary', 
             use_container_width=True):
     st.session_state['authenticated'] = True
@@ -81,7 +81,7 @@ if st.button('Act as Miles Morales, a hiring manager',
     st.session_state['first_name'] = 'Miles'
     st.switch_page('pages/31_ManagerDashboard.py')
 
-if st.button('Act as Gwen Stacy, Systems Administrator', 
+if st.button('Act as Gwen Stacy, Systems Administrator for SpiderWorks', 
             type = 'primary', 
             use_container_width=True):
     st.session_state['authenticated'] = True

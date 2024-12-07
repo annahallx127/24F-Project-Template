@@ -164,100 +164,38 @@ def fetch_completed_coops():
     # Fetch the student data
         coops = cursor.fetchall()
     
-        # # Fetch completed co-ops for the given student
-        # query = '''
-        #     SELECT *
-        #     FROM Coop
-        #     WHERE Coop.StudentID = 2   
-        # '''
-        # cursor.execute(query)
-        # coops = cursor.fetchall()  # Fetch all rows
-    
         return jsonify(coops), 200
 
     except Exception as e:
         current_app.logger.error(f"Error fetching completed co-ops: {str(e)}")
         return jsonify({'message': 'Failed to fetch completed co-ops', 'details': str(e)}), 500
 
-# @returning_student.route('/coop-review/<int:coop_id>', methods=['PUT'])
-# def update_coop_review(coop_id):
-#     current_app.logger.info(f"PUT /coop-review/{coop_id} route")
+@returning_student.route('/coop-review/<int:coop_id>', methods=['DELETE'])
+def delete_coop_review(coop_id):
+    """
+    Delete a co-op review by its CoopID
+    """
+    current_app.logger.info(f"DELETE /coop-review/{coop_id} route")
 
-#     try:
-#         # Parse the request body
-#         review_data = request.get_json()
-#         current_app.logger.info(f"Received payload: {review_data}")
+    try:
+        # Connect to the database
+        cursor = db.get_db().cursor()
 
-#         # Validate input data
-#         required_fields = ['CoopReview', 'CoopRating']
-#         for field in required_fields:
-#             if field not in review_data:
-#                 return jsonify({"message": f"Missing required field: {field}"}), 400
+        # Check if the review exists
+        cursor.execute("SELECT * FROM Coop WHERE CoopID = %s", (coop_id,))
+        review = cursor.fetchone()
 
-#         coop_review = review_data.get('CoopReview')
-#         coop_rating = review_data.get('CoopRating')
+        if not review:
+            current_app.logger.error(f"No review found with CoopID: {coop_id}")
+            return jsonify({'message': 'Review not found'}), 404
 
-#         # Validate CoopRating is an integer and within a valid range
-#         try:
-#             coop_rating = int(coop_rating)
-#             if coop_rating < 1 or coop_rating > 5:
-#                 raise ValueError
-#         except ValueError:
-#             return jsonify({"message": "CoopRating must be an integer between 1 and 5"}), 400
+        # Delete the review from the database
+        cursor.execute("UPDATE Coop SET CoopReview = NULL, CoopRating = NULL WHERE CoopID = %s", (coop_id,))
+        db.get_db().commit()
 
-#         # Check if the co-op exists for the student
-#         cursor = db.get_db().cursor()
-#         cursor.execute("""
-#             SELECT CoopID 
-#             FROM Coop 
-#             WHERE CoopID = %s AND StudentID = 2
-#         """, (coop_id,))
-#         coop = cursor.fetchone()
+        current_app.logger.info(f"Review with CoopID {coop_id} deleted successfully")
+        return jsonify({'message': 'Co-op review deleted successfully'}), 200
 
-#         if not coop:
-#             return jsonify({"message": "Co-op not found or unauthorized"}), 404
-
-#         # Update the co-op review and rating
-#         cursor.execute("""
-#             UPDATE Coop
-#             SET CoopReview = %s, CoopRating = %s
-#             WHERE CoopID = %s
-#         """, (coop_review, coop_rating, coop_id))
-#         db.get_db().commit()
-
-#         current_app.logger.info(f"Co-op review for CoopID {coop_id} updated successfully")
-#         return jsonify({"message": "Co-op review updated successfully"}), 200
-
-#     except Exception as e:
-#         current_app.logger.error(f"Error updating co-op review: {str(e)}")
-#         return jsonify({"message": "Failed to update co-op review", "details": str(e)}), 500
-
-# @returning_student.route('/coop-review/<int:coop_id>', methods=['DELETE'])
-# def delete_coop_review(coop_id):
-#     """
-#     Delete a co-op review by its CoopID
-#     """
-#     current_app.logger.info(f"DELETE /coop-review/{coop_id} route")
-
-#     try:
-#         # Connect to the database
-#         cursor = db.get_db().cursor()
-
-#         # Check if the review exists
-#         cursor.execute("SELECT * FROM Coop WHERE CoopID = %s", (coop_id,))
-#         review = cursor.fetchone()
-
-#         if not review:
-#             current_app.logger.error(f"No review found with CoopID: {coop_id}")
-#             return jsonify({'message': 'Review not found'}), 404
-
-#         # Delete the review from the database
-#         cursor.execute("UPDATE Coop SET CoopReview = NULL, CoopRating = NULL WHERE CoopID = %s", (coop_id,))
-#         db.get_db().commit()
-
-#         current_app.logger.info(f"Review with CoopID {coop_id} deleted successfully")
-#         return jsonify({'message': 'Co-op review deleted successfully'}), 200
-
-#     except Exception as e:
-#         current_app.logger.error(f"Error deleting co-op review: {str(e)}")
-#         return jsonify({'message': 'Failed to delete co-op review', 'details': str(e)}), 500
+    except Exception as e:
+        current_app.logger.error(f"Error deleting co-op review: {str(e)}")
+        return jsonify({'message': 'Failed to delete co-op review', 'details': str(e)}), 500
