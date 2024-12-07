@@ -8,7 +8,7 @@ SideBarLinks(show_home=True)
 # Section: Retrieve Audit Logs
 st.header("Retrieve Audit Logs")
 if st.button("Fetch Audit Logs"):
-    response = requests.get("http://web-api:4000/alert-system/audit-logs")
+    response = requests.get("http://web-api:4000/a/alert-system/audit-logs")
     if response.status_code == 200:
         try:
             data = response.json()
@@ -38,7 +38,7 @@ if st.button("Submit Alert"):
             "severity": severity,
             "generated_by": generated_by
         }
-        response = requests.post("http://web-api:4000/alert-system", json=payload)
+        response = requests.post("http://web-api:4000/a/alert-system", json=payload)
         if response.status_code == 200:
             st.success("Alert submitted successfully!")
         else:
@@ -56,7 +56,7 @@ if st.button("Update Alert"):
             "alert_id": alert_id,
             "status": status
         }
-        response = requests.put("http://web-api:4000/alert-system", json=payload)
+        response = requests.put("http://web-api:4000/a/alert-system", json=payload)
         if response.status_code == 200:
             st.success("Alert updated successfully!")
         else:
@@ -67,7 +67,7 @@ if st.button("Update Alert"):
 # Section: Delete Old Logs
 st.header("Delete Old Logs")
 if st.button("Delete Logs Older Than Retention Policy"):
-    response = requests.delete("http://web-api:4000/alert-system/logs")
+    response = requests.delete("http://web-api:4000/a/alert-system/logs")
     if response.status_code == 200:
         st.success("Old logs deleted successfully!")
     else:
