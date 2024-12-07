@@ -399,7 +399,7 @@ def delete_resume(student_id):
 
     return jsonify({'message': 'Resume deleted successfully'}), 200
 
-@new_student.route('/availabilities', methods=['GET'])
+@new_students.route('/availabilities', methods=['GET'])
 def get_availabilities():
     """
     Fetch all availabilities for a hardcoded StudentID.
