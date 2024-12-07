@@ -30,17 +30,7 @@ def get_availabilities():
     if not availabilities:
         return jsonify({"error": "No availabilities found"}), 404
 
-        # Convert rows into a JSON-serializable format, ensuring datetime fields are converted to strings
-        results = [
-            {
-                "AvailabilityID": row[0],
-                "StudentID": row[1],
-                "StartDate": row[2].strftime('%Y-%m-%d %H:%M:%S') if row[2] else None,
-                "EndDate": row[3].strftime('%Y-%m-%d %H:%M:%S') if row[3] else None
-            }
-            for row in availabilities
-        ]
-
+  
       # Return the student data as a JSON response
     the_response = make_response(jsonify(availabilities))
     the_response.status_code = 200
