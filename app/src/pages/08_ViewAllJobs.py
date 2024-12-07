@@ -52,6 +52,7 @@ if st.button("Getting Available Coffee Chats", key="fetch_coffee_chat"):
             st.error(f"Failed to fetch availabilities: {response.status_code}")
             logger.error(f"Error fetching availabilities: {response.status_code}")
 
+
 st.write("Pick an availability time to book an appointment with the student by inputting an availability id, the meeting subject, and the duration in minutes below.")
 
 availability_id = st.text_input("Availability ID", key="availability_id")
@@ -85,9 +86,8 @@ status = st.selectbox("Status", ["Applied", "Interested", "Rejected"], key="appl
 job_id = st.text_input("Job ID", key="apply_job_id")
 
 if st.button("Submit Application", key="submit_app"):
-    student_id = st.session_state.get("student_id")
-    if student_id and job_id and status:
-        application_payload = {"StudentID": student_id, "JobID": job_id, "Status": status}
+    if job_id and status:
+        application_payload = {"StudentID": 1, "JobID": job_id, "Status": status}
         response_application = requests.post("http://web-api:4000/ns/applications", json=application_payload)
         if response_application.status_code == 201:
             st.success("Application submitted successfully!")

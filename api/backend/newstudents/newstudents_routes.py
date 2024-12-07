@@ -10,6 +10,8 @@ from flask import make_response
 from flask import current_app
 from backend.db_connection import db
 from backend.ml_models.model01 import predict
+from datetime import datetime
+
 
 #------------------------------------------------------------
 # Create a new Blueprint object, which is a collection of 
@@ -267,28 +269,61 @@ def schedule_coffee_chat():
     
     # Step 1: Get data from the incoming request
     data = request.get_json()
+    current_app.logger.info(f"Incoming request data: {data}")
 
-    # Get fields from the request
-    mentee_id = data.get('MenteeID')  # This is the student who is booking the appointment
-    availability_id = data.get('AvailabilityID')
-    meeting_subject = data.get('MeetingSubject')
-    duration = data.get('Duration')
+    # Extract fields from the request
+    mentee_id = data.get('MenteeID')  # The student booking the appointment
+    availability_id = data.get('AvailabilityID')  # Availability to book
+    meeting_subject = data.get('MeetingSubject')  # Topic of the chat
+    duration = data.get('Duration')  # Duration of the meeting in minutes
 
     # Step 2: Validate input data
     if not mentee_id or not availability_id or not meeting_subject or not duration:
+        current_app.logger.warning("Missing required fields in the request")
         return jsonify({"message": "Missing required fields"}), 400
 
-    # Step 3: Fetch availability info from the database using availability_id
-    cursor = db.get_db().cursor()
-    cursor.execute("""
-        SELECT StudentID, StartDate FROM Availabilities WHERE AvailabilityID = %s
-    """, (availability_id,))
-    availability_info = cursor.fetchone()
+    try:
+        # Step 3: Check availability info in the database
+        cursor = db.get_db().cursor()
+        cursor.execute("""
+            SELECT StudentID, StartDate 
+            FROM Availabilities 
+            WHERE AvailabilityID = %s
+        """, (availability_id,))
+        availability_info = cursor.fetchone()
+        current_app.logger.info(f"Availability info: {availability_info}")
 
-    # Return the student data as a JSON response
-    the_response = make_response(jsonify(availability_info))
-    the_response.status_code = 200
-    return the_response
+        if not availability_info:
+            current_app.logger.info(f"No availability found for ID: {availability_id}")
+            return jsonify({"message": "No availability found for the given AvailabilityID"}), 404
+
+        # Extract mentor information from availability
+        mentor_id = availability_info[0]
+        start_date = availability_info[1]
+
+        # Step 4: Create the coffee chat record
+        cursor.execute("""
+            INSERT INTO CoffeeChats (MentorID, MenteeID, StartDate, MeetingSubject, Duration)
+            VALUES (%s, %s, %s, %s, %s)
+        """, (mentor_id, mentee_id, start_date, meeting_subject, duration))
+        db.get_db().commit()  # Commit the transaction
+        current_app.logger.info("Coffee chat successfully created")
+
+        # Step 5: Respond with success message
+        response_data = {
+            "message": "Coffee chat successfully scheduled",
+            "MentorID": mentor_id,
+            "MenteeID": mentee_id,
+            "StartDate": str(start_date),
+            "MeetingSubject": meeting_subject,
+            "Duration": duration
+        }
+        return jsonify(response_data), 201
+
+    except Exception as e:
+        current_app.logger.error(f"Error scheduling coffee chat: {e}")
+        return jsonify({"message": "Internal server error"}), 500
+
   
 
 #------------------------------------------------------------
@@ -342,17 +377,28 @@ def submit_resume():
     #------------------------------------------------------------
 # Delete a student's resume
 @new_students.route('/resume/<resume_name>', methods=['DELETE'])
-def delete_resume(resume_name):  # Change ResumeName to resume_name
+def delete_resume(resume_name):
     current_app.logger.info(f'DELETE /resume/{resume_name} route')
+
+    # Check if resume_name is empty or None
     if not resume_name:
         return jsonify({'message': 'Invalid resume name.'}), 400
+
     cursor = db.get_db().cursor()
+
+    # Check if the resume exists in the database
+    cursor.execute("SELECT * FROM Resume WHERE ResumeName = %s", (resume_name,))
+    resume = cursor.fetchone()
+
+    if not resume:
+        return jsonify({'message': 'Resume not found.'}), 404
 
     # Delete the resume record from the database
     cursor.execute("DELETE FROM Resume WHERE ResumeName = %s", (resume_name,))
     db.get_db().commit()
 
     return jsonify({'message': 'Resume deleted successfully'}), 200
+
 
 
 @new_students.route('/availabilities', methods=['GET'])
