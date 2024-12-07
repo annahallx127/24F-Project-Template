@@ -81,30 +81,16 @@ def update_new_student(StudentID):
 # Get all job listings
 @new_students.route('/job-listings', methods=['GET'])
 def get_all_job_listings():
-    current_app.logger.info('GET /job-listings route')
+    current_app.logger.info(f'GET /job-listings route')
     
-    # Create a cursor to execute the query
     cursor = db.get_db().cursor()
-    
-    # Query to retrieve all job listings
-    query = '''
-        SELECT *
-        FROM JobListings
-    '''
+    query = "SELECT * FROM JobListings"
     cursor.execute(query)
-    
-    # Fetch all job listings
     job_listings = cursor.fetchall()
+
+    if not job_listings:
+        return jsonify({'message': 'No job listings available'}), 404
     
-    # If no job listings are found, return an appropriate response
-    if not job_listings:
-        return jsonify({'message': 'No job listings found'}), 404
-
-    # If the student does not exist, return an error message
-    if not job_listings:
-        current_app.logger.error(f"Job Listings not found.")
-        return jsonify({'message': 'Job Listings not found'}), 404
-
     # Return the student data as a JSON response
     the_response = make_response(jsonify(job_listings))
     the_response.status_code = 200
@@ -412,3 +398,30 @@ def delete_resume(student_id):
     db.get_db().commit()
 
     return jsonify({'message': 'Resume deleted successfully'}), 200
+
+@new_students.route('/availabilities', methods=['GET'])
+def get_availabilities():
+    """
+    Fetch all availabilities for a hardcoded StudentID.
+    """
+    cursor = db.get_db().cursor()
+
+    query = '''
+        SELECT AvailabilityID, StudentID, StartDate, EndDate 
+        FROM Availabilities 
+        WHERE StudentID = %s;
+    '''
+
+        # Execute query for the hardcoded StudentID
+    cursor.execute(query, (2,)) 
+    availabilities = cursor.fetchall()
+
+        # If no availabilities found, return a 404 response
+    if not availabilities:
+        return jsonify({"error": "No availabilities found"}), 404
+
+  
+      # Return the student data as a JSON response
+    the_response = make_response(jsonify(availabilities))
+    the_response.status_code = 200
+    return the_response
