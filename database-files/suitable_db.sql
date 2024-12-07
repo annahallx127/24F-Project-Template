@@ -354,10 +354,10 @@ VALUES
 (2, 1);
 
 -- Insert into SystemsAdministrator table
-INSERT INTO SystemsAdministrator (FirstName, LastName)
+INSERT INTO SystemsAdministrator (AdminID, FirstName, LastName)
 VALUES
-('John', 'Doe'),
-('Jane', 'Smith');
+(1, 'Gwen', 'Stacy'),
+(2, 'Mary', 'Jane');
 
 -- Insert into SystemUpdate table
 INSERT INTO SystemUpdate (UpdateType, AdminID, UpdateDate, Description)
