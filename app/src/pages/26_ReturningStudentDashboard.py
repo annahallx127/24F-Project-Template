@@ -8,10 +8,9 @@ import requests
 
 st.set_page_config(layout="wide")
 
-SideBarLinks()
-BASE_API_URL = "http://web-api:4000"
+SideBarLinks(show_home=True)
 
-st.title("Mary Jane's Dashboard")
+st.title("Welcome Mary! What would you like to do?")
 
 # Button to view and manage availability
 if st.button("Manage Availability", 

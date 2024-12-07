@@ -1,53 +1,47 @@
-from flask import Blueprint, request, jsonify, make_response, current_app
+from flask import Blueprint
+from flask import jsonify
+from flask import make_response
+from flask import current_app
 from backend.db_connection import db
 import logging
-
-logger = logging.getLogger(__name__)
+from backend.ml_models.model01 import predict
 
 # Create a new Blueprint object for returning students
 returning_student = Blueprint('returning_student', __name__)
 
 @returning_student.route('/availabilities', methods=['GET'])
 def get_availabilities():
-    current_app.logger.info(f"GET /availabilities route")
-
-    # Get the database cursor
+    """
+    Fetch all availabilities for a hardcoded StudentID (e.g., Gwen Stacy).
+    """
     cursor = db.get_db().cursor()
 
-    # Hardcoded StudentID for Mary Jane
-    student_id = 2
+    query = '''
+        SELECT AvailabilityID, StudentID, StartDate, EndDate 
+        FROM Availabilities 
+        WHERE StudentID = %s;
+    '''
 
-    # Execute the query to fetch availabilities
-    cursor.execute('''
-    SELECT AvailabilityID, StudentID, StartDate, EndDate
-    FROM Availabilities
-    WHERE StudentID = %s
-    ''', (student_id,))
+        # Execute query for the hardcoded StudentID
+        cursor.execute(query, (2,))  # Replace `2` with Gwen Stacy's StudentID
+        availabilities = cursor.fetchone()
 
-    # Fetch the availabilities data
-    availabilities = cursor.fetchall()
+        # If no availabilities found, return a 404 response
+        if not availabilities:
+            return jsonify({"error": "No availabilities found"}), 404
 
-    # If no availabilities exist, return an error message
-    if not availabilities:
-        current_app.logger.error(f"No availabilities found for StudentID {student_id}.")
-        return jsonify({'message': 'No availabilities found'}), 404
+        # Convert rows into a JSON-serializable format, ensuring datetime fields are converted to strings
+        results = [
+            {
+                "AvailabilityID": row[0],
+                "StudentID": row[1],
+                "StartDate": row[2].strftime('%Y-%m-%d %H:%M:%S') if row[2] else None,
+                "EndDate": row[3].strftime('%Y-%m-%d %H:%M:%S') if row[3] else None
+            }
+            for row in availabilities
+        ]
 
-    # Format the results into a list of dictionaries for JSON serialization
-    results = [
-        {
-            "AvailabilityID": row[0],
-            "StudentID": row[1],
-            "StartDate": row[2].strftime('%Y-%m-%d %H:%M:%S') if row[2] else None,
-            "EndDate": row[3].strftime('%Y-%m-%d %H:%M:%S') if row[3] else None
-        }
-        for row in availabilities
-    ]
-
-    # Return the availabilities as a JSON response
-    the_response = make_response(jsonify(results))
-    the_response.status_code = 200
-    return the_response
-
+        return jsonify(results), 200
 
 # # Post availability so other students can schedule coffee chat
 # @returning_student.route('/availability', methods=['POST'])
