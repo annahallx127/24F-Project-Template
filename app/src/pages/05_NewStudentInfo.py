@@ -38,6 +38,55 @@ if st.button("Fetch Student Details", type='primary', use_container_width=True):
     else:
         st.warning("You are not logged in as Peter. Please authenticate first.")
 
+with st.expander("What is WCFI?"):
+    st.write("""
+This system is a personalized tool inspired by the Myers-Briggs Type Indicator (MBTI), designed to evaluate alignment with workplace cultures. It uses four dichotomies to capture preferences in how individuals approach tasks, collaboration, competition, learning, and innovation. The result is a four-letter code that represents an individual’s work-culture fit. 
+
+1. **Collaborative (A) vs. Independent (I):**  
+   This dimension assesses whether an individual prefers working closely with others or thrives by tackling projects independently. "A" reflects a preference for teamwork and shared problem-solving, while "I" signifies a focus on autonomy and self-reliance.
+
+2. **Competitive (E) vs. Paced (P):**  
+   This axis examines motivation. "E" represents individuals who measure success by comparing themselves to others, often thriving in high-pressure, results-driven environments. On the other hand, "P" describes those who prefer a steady, self-paced approach, focusing on personal goals and avoiding external competition.
+
+3. **Selective (S) vs. Open (O):**  
+   This pair gauges attitudes toward skill development. "S" denotes a focus on mastering specific skills, favoring depth over breadth, while "O" reflects an openness to exploring diverse skills and continuous learning.
+
+4. **Realistic (R) vs. Innovative (I):**  
+   This dimension evaluates how individuals approach problem-solving and creativity. "R" indicates a practical mindset, prioritizing actionable and proven solutions, while "I" highlights a preference for visionary, experimental, and creative thinking.
+
+By combining these attributes, this system provides insight into how individuals align with different work cultures, helping both employees and employers find environments where they can thrive. For example, an individual with the code "AIRO" may work best independently on innovative, forward-thinking projects while continuously learning.
+""")
+    
+with st.expander("What is mine?"):
+   st.write("""
+The **AESI** personality type combines the attributes of being **Collaborative**, **Competitive**, **Selective**, and **Innovative**. Here’s a breakdown of what each attribute suggests and how this personality type fits into a workplace environment:
+
+1. **Collaborative (A):**  
+   Individuals with this trait thrive in team settings. They prefer working with others to achieve common goals and value shared problem-solving. In a company, they excel in roles requiring strong teamwork, such as project management, cross-functional teams, or client-facing positions. They also help foster a sense of community within the workplace.
+
+2. **Competitive (E):**  
+   The competitive nature of this personality means they are driven by comparison and metrics. They perform well in high-pressure, results-oriented environments where success is measured and rewarded, such as sales, consulting, or competitive tech sectors. This drive can inspire their team and push others to perform better, making them a valuable asset in competitive industries.
+
+3. **Selective (S):**  
+   Being selective suggests a preference for mastering specific skills rather than spreading their focus too thin. This makes them well-suited for roles that require deep expertise or specialization, such as data analysis, software development, or research-focused positions. They value honing their craft and becoming a go-to expert in their domain.
+
+4. **Innovative (I):**  
+   Innovators are forward-thinkers who prioritize creativity and visionary approaches to problem-solving. They fit best in roles or companies that encourage experimentation and bold ideas, such as startups, R&D teams, or tech innovation hubs. They bring fresh perspectives and enjoy pushing boundaries to achieve breakthroughs.
+
+**Workplace Fit for AESI:**  
+- **Ideal Roles:** Product manager, creative strategist, research scientist, or tech innovator.  
+- **Team Dynamics:** They contribute significantly to brainstorming sessions and collaborative projects, blending their innovative ideas with a focus on measurable outcomes. Their selective expertise allows them to take ownership of specialized tasks while driving team success through collaborative efforts.  
+- **Company Culture Fit:** AESI personalities thrive in progressive companies that reward creativity and value teamwork. They are especially well-suited to environments that emphasize innovation, continuous improvement, and competitive performance metrics. Examples include startups, creative agencies, and high-growth tech companies.
+
+**Potential Challenges:**  
+- **Overly Competitive:** Their competitive nature might cause stress or friction in overly relaxed or slow-paced environments.  
+- **Preference for Mastery:** Their focus on selective skill-building could make them resistant to taking on tasks outside their area of expertise.
+
+**Conclusion:**  
+The AESI personality type is an asset to companies that value collaboration, innovation, and specialization. By leveraging their strengths and providing opportunities for both teamwork and individual mastery, organizations can help AESI individuals thrive while driving exceptional outcomes.
+""") 
+
+
 # Section: Update Student Information
 st.header("Update Student Information")
 update_major = st.text_input("Major", key="update_major")
