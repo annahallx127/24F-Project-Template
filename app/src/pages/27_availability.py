@@ -117,11 +117,10 @@ st.header("Delete an Availability")
 
 # Input field for AvailabilityID
 availability_id = st.text_input("Enter AvailabilityID to delete", key="availability_id")
+confirm = st.checkbox("Are you sure you want to delete this availability?", key="confirm_delete")
 
 if st.button("Delete Availability"):
     if availability_id:
-        # Confirm deletion
-        confirm = st.checkbox("Are you sure you want to delete this availability?", key="confirm_delete")
         if not confirm:
             st.warning("Please confirm before proceeding.")
         else:
