@@ -53,85 +53,84 @@ if st.button("Getting Available Coffee Chats", key="fetch_coffee_chat"):
             st.error(f"Failed to fetch availabilities: {response.status_code}")
             logger.error(f"Error fetching availabilities: {response.status_code}")
 
-st.write("Pick an availability time to book an appointment with the student by inputting an availability id below.")
+st.write("Pick an availability time to book an appointment with the student by inputting an availability id, the meeting subject, and the duration in minutes below.")
 
 availability_id = st.text_input("Availability ID", key="availability_id")
+meeting_subject = st.text_input("Meeting Subject", key="meeting_subject")
+duration = st.text_input("Duration", key="duration")
 if st.button("Book an Appointment", key="book_appointment"):
     student_id = st.session_state.get("student_id")
     with st.spinner("Fetching job listings..."):
-        if st.session_state.get('authenticated') and st.session_state.get('first_name') == 'Peter':
+        if st.session_state.get('authenticated') and st.session_state.get('first_name') == 'Peter' and availability_id and meeting_subject:
             if availability_id:
             # You can replace these values with the actual session or user-specific details
                 chat_info = {
-                "MentorID": 1,  # Replace with actual MentorID from session or context
-                "MenteeID": 2,  # Replace with actual MenteeID from session or context
+                "MenteeID": student_id,
                 "AvailabilityID": availability_id,
-                "AppointmentDate": "2024-12-07T10:00:00",  # Dynamically set this value
-                "Duration": 30,  # Example duration, you can change as needed
-                "MeetingSubject": "Coffee Chat",  # Customizable subject
+                "Duration": duration,
+                "MeetingSubject": meeting_subject
         }
             url = f"http://web-api:4000/ns/coffee-chat"
 
             try:
-                response = requests.post(url).json()
+                response = requests.post(url, json=chat_info)
                 st.dataframe(response)
             except Exception as e:
                 st.error("Appointment cannot be made based on this availability time.")
         else:
             st.warning(f"Failed to book appointment.")
 
-# # Fetch all job listings from the API
-# response = requests.get("http://web-api:4000/ns/job-listings")
-# if response.status_code == 200:
-#     job_listings = response.json()
+# Section: Apply for a Job
+st.header("Apply for a Job")
+job_id = st.text_input("Job ID", key="apply_job_id")
+status = st.selectbox("Status", ["Applied", "Interested", "Rejected"], key="apply_status")
+if st.button("Submit Application"):
+    student_id = st.session_state.get("student_id")
 
-#     if job_listings:
-#         # Loop through each job listing and create a clickable button for each job
-#         for job in job_listings:
-#             job_title = job["JobPositionTitle"]
-#             job_id = job["JobListingID"]
+    if student_id and job_id and status:
+        payload = {"StudentID": student_id, "JobID": job_id, "Status": status}
+        response = requests.post("http://web-api:4000/applications", json=payload)
+        if response.status_code == 201:
+            st.success("Application submitted successfully!")
+        else:
+            st.error("Failed to submit application.")
+    else:
+        st.warning("Please fill out all required fields.")
 
-#             # Display each job as a clickable button
-#             if st.button(f"View Details for {job_title}", key=f"job_{job_id}"):
-#                 # When a job is clicked, show the details for that job
-#                 # try:
-#                 #     job_details_response = requests.get(f"http://web-api:4000/job-listings/{job_id}").json()
-#                 #     st.subheader(f"Job Details for {job_title}")
-#                 #     st.write(job_details_response)
-#                 # except Exception as e:
-#                 #     st.error("No applications found for this student.")
-#                     # If the job is active, allow users to schedule a coffee chat
-#                 #     if job_details.get("JobIsActive"):
-#                 #         st.header("Schedule a Coffee Chat")
-#                 #         mentor_id = st.text_input("Mentor ID", key="mentor_id")
-#                 #         mentee_id = st.text_input("Mentee ID", key="mentee_id")
-#                 #         availability_id = st.text_input("Availability ID", key="availability_id")
-#                 #         appointment_date = st.date_input("Appointment Date", key="appointment_date")
-#                 #         duration = st.number_input("Duration (in minutes)", min_value=1, key="duration")
-#                 #         meeting_subject = st.text_input("Meeting Subject", key="meeting_subject")
+    # Section: Submit Resume
+    st.write("Submit Resume")
+    resume_file = st.file_uploader("Upload Resume", type=["pdf", "docx", "txt", "rtf"], key="resume_file")
+    resume_name = st.text_input("Resume Name", key="resume_name")
+    work_experience = st.text_area("Enter Your Most Recent Work Experience", key="work_experience")
+    technical_skills = st.text_area("Technical Skills", key="technical_skills")
+    soft_skills = st.text_area("Soft Skills", key="soft_skills")
+    if st.button("Submit Resume"):
+        student_id = st.session_state.get("student_id")
+        if student_id and resume_file:
+            files = {"resume": resume_file}
+            payload = {
+                "ResumeName": resume_name,
+                "WorkExperience": work_experience,
+                "TechnicalSkills": technical_skills,
+                "SoftSkills": soft_skills,
+            }
+            response = requests.post(f"http://web-api:4000/resume/{resume_student_id}", files=files, data=payload)
+            if response.status_code == 200:
+                st.success("Resume submitted successfully!")
+            else:
+                st.error("Failed to submit resume.")
+        else:
+            st.warning("Please fill out all required fields.")
 
-#                 #         if st.button("Schedule Coffee Chat", key="schedule_chat"):
-#                 #             if mentor_id and mentee_id and availability_id and appointment_date and duration and meeting_subject:
-#                 #                 payload = {
-#                 #                     "MentorID": mentor_id,
-#                 #                     "MenteeID": mentee_id,
-#                 #                     "AvailabilityID": availability_id,
-#                 #                     "AppointmentDate": str(appointment_date),
-#                 #                     "Duration": duration,
-#                 #                     "MeetingSubject": meeting_subject,
-#                 #                 }
-#                 #                 chat_response = requests.post("http://web-api:4000/coffee-chat", json=payload)
-#                 #                 if chat_response.status_code == 201:
-#                 #                     st.success("Coffee chat scheduled successfully!")
-#                 #                 else:
-#                 #                     st.error("Failed to schedule coffee chat.")
-#                 #             else:
-#                 #                 st.warning("Please fill out all required fields.")
-#                 #     else:
-#                 #         st.info("This job listing is not active. Coffee chats cannot be scheduled.")
-#                 # else:
-#                 #     st.error("Failed to fetch job details.")
-#     else:
-#         st.warning("No job listings found.")
-# else:
-#     st.error("Failed to fetch job listings.")
+# Section: Delete Resume
+st.header("Delete Resume")
+delete_resume_name = st.text_input("Enter Resume Name", key="delete_resume_student_id")
+if st.button("Delete Resume"):
+    if delete_resume_name:
+        response = requests.delete(f"http://web-api:4000/resume/{delete_resume_name}")
+        if response.status_code == 200:
+            st.success("Resume deleted successfully!")
+        else:
+            st.error("Failed to delete resume.")
+    else:
+        st.warning("Please enter a Student ID.")

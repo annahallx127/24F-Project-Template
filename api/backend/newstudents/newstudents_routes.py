@@ -101,7 +101,7 @@ def get_all_job_listings():
 
 #------------------------------------------------------------
 # Get detailed information about a specific job posting by ID
-@new_students.route('/job-listings/JobListingID>', methods=['GET'])
+@new_students.route('/job-listings/<int:JobListingID>', methods=['GET'])
 def get_job_listing_details(JobListingID):
     current_app.logger.info('GET /job-listings/{JobListingID} route')
 
@@ -222,38 +222,52 @@ def withdraw_application(id):
 # Schedule a coffee chat by creating an appointment between a mentor and mentee
 @new_students.route('/coffee-chat', methods=['POST'])
 def schedule_coffee_chat():
-    current_app.logger.info('POST /coffee-chat route')
+    current_app.logger.info(f"POST /coffee-chat route")
+    
+    # Step 1: Get data from the incoming request
+    data = request.get_json()
 
-    # Get the data from the request body
-    chat_info = request.json
-    mentor_id = chat_info['MentorID']
-    mentee_id = chat_info['MenteeID']
-    availability_id = chat_info['AvailabilityID']  # Availability ID for the mentor's time slot
-    appointment_date = chat_info['AppointmentDate']  # Date and time for the coffee chat
-    duration = chat_info['Duration']  # Duration of the chat in minutes
-    meeting_subject = chat_info['MeetingSubject']  # Subject of the meeting
+    # Get fields from the request
+    mentee_id = data.get('MenteeID')  # This is the student who is booking the appointment
+    availability_id = data.get('AvailabilityID')
+    meeting_subject = data.get('MeetingSubject')
+    duration = data.get('Duration')
 
-    # Step 1: Check if the availability slot exists
+    # Step 2: Validate input data
+    if not mentee_id or not availability_id or not meeting_subject or not duration:
+        return jsonify({"message": "Missing required fields"}), 400
+
+    # Step 3: Fetch availability info from the database using availability_id
     cursor = db.get_db().cursor()
-    cursor.execute("SELECT * FROM Availabilities WHERE AvailabilityID = %s", (availability_id,))
-    availability = cursor.fetchone()
-
-    if not availability:
-        return jsonify({'message': 'Availability slot not found'}), 404
-
-    # Step 2: Check if the mentor and mentee are available at this time
-    if availability['MenteeID'] != availability['MentorID']:
-        return jsonify({'message': 'The mentor ID does not match the availability'}), 400
-
-    # Step 3: Create a new appointment (coffee chat) between the mentor and mentee
     cursor.execute("""
-        INSERT INTO Appointment (MentorID, MenteeID, AvailabilityID, AppointmentDate, Duration, MeetingSubject)
-        VALUES (%s, %s, %s, %s, %s, %s)
-    """, (mentor_id, mentee_id, availability_id, appointment_date, duration, meeting_subject))
-    db.get_db().commit()
+        SELECT StudentID, StartDate FROM Availabilities WHERE AvailabilityID = %s
+    """, (availability_id,))
+    availability_info = cursor.fetchone()
 
-    # Step 4: Return success message
-    return jsonify({'message': 'Coffee chat scheduled successfully'}), 201
+    # Return the student data as a JSON response
+    the_response = make_response(jsonify(availability_info))
+    the_response.status_code = 200
+    return the_response
+    # if not availability_info:
+    #     return jsonify({"message": "Availability not found"}), 404
+
+    # mentor_id = availability_info[0]  # This is the StudentID of the mentor
+    # start_date = availability_info[1]  # This is the start date of the availability
+
+    # # Step 4: Insert the appointment into the Appointments table
+    # cursor.execute("""
+    #     INSERT INTO Appointments (MentorID, MenteeID, AvailabilityID, AppointmentDate, Duration, MeetingSubject)
+    #     VALUES (%s, %s, %s, %s, %s, %s)
+    # """, (mentor_id, mentee_id, availability_id, start_date, duration, meeting_subject))
+
+    # # Commit the transaction
+    # db.get_db().commit()
+
+    # # Step 5: Return success response
+    # return jsonify({"message": "Appointment successfully scheduled"}), 201
+
+
+
 
 #------------------------------------------------------------
 # Change application details (e.g., rank candidates, update resume)
@@ -369,26 +383,13 @@ def submit_resume(student_id):
     
     #------------------------------------------------------------
 # Delete a student's resume
-@new_students.route('/resume/<int:student_id>', methods=['DELETE'])
-def delete_resume(student_id):
-    current_app.logger.info(f'DELETE /resume/{student_id} route')
+@new_students.route('/resume/<resume_name>', methods=['DELETE'])
+def delete_resume(ResumeName):
+    current_app.logger.info(f'DELETE /resume/{ResumeName} route')
     
-    # Retrieve the resume record from the database
-    cursor = db.get_db().cursor()
-    cursor.execute("SELECT ResumeID, ResumeName FROM Resume WHERE StudentID = %s", (student_id,))
-    resume = cursor.fetchone()
-
-    # If no resume found for the student
-    if not resume:
-        return jsonify({'message': 'No resume found for this student'}), 404
-
-    # Delete the resume file from the server
-    file_path = os.path.join(UPLOAD_FOLDER, resume[1])
-    if os.path.exists(file_path):
-        os.remove(file_path)
 
     # Delete the resume record from the database
-    cursor.execute("DELETE FROM Resume WHERE StudentID = %s", (student_id,))
+    cursor.execute("DELETE FROM Resume WHERE ResumeName = %s", (ResumeName,))
     db.get_db().commit()
 
     return jsonify({'message': 'Resume deleted successfully'}), 200
