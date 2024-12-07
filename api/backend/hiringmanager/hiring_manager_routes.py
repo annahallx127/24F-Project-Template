@@ -121,66 +121,99 @@ def add_job_listing():
 # Update a job listing based on JobListingID 
 @hiring_manager.route('/hiring-manager/job-listings/<int:job_id>', methods=['PUT'])
 def update_job_listing(job_id):
-    current_app.logger.info(f'PUT /hiring-manager/job-listings/{job_id} route')
+    """
+    Update an existing job listing by JobListingID, hardcoding the CompanyID for Miles Morales.
+    """
+    try:
+        # Parse the request payload
+        job_data = request.get_json()
 
-    job_data = request.json
-    updates = []
-    values = []
+        # Validate JobIsActive if provided
+        if 'JobIsActive' in job_data:
+            job_is_active = job_data['JobIsActive']
+            if not isinstance(job_is_active, bool):
+                return jsonify({'message': 'JobIsActive must be a boolean'}), 400
 
-    if 'JobPositionTitle' in job_data:
-        updates.append("JobPositionTitle = %s")
-        values.append(job_data['JobPositionTitle'])
-    if 'JobDescription' in job_data:
-        updates.append("JobDescription = %s")
-        values.append(job_data['JobDescription'])
-    if 'JobIsActive' in job_data:
-        # Ensure JobIsActive is a valid boolean
-        job_is_active = job_data['JobIsActive']
-        if not isinstance(job_is_active, (bool, int)) or job_is_active not in [True, False, 1, 0]:
-            return jsonify({'message': 'JobIsActive must be a boolean'}), 400
-        updates.append("JobIsActive = %s")
-        values.append(bool(job_is_active))
+        # Hardcoded CompanyID for SpiderVerse
+        company_id = 1  # Based on insert statements
 
-    if updates:
-        query = f"UPDATE JobListing SET {', '.join(updates)} WHERE JobListingID = %s"
-        values.append(job_id)
+        # Build the update query
+        updates = []
+        values = []
+
+        if 'JobPositionTitle' in job_data:
+            updates.append("JobPositionTitle = %s")
+            values.append(job_data['JobPositionTitle'])
+        if 'JobDescription' in job_data:
+            updates.append("JobDescription = %s")
+            values.append(job_data['JobDescription'])
+        if 'JobIsActive' in job_data:
+            updates.append("JobIsActive = %s")
+            values.append(job_data['JobIsActive'])
+
+        # Ensure there are fields to update
+        if not updates:
+            return jsonify({'message': 'No fields to update provided'}), 400
+
+        # Finalize the update query with a check for CompanyID
+        query = f"""
+            UPDATE JobListings 
+            SET {', '.join(updates)}
+            WHERE JobListingID = %s AND CompanyID = %s
+        """
+        values.extend([job_id, company_id])
+
+        # Execute the update
         cursor = db.get_db().cursor()
         cursor.execute(query, tuple(values))
         db.get_db().commit()
-        return jsonify({'message': 'Job listing updated successfully'}), 200
-    else:
-        return jsonify({'message': 'No fields to update provided'}), 400
+
+        # Check if the update affected any rows
+        if cursor.rowcount == 0:
+            return jsonify({'message': f'Job listing with ID {job_id} not found or not associated with the company'}), 404
+
+        return jsonify({'message': 'Job listing updated successfully!'}), 200
+
+    except Exception as e:
+        current_app.logger.error(f"Error updating job listing: {e}")
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
 
 # Delete a job listing based on JobListingID
-@hiring_manager.route('/job-listings/<int:id>', methods=['DELETE'])
-def delete_job_listing(id):
-    cursor = db.get_db().cursor()
-
-    # SQL query to delete the job listing
-    query = '''
-        DELETE FROM JobListing
-        WHERE JobListingID = %s
-    '''
-
+@hiring_manager.route('/hiring-manager/job-listings/<int:job_id>', methods=['DELETE'])
+def delete_job_listing(job_id):
+    """
+    Delete a job listing by JobListingID, ensuring it belongs to Miles Morales' company (CompanyID = 1).
+    """
     try:
-        cursor.execute(query, (id,))
+        # Hardcoded CompanyID for SpiderVerse
+        company_id = 1  # Based on insert statements
+
+        # SQL query to delete the job listing, ensuring it belongs to the correct company
+        query = '''
+            DELETE FROM JobListings
+            WHERE JobListingID = %s AND CompanyID = %s
+        '''
+
+        cursor = db.get_db().cursor()
+        cursor.execute(query, (job_id, company_id))
         db.get_db().commit()
 
         # Check if a row was deleted
         if cursor.rowcount == 0:
-            return make_response(
-                jsonify({"error": f"No job listing found with JobListingID {id}"}), 404
-            )
+            return jsonify({
+                "message": f"Job listing with ID {job_id} not found or not associated with the company."
+            }), 404
 
-        return make_response(
-            jsonify({"message": f"Job listing with JobListingID {id} successfully deleted"}), 200
-        )
+        return jsonify({
+            "message": f"Job listing with ID {job_id} successfully deleted."
+        }), 200
+
     except Exception as e:
+        current_app.logger.error(f"Error deleting job listing: {e}")
         db.get_db().rollback()
-        return make_response(
-            jsonify({"error": "Failed to delete job listing", "details": str(e)}), 500
-        )
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+
 
 # Get the ranking of candidates for a specific job listing
 @hiring_manager.route('/job-listings/<int:job_id>/candidates-ranking', methods=['GET'])
