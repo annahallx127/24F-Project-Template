@@ -41,38 +41,7 @@ def get_candidates_by_job(job_id):
     except Exception as e:
         return make_response(jsonify({"error": str(e)}), 500)
     
-@hiring_manager.route('/job-listings/<int:job_id>/candidates-wcfi', methods=['GET'])
-def get_candidates_wcfi(job_id):
-    """
-    Fetch WCFI values for students who applied for a specific job.
-    """
-    cursor = db.get_db().cursor()
 
-    # Query to fetch FirstName, LastName, and WCFI for candidates applied to the specified job ID
-    query = '''
-        SELECT DISTINCT s.FirstName, s.LastName, s.WCFI
-        FROM Student s
-        JOIN Application a ON s.StudentID = a.StudentID
-        JOIN JobListings j ON a.JobID = j.JobListingID
-        WHERE j.JobListingID = %s
-    '''
-
-    try:
-        # Execute the query with the provided job_id
-        cursor.execute(query, (job_id,))
-        rows = cursor.fetchall()
-
-        if rows:
-            # Include WCFI in the response
-            column_names = [desc[0] for desc in cursor.description]
-            result = [dict(zip(column_names, row)) for row in rows]
-            return make_response(jsonify(result), 200)
-        else:
-            return make_response(jsonify({"message": f"No candidates found for Job ID {job_id}"}), 404)
-
-    except Exception as e:
-        return make_response(jsonify({"error": f"An error occurred: {str(e)}"}), 500)
-    
 @hiring_manager.route('/hiring-manager/job-listings', methods=['POST'])
 def add_job_listing():
     """
