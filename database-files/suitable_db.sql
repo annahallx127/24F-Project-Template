@@ -247,12 +247,12 @@ VALUES
 (4, 1, 'Hiring a Data Scientist with expertise in machine learning, Python, and R. Must be capable of building predictive models and analyzing large datasets.', 'Data Scientist', TRUE),
 (5, 1, 'Seeking an Arachnology Technician for on-site research focused on venom composition analysis. Must be comfortable handling live specimens.', 'Arachnology Technician', TRUE),
 (6, 1, 'Hiring a Mobile App Developer with experience in Kotlin and Swift to develop cross-platform applications for research and education.', 'Mobile App Developer', TRUE),
-(7, 1, 'Looking for an AI/ML Engineer with experience in deep learning frameworks (TensorFlow, PyTorch) and natural language processing.', 'AI/ML Engineer', TRUE),
-(8, 1, 'Opening for a Database Administrator with expertise in SQL, MongoDB, and cloud services like AWS RDS. Will manage large-scale data for computational biology.', 'Database Administrator', TRUE),
+(7, 1, 'Looking for an AI/ML Engineer with experience in deep learning frameworks (TensorFlow, PyTorch) and natural language processing.', 'AI/ML Engineer', FALSE),
+(8, 1, 'Opening for a Database Administrator with expertise in SQL, MongoDB, and cloud services like AWS RDS. Will manage large-scale data for computational biology.', 'Database Administrator', FALSE),
 (9, 1, 'Seeking an Arachnology Field Researcher to conduct field surveys on spider populations and document ecological data. Must have prior experience with taxonomy and habitat analysis.', 'Arachnology Field Researcher', TRUE),
 (10, 1, 'Hiring an Arachnology Laboratory Assistant to assist in studying arachnid venom and silk properties. Must be skilled in microscopy and chemical analysis.', 'Arachnology Laboratory Assistant', TRUE),
-(11, 1, 'Looking for a Wildlife Photographer specializing in arachnids to document rare species for a research database. Prior experience in macro photography is required.', 'Arachnid Wildlife Photographer', TRUE),
-(12, 1, 'Opening for an Arachnology Educator to create engaging content about arachnids for museums and educational platforms. Experience in public outreach is a plus.', 'Arachnology Educator', TRUE),
+(11, 1, 'Looking for a Wildlife Photographer specializing in arachnids to document rare species for a research database. Prior experience in macro photography is required.', 'Arachnid Wildlife Photographer', FALSE),
+(12, 1, 'Opening for an Arachnology Educator to create engaging content about arachnids for museums and educational platforms. Experience in public outreach is a plus.', 'Arachnology Educator', FALSE),
 (13, 1, 'Seeking a Spider Silk Engineer to study and replicate silk properties for use in biotechnological applications. Background in biomaterials is essential.', 'Spider Silk Engineer', TRUE),
 (14, 1, 'Hiring a Biodiversity Analyst specializing in arachnids to analyze datasets and create conservation strategies for endangered spider species.', 'Arachnid Biodiversity Analyst', TRUE),
 (15, 1, 'Looking for an Arachnid Behavioral Ecologist to study spider hunting and mating behaviors in controlled environments. Must have expertise in experimental design.', 'Arachnid Behavioral Ecologist', TRUE),
@@ -299,17 +299,16 @@ VALUES
 -- System Administrator Insert Statements --
 INSERT INTO SystemsAdministrator (AdminID, FirstName, LastName)
 VALUES
-(1, 'Gwen', 'Stacy'),
-(2, 'Mary', 'Jane');
+(1, 'Gwen', 'Stacy');
 
 INSERT INTO SystemUpdate (UpdateID, UpdateType, AdminID, UpdateDate)
 VALUES
 (1, 'Delete Old Data', 1, '2024-10-13'),
-(2, 'System Update Version 12', 2, '2024-08-25');
+(2, 'System Update Version 12', 1, '2024-08-25');
 
 INSERT INTO DataArchive (UpdateID, DataType, ArchiveDate, AdminID)
 VALUES
-(1, 'Old Users', '2024-04-26', 2),
+(1, 'Old Users', '2024-04-26', 1),
 (2, 'EmployerIDs', '2024-09-09', 1);
 
 INSERT INTO DataBackup (BackupID, UpdateID, BackupDate, DataSize)
@@ -325,7 +324,7 @@ VALUES
 INSERT INTO StudentPermissions (AdminInCharge, StudentID, AccessLevel, AccessDescription)
 VALUES
 (1, 1, 2, 'Can apply for Co-op'),
-(2, 2, 4, 'Can apply for Co-op and submit Coffee Chat Availibility');
+(1, 2, 4, 'Can apply for Co-op and submit Coffee Chat Availibility');
 
 INSERT INTO EmployerPermissions (AdminInCharge, EmployerID, AccessLevel, AccessDescription)
 VALUES
@@ -334,15 +333,15 @@ VALUES
 INSERT INTO AdminPermissions (AdminInCharge, AdminID, AccessLevel, AccessDescription)
 VALUES
 (1, 1, 5, 'High Level Access'),
-(2, 2, 5, 'High Level Access');
+(1, 1, 5, 'High Level Access');
 
 INSERT INTO AlertSystem (AlertID, AdminInCharge, ActivityType, GeneratedBy, Description, Severity, TimeStamp, Status)
 VALUES
-(1, 2, 'Glitch', 1, 'User has experienced a glitch when logging into their account', 2, '2024-12-10 10:00:00', 'Resolved'),
+(1, 1, 'Glitch', 1, 'User has experienced a glitch when logging into their account', 2, '2024-12-10 10:00:00', 'Resolved'),
 (2, 1, 'Lag', 1, 'User experienced a lag when changing pages', 1, '2024-10-12 12:22:22', 'Resolved');
 
 INSERT INTO JobListingManagement (AdminInCharge, JobID, UpdateID)
 VALUES
 (1, 1, 1),
-(2, 1, 2);
+(1, 1, 2);
 
