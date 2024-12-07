@@ -4,7 +4,7 @@ import requests
 st.title("View All Job Listings")
 
 # Fetch all job listings from the API
-response = requests.get("http://web-api:4000/job-listings")
+response = requests.get("http://web-api:4000/ns/job-listings")
 if response.status_code == 200:
     job_listings = response.json()
 

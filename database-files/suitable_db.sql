@@ -153,7 +153,7 @@ CREATE TABLE IF NOT EXISTS `DataDeletion` (
   `UpdateID` integer NOT NULL,
   `DeletionDate` date,
   `DataRemoved` integer,
-    FOREIGN KEY (UpdateID) REFERENCES DataArchive(UpdateID) ON DELETE CASCADE
+    FOREIGN KEY (UpdateID) REFERENCES SystemUpdate(UpdateID) ON DELETE CASCADE
 );
 
 
@@ -210,6 +210,7 @@ CREATE TABLE IF NOT EXISTS `JobListingManagement` (
     FOREIGN KEY (UpdateID) REFERENCES SystemUpdate(UpdateID) ON DELETE CASCADE
 );
 
+
 -- Insert into Student table
 INSERT INTO Student (StudentID, FirstName, LastName, Major, isMentor, WCFI)
 VALUES
@@ -231,14 +232,14 @@ VALUES
 -- Hiring Manager Insert Statement--------------------------
 INSERT INTO HiringManager (EmployerId,ApplicantID, FirstName, LastName, Position)
 VALUES
-(1, 2, 5, 'Miles', 'Moralas','Hiring Manager');
+(1, 2, 'Miles', 'Moralas','Hiring Manager'),
+(2, 1, 'Miles', 'Moralas','Hiring Manager');
 
-----Company Insert Statement---------------
+
 INSERT INTO Company (CompanyID, EmployerID, Name, Industry)
 VALUES
 (21, 1, 'Milies Moralas','Software');
 
-------------JobListings Insert Statements------------
 INSERT INTO JobListings (JobListingID,CompanyID,JobDescription, JobPositionTitle, JobIsActive)
 VALUES
 (1,21,'Looking for a software engineer with REQUIRED experience in kotlin,java,sql,html,C++,C,Racket,Assembly,javascript, R, ruby, rust, perl, babbage. Must know all languages fluently to apply. $15 an hour ', 'SWE Role (HIGH PAYING)', true);
@@ -249,25 +250,21 @@ VALUES
 (1, 1, '2024-12-06', 'Pending', 1),
 (2, 2, '2024-12-02', 'Applied', 1);
 
-----CareerProjections Insert Statement------------
 INSERT INTO CareerProjections (TimelineID,StudentID,EducationTimeline,CoopTimeline,FullTimeTimeline)
 VALUES
 (1,2,'Plus one program - adding one year to your time at northeastern but graduating with a masters degree','Previous experience in SWE, Data Anlayst, roles','Reccomended full time in SWE role');
 
------------------Coop Insert Statement ---------------------------------
 INSERT INTO Coop(CoopID, StudentID, StartDate, EndDate, JobTitle, CompanyName, CoopReview, CoopRating)
 VALUES
-(1,1,2024-12-04,2025-06-18,'SWE at Apple','Apple Inc.','Very nice co-op I got a lot of free merch', 5);
+(1,1,'2024-12-04','2025-06-18','SWE at Apple','Apple Inc.','Very nice co-op I got a lot of free merch', 5);
 
----------Rank Insert Statement ----------------
-INSERT INTO Rank (ApplicantID, RankNum)
-VALUES 
-(1,2);
+INSERT INTO `Rank` (ApplicantID, RankNum)
+VALUES
+(1,2),
 (2,1);
 
---Appointment Insert Statement--
 INSERT INTO Appointment(AppointmentID, MentorID, MenteeID, AvailabilityID, AppointmentDate, Duration, MeetingSubject)
-VALUES 
+VALUES
 (1, 2, 1, 1, '2024-12-10 10:00:00', 2, 'Discuss Jobs')
 
 
@@ -278,47 +275,46 @@ VALUES
 (2, 'Mary', 'Jane');
 
 INSERT INTO SystemUpdate (UpdateID, UpdateType, AdminID, UpdateDate)
-VALUES 
+VALUES
 (1, 'Delete Old Data', 1, '2024-10-13'),
 (2, 'System Update Version 12', 2, '2024-08-25');
 
 INSERT INTO DataArchive (UpdateID, DataType, ArchiveDate, AdminID)
 VALUES
-(3, 'Old Users', '2024-04-26', 2),
-(4, 'EmployerIDs', '2024-09-09', 1);
+(1, 'Old Users', '2024-04-26', 2),
+(2, 'EmployerIDs', '2024-09-09', 1);
 
 INSERT INTO DataBackup (BackupID, UpdateID, BackupDate, DataSize)
-VALUES 
-(1, 5, '2023-04-06', 6400),
-(2, 6, '2024-09-04', 127000);
+VALUES
+(1, 1, '2023-04-06', 6400),
+(2, 2, '2024-09-04', 127000);
 
 INSERT INTO DataDeletion (DeletionID, UpdateID, DeletionDate, DataRemoved)
-VALUES 
-(1, 7, '2024-08-15', 500),
-(2, 8, '2024-02-29', 127);
+VALUES
+(1, 1, '2024-08-15', 500),
+(2, 2, '2024-02-29', 127);
 
-INSERT INTO StudentPermissions (AdminInCharge, StudentID, AccessLevel, AccessDescription),
-VALUES 
+INSERT INTO StudentPermissions (AdminInCharge, StudentID, AccessLevel, AccessDescription)
+VALUES
 (1, 1, 2, 'Can apply for Co-op'),
 (2, 2, 4, 'Can apply for Co-op and submit Coffee Chat Availibility');
 
-INSERT INTO EmployerPermissions (AdminInCharge, EmployerID, AccessLevel, AccessDescription),
+INSERT INTO EmployerPermissions (AdminInCharge, EmployerID, AccessLevel, AccessDescription)
 VALUES
 (1, 1, 5, 'Can Post new job openings'),
 (2, 2, 5, 'Can Post new job openings');
 
-INSERT INTO AdminPermisssions (AdminInCharge, AdminID, AccessLevel, AccessDescription)
+INSERT INTO AdminPermissions (AdminInCharge, AdminID, AccessLevel, AccessDescription)
 VALUES
-(1, 3, 5, 'High Level Access'),
-(2, 4, 5, 'High Level Access');
+(1, 1, 5, 'High Level Access'),
+(2, 2, 5, 'High Level Access');
 
-INSERT INTO AlertSystem (AlertID, AdminInCharge, ActivityType, GeneratedBy, Description, Severtiy, TimeStamp, Status)
+INSERT INTO AlertSystem (AlertID, AdminInCharge, ActivityType, GeneratedBy, Description, Severity, TimeStamp, Status)
 VALUES
-(1, 2, 'Glitch', 4, 'User has experienced a glitch when logging into their account', 2, '2024-12-10 10:00:00', 'Resolved')
-(2, 1, 'Lag', 4, 'User experienced a lag when changing pages', 1, '2024-10-12 12:22:22', 'Resolved')
+(1, 2, 'Glitch', 1, 'User has experienced a glitch when logging into their account', 2, '2024-12-10 10:00:00', 'Resolved'),
+(2, 1, 'Lag', 2, 'User experienced a lag when changing pages', 1, '2024-10-12 12:22:22', 'Resolved');
 
 INSERT INTO JobListingManagement (AdminInCharge, JobID, UpdateID)
 VALUES
 (1, 1, 1),
-(2, 2, 2);
-
+(2, 1, 2);

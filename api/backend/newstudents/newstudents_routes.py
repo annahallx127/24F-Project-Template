@@ -97,7 +97,7 @@ def get_all_job_listings():
     # Query to retrieve all job listings
     query = '''
         SELECT *
-        FROM JobListing
+        FROM JobListings
     '''
     cursor.execute(query)
     
@@ -107,20 +107,16 @@ def get_all_job_listings():
     # If no job listings are found, return an appropriate response
     if not job_listings:
         return jsonify({'message': 'No job listings found'}), 404
-    
-    # Format the job listings as a list of dictionaries
-    job_data = []
-    for job in job_listings:
-        job_data.append({
-            'JobListingID': job[0],
-            'CompanyID': job[1],
-            'JobDescription': job[2],
-            'JobPositionTitle': job[3],
-            'JobIsActive': job[4],
-        })
-    
-    # Return the list of job listings as a JSON response
-    return jsonify({'job_listings': job_data}), 200
+
+    # If the student does not exist, return an error message
+    if not job_listings:
+        current_app.logger.error(f"Job Listings not found.")
+        return jsonify({'message': 'Job Listings not found'}), 404
+
+    # Return the student data as a JSON response
+    the_response = make_response(jsonify(job_listings))
+    the_response.status_code = 200
+    return the_response
 
 
 #------------------------------------------------------------
@@ -152,16 +148,24 @@ def get_job_listing_details(JobListingID):
     if not job_listing:
         return jsonify({'message': 'Job listing not found'}), 404
 
-    # Format the result into a dictionary for JSON response
-    job_data = {
-        'JobID': job_listing[0],
-        'CompanyID': job_listing[1],
-        'Job Description': job_listing[3],
-        'JobPositionTitle': job_listing[4],
-        'JobIsActive': job_listing[5],
-    }
+    # # Format the result into a dictionary for JSON response
+    # job_data = {
+    #     'JobID': job_listing[0],
+    #     'CompanyID': job_listing[1],
+    #     'Job Description': job_listing[3],
+    #     'JobPositionTitle': job_listing[4],
+    #     'JobIsActive': job_listing[5],
+    # }
 
-    return jsonify(job_data), 200
+    # If the student does not exist, return an error message
+    if not job_listing:
+        current_app.logger.error(f"Job Listing Not Found.")
+        return jsonify({'message': 'Job Listing not found'}), 404
+
+    # Return the student data as a JSON response
+    the_response = make_response(jsonify(job_listing))
+    the_response.status_code = 200
+    return the_response
 
 #------------------------------------------------------------
 # Apply for a job
