@@ -1,9 +1,10 @@
 import streamlit as st
 import pandas as pd
 import requests
+from modules.nav import SideBarLinks
 
-# Configure the Streamlit page
-st.set_page_config(page_title="Candidate Rankings Overview", layout="wide")
+SideBarLinks()
+
 
 # Title of the page
 st.title("Candidate Rankings Overview")
