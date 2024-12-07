@@ -80,7 +80,7 @@ if st.button("Book an Appointment", key="book_appointment"):
             "MeetingSubject": meeting_subject
         }
 
-        st.write("Payload to be sent:", chat_info)
+        st.dataframe(chat_info)
 
         # API URL
         url = "http://web-api:4000/ns/coffee-chat"
@@ -107,9 +107,8 @@ status = st.selectbox("Status", ["Applied", "Interested", "Rejected"], key="appl
 job_id = st.text_input("Job ID", key="apply_job_id")
 
 if st.button("Submit Application", key="submit_app"):
-    student_id = st.session_state.get("student_id")
-    if student_id and job_id and status:
-        application_payload = {"StudentID": student_id, "JobID": job_id, "Status": status}
+    if job_id and status:
+        application_payload = {"StudentID": 1, "JobID": job_id, "Status": status}
         response_application = requests.post("http://web-api:4000/ns/applications", json=application_payload)
         if response_application.status_code == 201:
             st.success("Application submitted successfully!")

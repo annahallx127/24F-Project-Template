@@ -181,44 +181,7 @@ def delete_job_listing(job_id):
         current_app.logger.error(f"Error deleting job listing: {e}")
         db.get_db().rollback()
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
-
-@hiring_manager.route('/job-listings/<int:job_id>/candidates-wcfi', methods=['GET'])
-def get_candidates_wcfi(job_id):
-    """
-    Fetch WCFI values for students who applied for a specific job.
-    """
-    cursor = db.get_db().cursor()
-
-    query = '''
-        SELECT 
-            s.FirstName, 
-            s.LastName, 
-            s.WCFI, 
-            a.Status
-        FROM Student s
-        JOIN Application a ON s.StudentID = a.StudentID
-        JOIN JobListings j ON a.JobID = j.JobListingID
-        WHERE j.JobListingID = %s
-    '''
-
-    try:
-        cursor.execute(query, (job_id,))
-        rows = cursor.fetchall()
-
-        # Debug logging for rows
-        current_app.logger.debug(f"Fetched rows for Job ID {job_id}: {rows}")
-
-        if rows:
-            column_names = [desc[0] for desc in cursor.description]
-            result = [dict(zip(column_names, row)) for row in rows]
-            return jsonify(result), 200
-        else:
-            return jsonify({"message": f"No candidates found for Job ID {job_id}"}), 404
-
-    except Exception as e:
-        current_app.logger.error(f"Error fetching candidates for Job ID {job_id}: {e}")
-        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
-
+    
 
 @hiring_manager.route('/job-listings', methods=['GET'])
 def get_job_listings():
@@ -236,3 +199,88 @@ def get_job_listings():
     the_response = make_response(jsonify(job_listings))
     the_response.status_code = 200
     return the_response
+
+@hiring_manager.route('/students', methods=['GET'])
+def get_all_students():
+    """
+    Fetch all students from the database along with their WCFI values.
+    """
+    cursor = db.get_db().cursor()
+
+    query = '''
+        SELECT 
+            StudentID,
+            FirstName,
+            LastName,
+            WCFI
+        FROM Student
+    '''
+
+    try:
+        cursor.execute(query)
+        students = cursor.fetchall()
+        return jsonify(students), 200
+    except Exception as e:
+        current_app.logger.error(f"Error fetching students: {e}")
+        return jsonify({"error": str(e)}), 500
+
+# @hiring_manager.route('/students/rankings', methods=['GET'])
+# def get_students_with_rankings():
+#     """
+#     Fetch all students from the database along with their WCFI values and rankings from the Rank table.
+#     """
+#     cursor = db.get_db().cursor()
+
+#     query = '''
+#         SELECT 
+#             s.StudentID,
+#             CONCAT(s.FirstName, ' ', s.LastName) AS FullName,
+#             s.WCFI,
+#             r.RankNum AS Rank
+#         FROM Student s
+#         LEFT JOIN Rank r ON s.StudentID = r.ApplicantID
+#         ORDER BY r.RankNum ASC
+#     '''
+
+#     try:
+#         cursor.execute(query)
+#         rows = cursor.fetchall()
+
+#         column_names = [desc[0] for desc in cursor.description]
+#         result = [dict(zip(column_names, row)) for row in rows]
+
+#         if result:
+#             return jsonify(result), 200
+#         else:
+#             return jsonify({"message": "No students or rankings found"}), 404
+#     except Exception as e:
+#         current_app.logger.error(f"Error fetching student rankings: {e}")
+#         return jsonify({"error": str(e)}), 500
+
+@hiring_manager.route('/students/rankings', methods=['GET'])
+def get_students_with_rankings():
+    """
+    Fetch all students from the database along with their WCFI values and rankings.
+    """
+    cursor = db.get_db().cursor()
+
+    query = '''
+        SELECT 
+            s.StudentID,
+            CONCAT(s.FirstName, ' ', s.LastName) AS FullName,
+            s.WCFI,
+            COALESCE(r.RankNum, 'Unranked') AS Rank
+        FROM Student s
+        LEFT JOIN `Rank` r ON s.StudentID = r.ApplicantID
+        ORDER BY r.RankNum ASC;
+    '''
+
+    try:
+        cursor.execute(query)
+        rows = cursor.fetchall()
+
+     
+        return jsonify(result), 200
+    except Exception as e:
+        current_app.logger.error(f"Error fetching student rankings: {e}")
+        return jsonify({"error": f"Error fetching rankings: {str(e)}"}), 500

@@ -10,6 +10,8 @@ from flask import make_response
 from flask import current_app
 from backend.db_connection import db
 from backend.ml_models.model01 import predict
+from datetime import datetime
+
 
 #------------------------------------------------------------
 # Create a new Blueprint object, which is a collection of 
@@ -366,17 +368,28 @@ def submit_resume():
     #------------------------------------------------------------
 # Delete a student's resume
 @new_students.route('/resume/<resume_name>', methods=['DELETE'])
-def delete_resume(resume_name):  # Change ResumeName to resume_name
+def delete_resume(resume_name):
     current_app.logger.info(f'DELETE /resume/{resume_name} route')
+
+    # Check if resume_name is empty or None
     if not resume_name:
         return jsonify({'message': 'Invalid resume name.'}), 400
+
     cursor = db.get_db().cursor()
+
+    # Check if the resume exists in the database
+    cursor.execute("SELECT * FROM Resume WHERE ResumeName = %s", (resume_name,))
+    resume = cursor.fetchone()
+
+    if not resume:
+        return jsonify({'message': 'Resume not found.'}), 404
 
     # Delete the resume record from the database
     cursor.execute("DELETE FROM Resume WHERE ResumeName = %s", (resume_name,))
     db.get_db().commit()
 
     return jsonify({'message': 'Resume deleted successfully'}), 200
+
 
 
 @new_students.route('/availabilities', methods=['GET'])
